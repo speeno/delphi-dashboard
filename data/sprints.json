@@ -1,0 +1,65 @@
+[
+  {
+    "id": 0,
+    "name": "Sprint 0 - 초기화 하네스",
+    "weeks": "1~2주차",
+    "status": "진행중",
+    "progress": 30,
+    "goal": "자산 수집(L1), 가드레일(L5), 상태 추적(L6) 체계 구축, 8계층 하네스 설계 문서 완성",
+    "exitCriteria": "8계층 하네스 설계 문서 완성, 가드레일(L5) 확정, 상태 추적(L6) 체계 구축, 대시보드 v1 배포"
+  },
+  {
+    "id": 1,
+    "name": "Sprint 1 - 분석 하네스",
+    "weeks": "3~4주차",
+    "status": "미시작",
+    "progress": 0,
+    "goal": "정적 분석(L2) 실행, 10대 산출물 #1~#6 생성, Legacy Object Catalog 구축",
+    "exitCriteria": "산출물 #1~#4, #6 완성, Legacy Object Catalog 핵심 10개 화면 등록, 쿼리 캡처 동작"
+  },
+  {
+    "id": 2,
+    "name": "Sprint 2 - 계약 하네스",
+    "weeks": "5~6주차",
+    "status": "미시작",
+    "progress": 0,
+    "goal": "작업 분해(L3) + Migration Contract + Eval Case 생성, Test Harness PoC",
+    "exitCriteria": "핵심 3개 흐름의 Capture→Golden Master→자동 테스트 파이프라인 연결"
+  },
+  {
+    "id": 3,
+    "name": "Sprint 3 - 생성 하네스 설계",
+    "weeks": "7~8주차",
+    "status": "미시작",
+    "progress": 0,
+    "goal": "계약 기반 코드 생성 파이프라인 + Routing/Comparison 설계, 5축 평가 기준 확정",
+    "exitCriteria": "Routing/Comparison Harness 설계 완성, Comparison PoC 1개 API 비교 가능"
+  },
+  {
+    "id": 4,
+    "name": "Sprint 4 - 생성+회귀 하네스",
+    "weeks": "9~14주차 (6주)",
+    "status": "미시작",
+    "progress": 0,
+    "goal": "계약 기반 API/UI 구현, 회귀 하네스로 DB delta/response/screen 비교",
+    "exitCriteria": "4계층 하네스 파이프라인 통합 동작, Comparison 핵심 API 자동 비교"
+  },
+  {
+    "id": 5,
+    "name": "Sprint 5 - 운영 하네스",
+    "weeks": "15~18주차",
+    "status": "미시작",
+    "progress": 0,
+    "goal": "shadow mode 비교, 점진적 라우팅 전환(10%→100%), 5축 eval 기반 Go/No-Go",
+    "exitCriteria": "Routing 50% 이상, Comparison 불일치율 0%, 즉시 롤백 검증, Go/No-Go 판단 완료"
+  },
+  {
+    "id": 6,
+    "name": "Sprint 6 - 전환 완료",
+    "weeks": "19~20주차",
+    "status": "미시작",
+    "progress": 0,
+    "goal": "하네스 → 운영 인프라 전환(Audit Log/CI/Canary), Known Unknowns 해소",
+    "exitCriteria": "Routing 100% 전환 후 1주 안정, 하네스 운영 도구 전환 완료, 확장 로드맵 수립"
+  }
+]

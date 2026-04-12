@@ -1,0 +1,30 @@
+[
+  {
+    "date": "2026-04-11",
+    "type": "milestone",
+    "title": "프로젝트 시작",
+    "description": "8계층 하네스 엔지니어링 기반 델파이→웹 포팅 프로젝트 착수",
+    "sprint": 0
+  },
+  {
+    "date": "2026-04-11",
+    "type": "decision",
+    "title": "8계층 하네스 엔지니어링 도입 결정",
+    "description": "레거시 포팅의 안전성과 자동 검증을 위해 8계층 하네스 프레임워크 도입",
+    "sprint": 0
+  },
+  {
+    "date": "2026-04-11",
+    "type": "decision",
+    "title": "프로젝트 대시보드 정적 사이트 구성",
+    "description": "HTML+CSS+JS + JSON 파일 기반 정적 대시보드, GitHub Pages 배포",
+    "sprint": 0
+  },
+  {
+    "date": "2026-04-11",
+    "type": "asset",
+    "title": "델파이 소스코드 및 DB 정보 확보 완료",
+    "description": "텍스트 형식 .dpr/.pas/.dfm 전체 확보, 빌드/구동 가능. MariaDB 접근 정보 확보.",
+    "sprint": 0
+  }
+]

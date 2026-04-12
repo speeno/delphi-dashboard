@@ -1,0 +1,9 @@
+[
+  { "id": "RISK-001", "name": "레거시 SQL 동작 차이", "probability": "높음", "impact": "높음", "response": "Capture + Comparison Harness로 자동 감지", "owner": "M + S-Mid", "status": "감시중" },
+  { "id": "RISK-002", "name": "고객사 커스터마이징 누락", "probability": "높음", "impact": "중간", "response": "Customer Variant Matrix + Capture 데이터 분석", "owner": "P + M", "status": "감시중" },
+  { "id": "RISK-003", "name": "장비 브리지 호환성", "probability": "중간", "impact": "높음", "response": "조기 PoC + Capture Harness에 장비 명령 포함", "owner": "S-Mid", "status": "감시중" },
+  { "id": "RISK-004", "name": "성능 저하", "probability": "중간", "impact": "높음", "response": "Comparison Harness 응답시간 비교 + 프로파일링", "owner": "M", "status": "감시중" },
+  { "id": "RISK-005", "name": "현업 저항/교육 부족", "probability": "중간", "impact": "중간", "response": "Routing Harness 점진적 전환 + 즉시 롤백 보장", "owner": "P", "status": "감시중" },
+  { "id": "RISK-006", "name": "데이터 정합성 문제", "probability": "중간", "impact": "높음", "response": "Comparison Harness 상시 비교 + 자동 알림", "owner": "M + S-Mid", "status": "감시중" },
+  { "id": "RISK-007", "name": "하네스 자체 장애", "probability": "낮음", "impact": "중간", "response": "하네스 우회 경로 + 운영 런북", "owner": "M + S-Mid", "status": "감시중" }
+]

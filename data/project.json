@@ -1,0 +1,46 @@
+{
+  "name": "델파이 도서 물류 시스템 무중단 웹 포팅",
+  "description": "8계층 하네스 엔지니어링 기반 델파이→웹 포팅 프로젝트",
+  "startDate": "2026-04-11",
+  "totalSprints": 7,
+  "currentSprint": 0,
+  "overallProgress": 5,
+  "status": "진행중",
+  "team": [
+    {
+      "role": "메인개발자",
+      "harnessRole": "하네스 아키텍트",
+      "code": "M",
+      "count": 1,
+      "responsibilities": "8계층 하네스 설계, 가드레일 정의, 아키텍처 의사결정, 코드 리뷰"
+    },
+    {
+      "role": "서브개발자 중급",
+      "harnessRole": "하네스 구현자",
+      "code": "S-Mid",
+      "count": 1,
+      "responsibilities": "자산 수집 자동화, 정적 분석 도구, 실행 도구 세팅, 평가 파이프라인"
+    },
+    {
+      "role": "서브개발자 초급",
+      "harnessRole": "하네스 운영자",
+      "code": "S-Jr",
+      "count": 1,
+      "responsibilities": "상태 추적 관리, 산출물 문서화, 대시보드 구축, 프론트엔드 UI"
+    },
+    {
+      "role": "기획자",
+      "harnessRole": "하네스 검증자",
+      "code": "P",
+      "count": 1,
+      "responsibilities": "업무 시나리오 작성, Eval Case 정의, 승인 게이트 주관, Variant Matrix 관리"
+    }
+  ],
+  "assets": {
+    "sourceCode": { "status": "미확인", "description": "텍스트 형식 .dpr/.pas/.dfm 확보 예정" },
+    "database": { "status": "미확인", "description": "MariaDB 서버 접근 정보 확보 예정" },
+    "dfmFiles": { "status": "미확인", "description": "텍스트 형태 .dfm 파일 확보 예정" },
+    "manuals": { "status": "미확인", "description": "운영 매뉴얼/교육 자료 수집 필요" },
+    "deviceInfo": { "status": "미확인", "description": "스캐너/프린터/저울 모델 및 연동 방식 조사 필요" }
+  }
+}

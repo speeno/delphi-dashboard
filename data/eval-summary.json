@@ -1,0 +1,11 @@
+{
+  "activated": false,
+  "activationSprint": 4,
+  "axes": [
+    { "id": "outcome", "name": "Outcome", "nameKr": "결과 동일성", "description": "저장 결과, 계산 결과, 상태 변화, 전표번호 생성 규칙 일치", "passRate": null, "totalCases": 0, "passedCases": 0 },
+    { "id": "process", "name": "Process", "nameKr": "프로세스 준수", "description": "필수 validation 수행, 트랜잭션 경계 준수, audit log 기록", "passRate": null, "totalCases": 0, "passedCases": 0 },
+    { "id": "uiux", "name": "UI/UX", "nameKr": "UI/UX 동일성", "description": "버튼 활성/비활성, 경고 문구 표시 시점, 입력 focus 이동", "passRate": null, "totalCases": 0, "passedCases": 0 },
+    { "id": "efficiency", "name": "Efficiency", "nameKr": "효율성", "description": "불필요한 API 호출, 과도한 DB round-trip 여부", "passRate": null, "totalCases": 0, "passedCases": 0 },
+    { "id": "variant", "name": "Variant", "nameKr": "고객사 분기", "description": "고객사별 분기 유지 여부", "passRate": null, "totalCases": 0, "passedCases": 0 }
+  ]
+}
