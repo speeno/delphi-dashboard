@@ -1,0 +1,162 @@
+{
+  "title": "전체 기간 To-Do 흐름 (직렬·병렬)",
+  "description": "단계는 시간 순서입니다. 각 단계 안에서 「병렬」은 동시 착수 가능,「직렬」은 위에서 아래 순서로 선행 완료 후 진행합니다. 중급·초급은 인수인계·유지보수만 담당하며, 실무 개발은 메인이 주도합니다.",
+  "legend": {
+    "parallel": "동시 착수 가능 (표시된 선행 단계·게이트만 충족되면 됨)",
+    "serial": "위에서 아래로 순차 진행 (앞 블록 완료 후 다음 블록)"
+  },
+  "gates": [
+    {
+      "id": "SRC",
+      "name": "Delphi 소스 입수",
+      "note": "이후 분석 파이프라인·인벤토리 검수 착수"
+    },
+    {
+      "id": "DB",
+      "name": "DB 접속·덤프 또는 복제본 확보",
+      "note": "이후 스키마 추출·검증(메인 주도)"
+    },
+    {
+      "id": "V1",
+      "name": "1차 기능 완료(합의된 범위)",
+      "note": "이후 중급·초급 인수인계·유지보수 본격화"
+    }
+  ],
+  "phases": [
+    {
+      "id": "F0",
+      "order": 0,
+      "name": "선행 완료 (병렬로 이미 수행됨)",
+      "stages": [
+        {
+          "mode": "parallel",
+          "label": "완료된 To-Do",
+          "taskIds": ["M-S0-06", "M-S0-07", "M-S0-08", "SJ-S0-01"]
+        }
+      ]
+    },
+    {
+      "id": "F1",
+      "order": 1,
+      "name": "기동·거버넌스 착수",
+      "stages": [
+        {
+          "mode": "parallel",
+          "label": "프로젝트 착수 직후 동시 착수 가능",
+          "taskIds": ["M-S0-01", "P-S0-01", "P-S0-03", "P-S0-04", "M-S0-13"]
+        }
+      ]
+    },
+    {
+      "id": "F2",
+      "order": 2,
+      "name": "기술 PoC·기획 초안·대시보드·CI",
+      "stages": [
+        {
+          "mode": "parallel",
+          "label": "저장소·CI 골격(M-S0-01) 진행 중이면 동시 착수",
+          "taskIds": ["M-S0-09", "P-S0-02", "P-S0-05", "P-S0-06", "P-S0-07", "M-S0-12"]
+        }
+      ]
+    },
+    {
+      "id": "F3",
+      "order": 3,
+      "name": "소스 입수 후",
+      "gateAfter": "SRC",
+      "stages": [
+        {
+          "mode": "parallel",
+          "label": "병렬: 분석 파이프라인과 인벤토리 검수 (메인)",
+          "taskIds": ["M-S0-02", "M-S0-11"]
+        }
+      ]
+    },
+    {
+      "id": "F4",
+      "order": 4,
+      "name": "DB 확보 후 (스키마·검증)",
+      "gateAfter": "DB",
+      "stages": [
+        {
+          "mode": "serial",
+          "label": "1) DB 분석 환경·자동화",
+          "taskIds": ["M-S0-03"]
+        },
+        {
+          "mode": "serial",
+          "label": "2) 메타·스키마 추출·diff·검증",
+          "taskIds": ["M-S0-04"]
+        }
+      ]
+    },
+    {
+      "id": "F5",
+      "order": 5,
+      "name": "실행 도구(L4)·캡처",
+      "stages": [
+        {
+          "mode": "serial",
+          "label": "선정·연동·PoC·점검 (메인)",
+          "taskIds": ["M-S0-05"]
+        }
+      ]
+    },
+    {
+      "id": "F6",
+      "order": 6,
+      "name": "계약·Eval·QA 연계",
+      "stages": [
+        {
+          "mode": "parallel",
+          "label": "분석·평가 기준·대시보드 검수·테스트 설계 (동시 진행)",
+          "taskIds": ["M-S0-10", "P-S0-08", "P-S0-09", "P-S0-10"]
+        }
+      ]
+    },
+    {
+      "id": "F7",
+      "order": 7,
+      "name": "QC·게이트 운영 (지속)",
+      "stages": [
+        {
+          "mode": "parallel",
+          "label": "품질 기준·체크리스트 병행 운영",
+          "taskIds": ["P-S0-11", "P-S0-12"]
+        }
+      ]
+    },
+    {
+      "id": "F8",
+      "order": 8,
+      "name": "서브 인수인계·유지보수 역할 합의",
+      "stages": [
+        {
+          "mode": "serial",
+          "label": "범위·권한·연락 체계 확정 (메인 주도)",
+          "taskIds": ["M-S0-14"]
+        }
+      ]
+    },
+    {
+      "id": "F9",
+      "order": 9,
+      "name": "V1 이후 — 인수인계 실행·유지보수",
+      "gateAfter": "V1",
+      "stages": [
+        {
+          "mode": "parallel",
+          "label": "중급·초급: 핸드오프·합의된 점검·요청 반영만 (병렬)",
+          "taskIds": ["SM-S0-01", "SM-S0-02", "SJ-S0-02", "SJ-S0-03"]
+        }
+      ]
+    }
+  ],
+  "dependencyNotes": [
+    { "taskIds": ["M-S0-02", "M-S0-11"], "requires": "소스 입수 (게이트 SRC)" },
+    { "taskIds": ["M-S0-03", "M-S0-04"], "requires": "DB 접속 또는 덤프 (게이트 DB)" },
+    { "taskIds": ["M-S0-10"], "requires": "분석 파이프라인(M-S0-02) 및 평가 기준(P-S0-05) 초안 권장" },
+    { "taskIds": ["P-S0-10"], "requires": "Migration Contract·Eval 산출 경로 가동 시 매핑 검토가 유효" },
+    { "taskIds": ["SM-S0-01", "SM-S0-02", "SJ-S0-02", "SJ-S0-03"], "requires": "M-S0-14 합의 후, V1(게이트) 이후 본격 운영" }
+  ]
+}

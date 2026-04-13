@@ -1,16 +1,29 @@
-const DATA_PATH = 'data/';
+/** GitHub Pages 등 서브 경로에서 끝 슬래시 없이 열릴 때 상대 fetch가 /data 로 가는 문제 방지 */
+function dashboardBaseUrl() {
+  let p = window.location.pathname;
+  if (/\/[^/]+\.html?$/i.test(p)) p = p.replace(/\/[^/]+$/, '/');
+  else if (!p.endsWith('/')) p += '/';
+  return window.location.origin + p;
+}
+
+const DATA_PATH = dashboardBaseUrl() + 'data/';
 
 async function loadJSON(file) {
-  const res = await fetch(DATA_PATH + file);
+  const url = DATA_PATH + file;
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`${res.status} ${res.statusText}: ${url}`);
+  }
   return res.json();
 }
 
 async function loadAll() {
-  const [project, sprints, todos, harness, deliverables, approvals, risks, timeline, evalSummary] =
+  const [project, sprints, todos, todoFlow, harness, deliverables, approvals, risks, timeline, evalSummary] =
     await Promise.all([
       loadJSON('project.json'),
       loadJSON('sprints.json'),
       loadJSON('todos.json'),
+      loadJSON('todo-flow.json'),
       loadJSON('harness.json'),
       loadJSON('deliverables.json'),
       loadJSON('approvals.json'),
@@ -18,7 +31,18 @@ async function loadAll() {
       loadJSON('timeline.json'),
       loadJSON('eval-summary.json'),
     ]);
-  return { project, sprints, todos, harness, deliverables, approvals, risks, timeline, evalSummary };
+  return { project, sprints, todos, todoFlow, harness, deliverables, approvals, risks, timeline, evalSummary };
+}
+
+function buildTaskMap(todos) {
+  const map = {};
+  Object.keys(todos.roles).forEach((roleKey) => {
+    const role = todos.roles[roleKey];
+    role.tasks.forEach((t) => {
+      map[t.id] = { ...t, roleCode: roleKey, roleName: role.name };
+    });
+  });
+  return map;
 }
 
 function statusBadge(status) {
@@ -127,6 +151,115 @@ function renderTodos(data) {
         <div class="tabs" id="todo-tabs">${tabsHTML}</div>
         ${panelsHTML}
       </div>
+    </div>`;
+}
+
+function renderTodoFlow(data) {
+  const { todoFlow, todos } = data;
+  if (!todoFlow || !todoFlow.phases) return '';
+
+  const taskMap = buildTaskMap(todos);
+  const gateMap = {};
+  (todoFlow.gates || []).forEach((g) => {
+    gateMap[g.id] = g;
+  });
+
+  const legendHTML = `
+    <div class="flow-legend card">
+      <div class="flow-legend-title">범례</div>
+      <div class="flow-legend-grid">
+        <div><span class="flow-badge flow-badge-parallel">병렬</span> ${todoFlow.legend?.parallel || ''}</div>
+        <div><span class="flow-badge flow-badge-serial">직렬</span> ${todoFlow.legend?.serial || ''}</div>
+      </div>
+      <p class="flow-desc">${todoFlow.description || ''}</p>
+    </div>`;
+
+  const gatesHTML =
+    (todoFlow.gates || []).length > 0
+      ? `<div class="flow-gates card">
+      <div class="flow-gates-title">마일스톤 게이트</div>
+      <ul class="flow-gates-list">
+        ${todoFlow.gates
+          .map(
+            (g) => `
+        <li><strong>${g.id}</strong> — ${g.name}<br><span class="flow-gate-note">${g.note || ''}</span></li>`
+          )
+          .join('')}
+      </ul>
+    </div>`
+      : '';
+
+  const phasesHTML = todoFlow.phases
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .map((phase) => {
+      const gateLabel = phase.gateAfter && gateMap[phase.gateAfter]
+        ? `<div class="flow-phase-gate">선행 조건: <strong>${gateMap[phase.gateAfter].name}</strong></div>`
+        : '';
+
+      const stagesHTML = (phase.stages || [])
+        .map((stage) => {
+          const modeLabel =
+            stage.mode === 'parallel'
+              ? '<span class="flow-badge flow-badge-parallel">병렬</span>'
+              : '<span class="flow-badge flow-badge-serial">직렬</span>';
+          const cards = (stage.taskIds || [])
+            .map((tid) => {
+              const t = taskMap[tid];
+              const title = t ? t.task : `(정의 없음: ${tid})`;
+              const done = t?.done ? ' flow-task-done' : '';
+              const roleShort = t?.roleCode || '?';
+              return `
+            <div class="flow-task${done}">
+              <div class="flow-task-meta"><span class="flow-task-id">${tid}</span><span class="flow-task-role">${roleShort}</span></div>
+              <div class="flow-task-title">${title}</div>
+            </div>`;
+            })
+            .join('');
+          const wrapClass = stage.mode === 'parallel' ? 'flow-stage flow-stage-parallel' : 'flow-stage flow-stage-serial';
+          return `
+        <div class="${wrapClass}">
+          <div class="flow-stage-head">${modeLabel} <span class="flow-stage-label">${stage.label || ''}</span></div>
+          <div class="flow-task-row">${cards}</div>
+        </div>`;
+        })
+        .join('');
+
+      return `
+    <div class="flow-phase card">
+      <div class="flow-phase-head">
+        <span class="flow-phase-order">${phase.order}</span>
+        <div>
+          <div class="flow-phase-name">${phase.name}</div>
+          ${gateLabel}
+        </div>
+      </div>
+      <div class="flow-phases-stages">${stagesHTML}</div>
+    </div>`;
+    })
+    .join('');
+
+  const depHTML =
+    (todoFlow.dependencyNotes || []).length > 0
+      ? `<div class="card flow-deps">
+      <div class="section-title" style="margin-bottom:12px">선행 관계 요약</div>
+      <ul class="flow-deps-list">
+        ${todoFlow.dependencyNotes
+          .map(
+            (d) => `
+        <li><strong>${(d.taskIds || []).join(', ')}</strong> — ${d.requires}</li>`
+          )
+          .join('')}
+      </ul>
+    </div>`
+      : '';
+
+  return `
+    <div class="section">
+      <div class="section-title">${todoFlow.title || '전체 To-Do 흐름'}</div>
+      ${legendHTML}
+      ${gatesHTML}
+      <div class="flow-timeline">${phasesHTML}</div>
+      ${depHTML}
     </div>`;
 }
 
@@ -298,20 +431,33 @@ function bindEvents(data) {
 }
 
 async function init() {
-  const data = await loadAll();
   const app = document.getElementById('app');
-  app.innerHTML = [
-    renderOverview(data),
-    renderTimeline(data),
-    renderTodos(data),
-    renderHarness(data),
-    renderDeliverables(data),
-    renderApprovals(data),
-    renderEval(data),
-    renderRisks(data),
-    renderLog(data),
-  ].join('');
-  bindEvents(data);
+  try {
+    const data = await loadAll();
+    app.innerHTML = [
+      renderOverview(data),
+      renderTimeline(data),
+      renderTodos(data),
+      renderTodoFlow(data),
+      renderHarness(data),
+      renderDeliverables(data),
+      renderApprovals(data),
+      renderEval(data),
+      renderRisks(data),
+      renderLog(data),
+    ].join('');
+    bindEvents(data);
+  } catch (err) {
+    app.innerHTML = `
+      <div class="section">
+        <div class="card" style="border-color:var(--danger)">
+          <div class="section-title" style="margin-bottom:8px">데이터 로드 실패</div>
+          <p style="font-size:13px;margin-bottom:8px">JSON 파일을 불러오지 못했습니다. GitHub Pages는 저장소 이름이 경로에 포함됩니다. 아래 URL이 브라우저에서 열리는지 확인하세요.</p>
+          <code style="font-size:11px;word-break:break-all;display:block;padding:8px;background:var(--surface-alt);border-radius:6px">${DATA_PATH}project.json</code>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:12px">${String(err.message || err)}</p>
+        </div>
+      </div>`;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', init);

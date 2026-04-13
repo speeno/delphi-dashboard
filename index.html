@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>델파이 웹 포팅 - 프로젝트 대시보드</title>
+  <script>
+  (function () {
+    var p = location.pathname;
+    if (/\/[^/]+\.html?$/i.test(p)) p = p.replace(/\/[^/]+$/, '/');
+    else if (!p.endsWith('/')) p += '/';
+    var b = document.createElement('base');
+    b.href = location.origin + p;
+    var cur = document.currentScript;
+    cur.parentNode.insertBefore(b, cur.nextSibling);
+  })();
+  </script>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
