@@ -18,7 +18,7 @@ async function loadJSON(file) {
 }
 
 async function loadAll() {
-  const [project, sprints, todos, todoFlow, harness, deliverables, approvals, risks, timeline, evalSummary] =
+  const [project, sprints, todos, todoFlow, harness, deliverables, approvals, risks, timeline, evalSummary, releaseMilestones] =
     await Promise.all([
       loadJSON('project.json'),
       loadJSON('sprints.json'),
@@ -30,8 +30,9 @@ async function loadAll() {
       loadJSON('risks.json'),
       loadJSON('timeline.json'),
       loadJSON('eval-summary.json'),
+      loadJSON('release-milestones.json'),
     ]);
-  return { project, sprints, todos, todoFlow, harness, deliverables, approvals, risks, timeline, evalSummary };
+  return { project, sprints, todos, todoFlow, harness, deliverables, approvals, risks, timeline, evalSummary, releaseMilestones };
 }
 
 function buildTaskMap(todos) {
@@ -49,6 +50,8 @@ function statusBadge(status) {
   const map = {
     '진행중': 'badge-progress',
     '완료': 'badge-done',
+    '예정': 'badge-wait',
+    '지연': 'badge-danger',
     '미시작': 'badge-wait',
     '대기': 'badge-wait',
     '통과': 'badge-done',
@@ -101,6 +104,50 @@ function sprintsOnDate(iso, sprints) {
   });
 }
 
+/** sprintIds의 endDate 중 최댓값을 effectiveDate로 부여. 타임라인 이벤트와 별도인 오픈 단계 마일스톤용. */
+function resolveMilestonePhases(sprints, releaseMilestones) {
+  if (!releaseMilestones || !Array.isArray(releaseMilestones.phases)) return [];
+  const byId = {};
+  (sprints || []).forEach((s) => {
+    byId[s.id] = s;
+  });
+  const phases = [...releaseMilestones.phases].sort((a, b) => (a.order || 0) - (b.order || 0));
+  return phases.map((phase) => {
+    const ids = phase.sprintIds;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn(`[release-milestones] phase "${phase.id || phase.name}" has empty or missing sprintIds.`);
+      }
+      return { ...phase, effectiveDate: null, scheduleUnresolved: true };
+    }
+    const ends = [];
+    let anyInvalidRef = false;
+    ids.forEach((sid) => {
+      const sp = byId[sid];
+      if (!sp || !sp.endDate) {
+        anyInvalidRef = true;
+        return;
+      }
+      ends.push(sp.endDate);
+    });
+    if (!ends.length) {
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn(`[release-milestones] phase "${phase.id || phase.name}" has no valid sprint end dates.`);
+      }
+      return { ...phase, effectiveDate: null, scheduleUnresolved: true };
+    }
+    if (anyInvalidRef && typeof console !== 'undefined' && console.warn) {
+      console.warn(`[release-milestones] phase "${phase.id || phase.name}" references missing or invalid sprint id(s); date uses valid sprints only.`);
+    }
+    const effectiveDate = ends.reduce((a, b) => (compareYMD(a, b) >= 0 ? a : b));
+    return { ...phase, effectiveDate, scheduleUnresolved: false };
+  });
+}
+
+function releaseMilestonesOnDate(iso, resolvedPhases) {
+  return resolvedPhases.filter((p) => p.effectiveDate === iso);
+}
+
 function buildCalendarGridHTML(data, year, monthIndex) {
   const dayLabels = ['일', '월', '화', '수', '목', '금', '토'];
   const first = new Date(year, monthIndex, 1);
@@ -109,6 +156,7 @@ function buildCalendarGridHTML(data, year, monthIndex) {
   const todayYMD = toYMD(new Date());
 
   const headerRow = dayLabels.map((d) => `<div class="cal-head-cell">${d}</div>`).join('');
+  const resolvedReleaseMilestones = resolveMilestonePhases(data.sprints, data.releaseMilestones);
 
   const cells = [];
   let day = 1 - startPad;
@@ -125,6 +173,7 @@ function buildCalendarGridHTML(data, year, monthIndex) {
       const onSprints = sprintsOnDate(iso, data.sprints);
       const events = data.timeline.filter((e) => e.date === iso);
       const gates = data.approvals.filter((g) => g.plannedDate === iso);
+      const onReleaseMilestones = releaseMilestonesOnDate(iso, resolvedReleaseMilestones);
 
       let cellClass = 'cal-cell';
       if (iso === todayYMD) cellClass += ' cal-cell-today';
@@ -133,10 +182,14 @@ function buildCalendarGridHTML(data, year, monthIndex) {
         if (s.status === '진행중') cellClass += ' cal-cell-active-sprint';
         if (s.status === '완료') cellClass += ' cal-cell-done-sprint';
       });
+      if (onReleaseMilestones.length) cellClass += ' cal-cell-release-milestone';
 
       const dots = [];
       events.forEach((e) => dots.push(`<span class="cal-dot cal-dot-${e.type}" title="${e.title.replace(/"/g, '&quot;')}"></span>`));
       gates.forEach(() => dots.push('<span class="cal-dot cal-dot-gate" title="승인 게이트 예정"></span>'));
+      onReleaseMilestones.forEach((p) =>
+        dots.push(`<span class="cal-dot cal-dot-release" title="오픈 마일스톤: ${String(p.name || p.id).replace(/"/g, '&quot;')}"></span>`)
+      );
 
       cells.push(`
         <button type="button" class="${cellClass}" data-date="${iso}">
@@ -155,9 +208,11 @@ function formatCalendarDayDetail(data, iso) {
   const onSprints = sprintsOnDate(iso, data.sprints);
   const events = data.timeline.filter((e) => e.date === iso);
   const gates = data.approvals.filter((g) => g.plannedDate === iso);
+  const resolvedMilestones = resolveMilestonePhases(data.sprints, data.releaseMilestones);
+  const onReleaseMilestones = releaseMilestonesOnDate(iso, resolvedMilestones);
 
-  if (!onSprints.length && !events.length && !gates.length) {
-    return `<p class="cal-detail-empty">이 날짜에 등록된 스프린트·이벤트·승인 일정이 없습니다.</p>`;
+  if (!onSprints.length && !events.length && !gates.length && !onReleaseMilestones.length) {
+    return `<p class="cal-detail-empty">이 날짜에 등록된 스프린트·이벤트·승인·오픈 마일스톤 일정이 없습니다.</p>`;
   }
 
   let html = `<div class="cal-detail-date">${iso}</div>`;
@@ -182,6 +237,13 @@ function formatCalendarDayDetail(data, iso) {
     });
     html += '</ul></div>';
   }
+  if (onReleaseMilestones.length) {
+    html += '<div class="cal-detail-block"><strong>오픈 단계 마일스톤 (계획 완료일)</strong><ul>';
+    onReleaseMilestones.forEach((p) => {
+      html += `<li>${p.name} <code class="cal-milestone-id">${p.id}</code> ${statusBadge(p.status)}</li>`;
+    });
+    html += '</ul></div>';
+  }
   return html;
 }
 
@@ -193,7 +255,7 @@ function renderCalendarSection(data) {
     <div class="section" id="calendar-section" data-cal-year="${y}" data-cal-month="${m}">
       <div class="section-title">일정·진행 달력</div>
       <div class="card cal-card">
-        <p class="cal-intro">스프린트 기간·마일스톤·승인 예정일을 한 달 단위로 확인합니다. 날짜를 누르면 상세가 아래에 표시됩니다.</p>
+        <p class="cal-intro">스프린트 기간·타임라인 마일스톤·오픈 단계 마일스톤(스프린트 종료일 연동)·승인 예정일을 한 달 단위로 확인합니다. 날짜를 누르면 상세가 아래에 표시됩니다.</p>
         <div class="cal-toolbar">
           <button type="button" class="cal-nav-btn" data-cal-nav="prev" aria-label="이전 달">◀</button>
           <div class="cal-month-title" id="cal-month-title">${title}</div>
@@ -206,7 +268,8 @@ function renderCalendarSection(data) {
         <div class="cal-legend">
           <span><i class="cal-legend-swatch cal-legend-sprint"></i> 스프린트 기간</span>
           <span><i class="cal-legend-swatch cal-legend-active"></i> 진행 중 스프린트</span>
-          <span><i class="cal-dot cal-dot-milestone"></i> 마일스톤</span>
+          <span><i class="cal-dot cal-dot-milestone"></i> 타임라인 마일스톤</span>
+          <span><i class="cal-dot cal-dot-release"></i> 오픈 단계 마일스톤</span>
           <span><i class="cal-dot cal-dot-decision"></i> 의사결정</span>
           <span><i class="cal-dot cal-dot-asset"></i> 자산·기타</span>
           <span><i class="cal-dot cal-dot-gate"></i> 승인 예정</span>
@@ -296,6 +359,88 @@ function renderOverview(data) {
           <div class="card-label">확보 현황</div>
           ${assetsHTML}
         </div>
+      </div>
+    </div>`;
+}
+
+function renderReleaseMilestones(data) {
+  const rm = data.releaseMilestones;
+  if (!rm || !Array.isArray(rm.phases) || rm.phases.length === 0) return '';
+  const phases = resolveMilestonePhases(data.sprints, rm);
+  const byId = {};
+  (data.sprints || []).forEach((s) => {
+    byId[s.id] = s;
+  });
+
+  const stepsRow = phases
+    .map((p, i) => {
+      const last = i === phases.length - 1;
+      return `
+        <div class="milestone-step${last ? ' milestone-step-last' : ''}" data-phase="${p.id}">
+          <div class="milestone-step-row">
+            <div class="milestone-step-circle" aria-hidden="true">${i + 1}</div>
+            ${last ? '' : '<div class="milestone-step-connector" aria-hidden="true"></div>'}
+          </div>
+          <div class="milestone-step-label">${p.name}</div>
+        </div>`;
+    })
+    .join('');
+
+  const cards = phases
+    .map((p) => {
+      const planDate = p.effectiveDate
+        ? `<span class="milestone-plan-date">${p.effectiveDate}</span>`
+        : '<span class="milestone-plan-date milestone-plan-date-unknown">미정</span>';
+      const sprintLines = (p.sprintIds || [])
+        .map((sid) => {
+          const s = byId[sid];
+          if (s) return `<li><span class="milestone-sprint-ref">#${sid}</span> ${s.name} <span class="milestone-sprint-end">~ ${s.endDate}</span></li>`;
+          return `<li><span class="milestone-sprint-ref">#${sid}</span> <em class="milestone-sprint-missing">스프린트 목록에 없음</em></li>`;
+        })
+        .join('');
+      const goals =
+        Array.isArray(p.goals) && p.goals.length
+          ? `<ul class="milestone-goals">${p.goals.map((g) => `<li>${g}</li>`).join('')}</ul>`
+          : '';
+      const exit =
+        p.exitCriteria && String(p.exitCriteria).trim()
+          ? `<div class="milestone-exit"><strong>완료 기준</strong> ${p.exitCriteria}</div>`
+          : '';
+      const summary = p.summary ? `<p class="milestone-summary">${p.summary}</p>` : '';
+      const foot =
+        p.scheduleUnresolved || !p.effectiveDate
+          ? '<p class="milestone-footnote">계획 완료일은 sprintIds와 sprints.json의 endDate로 계산됩니다. 미정이면 sprintIds·id를 확인하세요.</p>'
+          : '';
+
+      return `
+        <article class="milestone-card" data-phase="${p.id}">
+          <div class="milestone-card-head">
+            <h3 class="milestone-card-title">${p.name}</h3>
+            ${statusBadge(p.status)}
+          </div>
+          ${summary}
+          <div class="milestone-card-meta">
+            <span class="milestone-meta-label">계획 완료일</span>
+            ${planDate}
+          </div>
+          <div class="milestone-card-meta">
+            <span class="milestone-meta-label">연결 스프린트</span>
+            <ul class="milestone-sprint-list">${sprintLines || '<li class="milestone-sprint-empty">없음</li>'}</ul>
+          </div>
+          ${goals}
+          ${exit}
+          ${foot}
+        </article>`;
+    })
+    .join('');
+
+  return `
+    <div class="section" id="release-milestones-section">
+      <div class="section-title">${rm.title || '오픈 단계 마일스톤'}</div>
+      ${rm.description ? `<p class="milestone-section-desc">${rm.description}</p>` : ''}
+      <div class="milestone-track">
+        <div class="milestone-steps" role="list">${stepsRow}</div>
+        <div class="milestone-cards">${cards}</div>
       </div>
     </div>`;
 }
@@ -637,6 +782,7 @@ async function init() {
     app.innerHTML = [
       renderOverview(data),
       renderCalendarSection(data),
+      renderReleaseMilestones(data),
       renderTimeline(data),
       renderTodos(data),
       renderTodoFlow(data),
