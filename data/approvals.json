@@ -1,8 +1,8 @@
 [
-  { "id": 1, "name": "분석 산출물 승인", "sprint": 1, "status": "대기", "approvers": ["M", "P"], "approvedDate": null, "plannedDate": "2026-05-08", "description": "10대 산출물 #1~#6 + Legacy Object Catalog 검증" },
-  { "id": 2, "name": "API 계약 승인", "sprint": 2, "status": "대기", "approvers": ["M", "P", "현업"], "approvedDate": null, "plannedDate": "2026-05-22", "description": "Migration Contract + Eval Case 검증" },
-  { "id": 3, "name": "고객사별 차이 승인", "sprint": 3, "status": "대기", "approvers": ["P", "현업"], "approvedDate": null, "plannedDate": "2026-06-05", "description": "Customer Variant Matrix 최종 확인" },
-  { "id": 4, "name": "인쇄 결과 승인", "sprint": 4, "status": "대기", "approvers": ["P", "현업"], "approvedDate": null, "plannedDate": "2026-07-17", "description": "라벨/송장/리포트 출력 결과 동일성" },
-  { "id": 5, "name": "UAT 승인", "sprint": 5, "status": "대기", "approvers": ["P", "현업", "관리자"], "approvedDate": null, "plannedDate": "2026-08-14", "description": "5축 eval 기반 동일성 입증" },
-  { "id": 6, "name": "Cut-over 승인", "sprint": 6, "status": "대기", "approvers": ["전원", "경영진"], "approvedDate": null, "plannedDate": "2026-08-28", "description": "Routing 100% 전환 최종 결정" }
+  { "id": 1, "name": "분석 산출물 승인", "sprint": 1, "status": "대기", "approvers": ["M", "P"], "approvedDate": null, "plannedDate": "2026-07-17", "description": "10대 산출물 #1~#6 + Legacy Object Catalog 검증(베타 러프 구간 종료 시점)" },
+  { "id": 2, "name": "API 계약 승인", "sprint": 2, "status": "대기", "approvers": ["M", "P", "현업"], "approvedDate": null, "plannedDate": "2026-07-31", "description": "Migration Contract + Eval Case 검증" },
+  { "id": 3, "name": "고객사별 차이 승인", "sprint": 3, "status": "대기", "approvers": ["P", "현업"], "approvedDate": null, "plannedDate": "2026-08-14", "description": "Customer Variant Matrix 최종 확인" },
+  { "id": 4, "name": "인쇄 결과 승인", "sprint": 4, "status": "대기", "approvers": ["P", "현업"], "approvedDate": null, "plannedDate": "2026-09-25", "description": "라벨/송장/리포트 출력 결과 동일성" },
+  { "id": 5, "name": "UAT 승인", "sprint": 5, "status": "대기", "approvers": ["P", "현업", "관리자"], "approvedDate": null, "plannedDate": "2026-10-23", "description": "5축 eval 기반 동등성 입증" },
+  { "id": 6, "name": "Cut-over 승인", "sprint": 6, "status": "대기", "approvers": ["전원", "경영진"], "approvedDate": null, "plannedDate": "2026-11-06", "description": "Routing 100% 전환 최종 결정" }
 ]

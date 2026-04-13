@@ -26,5 +26,12 @@
     "title": "델파이 소스코드 및 DB 정보 확보 완료",
     "description": "텍스트 형식 .dpr/.pas/.dfm 전체 확보, 빌드/구동 가능. MariaDB 접근 정보 확보.",
     "sprint": 0
+  },
+  {
+    "date": "2026-07-17",
+    "type": "milestone",
+    "title": "베타 오픈(계획 완료일)",
+    "description": "Sprint 0~1 종료 기준. 러프 구현·알려진 버그 허용 범위에서 핵심 흐름 1차 검증 후 제한 오픈(일정은 sprints.json·release-milestones와 동기화).",
+    "sprint": 1
   }
 ]
