@@ -42,6 +42,13 @@
     "sprint": 0
   },
   {
+    "date": "2026-04-15",
+    "type": "decision",
+    "title": "MariaDB 접속 검증 진행",
+    "description": "연결 정보(.env) 확보 후 실접속 시도 중 현재 실패. 방화벽·VPN·포트·DB명·계정 권한 확인. 해결 시 schema_extractor 실행.",
+    "sprint": 0
+  },
+  {
     "date": "2026-07-17",
     "type": "milestone",
     "title": "베타 오픈(계획 완료일)",

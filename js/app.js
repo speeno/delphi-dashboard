@@ -332,7 +332,13 @@ function renderOverview(data) {
   const { project, sprints } = data;
   const current = sprints.find(s => s.status === '진행중') || sprints[0];
   const assetsHTML = Object.entries(project.assets)
-    .map(([, v]) => `<div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0"><span>${v.description}</span>${statusBadge(v.status)}</div>`)
+    .map(
+      ([, v]) =>
+        `<div class="overview-asset-row">
+          <span class="overview-asset-desc">${v.description}</span>
+          <span class="overview-asset-badge">${statusBadge(v.status)}</span>
+        </div>`
+    )
     .join('');
   const teamHTML = project.team
     .map(t => `<div style="font-size:13px;padding:4px 0"><strong>${t.role}</strong> (${t.harnessRole}) &times;${t.count}</div>`)

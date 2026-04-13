@@ -40,7 +40,7 @@
   ],
   "assets": {
     "sourceCode": { "status": "완료", "description": "WeLove_FTP/ — .dpr·.pas 등 델파이 소스 1차 반입" },
-    "database": { "status": "진행중", "description": "MariaDB 후보 호스트 4대 확보(115.68.3.153, 115.68.3.154, 115.68.3.155, 115.68.7.138). 자격 증명은 로컬 .env에만 보관(저장소 미기재). 다음: schema_extractor로 스키마 JSON·산출물 #4" },
+    "database": { "status": "진행중", "description": "MariaDB 호스트 4대·연결 정보 확보(.env). 현재 접속 불가 — 방화벽/VPN/포트·DB명·계정 권한 확인 중. 연결되면 schema_extractor → 스키마·산출물 #4" },
     "dfmFiles": { "status": "완료", "description": "WeLove_FTP/ — .dfm 텍스트(백업 .~dfm·.dcu 혼재 시 스캔 시 제외·정리)" },
     "manuals": { "status": "미확인", "description": "운영 매뉴얼/교육 자료 수집 필요" },
     "deviceInfo": { "status": "미확인", "description": "스캐너/프린터/저울 모델 및 연동 방식 조사 필요" }
