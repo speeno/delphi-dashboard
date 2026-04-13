@@ -65,6 +65,206 @@ function riskClass(level) {
   return map[level] || '';
 }
 
+function parseYMD(iso) {
+  if (!iso || typeof iso !== 'string') return null;
+  const p = iso.split('-').map(Number);
+  if (p.length !== 3 || p.some((n) => Number.isNaN(n))) return null;
+  return new Date(p[0], p[1] - 1, p[2]);
+}
+
+function toYMD(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function compareYMD(a, b) {
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+}
+
+function initialCalendarYM(project) {
+  const anchor = parseYMD(project.startDate);
+  const now = new Date();
+  if (anchor) {
+    return { y: anchor.getFullYear(), m: anchor.getMonth() };
+  }
+  return { y: now.getFullYear(), m: now.getMonth() };
+}
+
+function sprintsOnDate(iso, sprints) {
+  return sprints.filter((s) => {
+    if (!s.startDate || !s.endDate) return false;
+    return compareYMD(s.startDate, iso) <= 0 && compareYMD(iso, s.endDate) <= 0;
+  });
+}
+
+function buildCalendarGridHTML(data, year, monthIndex) {
+  const dayLabels = ['일', '월', '화', '수', '목', '금', '토'];
+  const first = new Date(year, monthIndex, 1);
+  const startPad = first.getDay();
+  const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+  const todayYMD = toYMD(new Date());
+
+  const headerRow = dayLabels.map((d) => `<div class="cal-head-cell">${d}</div>`).join('');
+
+  const cells = [];
+  let day = 1 - startPad;
+  for (let i = 0; i < 42; i += 1) {
+    const cellDate = new Date(year, monthIndex, day);
+    const iso = toYMD(cellDate);
+    const inMonth = day >= 1 && day <= daysInMonth;
+
+    if (!inMonth) {
+      cells.push(
+        `<div class="cal-cell cal-cell-muted" aria-hidden="true"><span class="cal-day-num">${cellDate.getDate()}</span></div>`
+      );
+    } else {
+      const onSprints = sprintsOnDate(iso, data.sprints);
+      const events = data.timeline.filter((e) => e.date === iso);
+      const gates = data.approvals.filter((g) => g.plannedDate === iso);
+
+      let cellClass = 'cal-cell';
+      if (iso === todayYMD) cellClass += ' cal-cell-today';
+      if (onSprints.length) cellClass += ' cal-cell-sprint';
+      onSprints.forEach((s) => {
+        if (s.status === '진행중') cellClass += ' cal-cell-active-sprint';
+        if (s.status === '완료') cellClass += ' cal-cell-done-sprint';
+      });
+
+      const dots = [];
+      events.forEach((e) => dots.push(`<span class="cal-dot cal-dot-${e.type}" title="${e.title.replace(/"/g, '&quot;')}"></span>`));
+      gates.forEach(() => dots.push('<span class="cal-dot cal-dot-gate" title="승인 게이트 예정"></span>'));
+
+      cells.push(`
+        <button type="button" class="${cellClass}" data-date="${iso}">
+          <span class="cal-day-num">${day}</span>
+          <span class="cal-dots">${dots.join('')}</span>
+        </button>`);
+    }
+    day += 1;
+  }
+
+  const title = `${year}년 ${monthIndex + 1}월`;
+  return { title, headerRow, cells: cells.join('') };
+}
+
+function formatCalendarDayDetail(data, iso) {
+  const onSprints = sprintsOnDate(iso, data.sprints);
+  const events = data.timeline.filter((e) => e.date === iso);
+  const gates = data.approvals.filter((g) => g.plannedDate === iso);
+
+  if (!onSprints.length && !events.length && !gates.length) {
+    return `<p class="cal-detail-empty">이 날짜에 등록된 스프린트·이벤트·승인 일정이 없습니다.</p>`;
+  }
+
+  let html = `<div class="cal-detail-date">${iso}</div>`;
+  if (onSprints.length) {
+    html += '<div class="cal-detail-block"><strong>스프린트</strong><ul>';
+    onSprints.forEach((s) => {
+      html += `<li>${s.name} (${s.startDate} ~ ${s.endDate}) ${statusBadge(s.status)}</li>`;
+    });
+    html += '</ul></div>';
+  }
+  if (events.length) {
+    html += '<div class="cal-detail-block"><strong>타임라인</strong><ul>';
+    events.forEach((e) => {
+      html += `<li><span class="log-type log-type-${e.type}">${e.type}</span> ${e.title}</li>`;
+    });
+    html += '</ul></div>';
+  }
+  if (gates.length) {
+    html += '<div class="cal-detail-block"><strong>승인 게이트 (예정)</strong><ul>';
+    gates.forEach((g) => {
+      html += `<li>#${g.id} ${g.name} ${statusBadge(g.status)}</li>`;
+    });
+    html += '</ul></div>';
+  }
+  return html;
+}
+
+function renderCalendarSection(data) {
+  const { y, m } = initialCalendarYM(data.project);
+  const { title, headerRow, cells } = buildCalendarGridHTML(data, y, m);
+
+  return `
+    <div class="section" id="calendar-section" data-cal-year="${y}" data-cal-month="${m}">
+      <div class="section-title">일정·진행 달력</div>
+      <div class="card cal-card">
+        <p class="cal-intro">스프린트 기간·마일스톤·승인 예정일을 한 달 단위로 확인합니다. 날짜를 누르면 상세가 아래에 표시됩니다.</p>
+        <div class="cal-toolbar">
+          <button type="button" class="cal-nav-btn" data-cal-nav="prev" aria-label="이전 달">◀</button>
+          <div class="cal-month-title" id="cal-month-title">${title}</div>
+          <button type="button" class="cal-nav-btn" data-cal-nav="next" aria-label="다음 달">▶</button>
+        </div>
+        <div class="cal-grid" id="cal-grid">
+          ${headerRow}
+          ${cells}
+        </div>
+        <div class="cal-legend">
+          <span><i class="cal-legend-swatch cal-legend-sprint"></i> 스프린트 기간</span>
+          <span><i class="cal-legend-swatch cal-legend-active"></i> 진행 중 스프린트</span>
+          <span><i class="cal-dot cal-dot-milestone"></i> 마일스톤</span>
+          <span><i class="cal-dot cal-dot-decision"></i> 의사결정</span>
+          <span><i class="cal-dot cal-dot-asset"></i> 자산·기타</span>
+          <span><i class="cal-dot cal-dot-gate"></i> 승인 예정</span>
+        </div>
+        <div class="cal-detail" id="cal-detail">
+          <div class="cal-detail-placeholder">날짜를 선택하세요.</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function refreshCalendarMonth(data) {
+  const section = document.getElementById('calendar-section');
+  if (!section) return;
+  const y = parseInt(section.dataset.calYear, 10);
+  const m = parseInt(section.dataset.calMonth, 10);
+  const { title, headerRow, cells } = buildCalendarGridHTML(data, y, m);
+  document.getElementById('cal-month-title').textContent = title;
+  document.getElementById('cal-grid').innerHTML = headerRow + cells;
+}
+
+function bindCalendarEvents(data) {
+  const section = document.getElementById('calendar-section');
+  if (!section) return;
+
+  section.addEventListener('click', (e) => {
+    const nav = e.target.closest('[data-cal-nav]');
+    if (nav) {
+      let y = parseInt(section.dataset.calYear, 10);
+      let m = parseInt(section.dataset.calMonth, 10);
+      if (nav.dataset.calNav === 'prev') {
+        m -= 1;
+        if (m < 0) {
+          m = 11;
+          y -= 1;
+        }
+      } else {
+        m += 1;
+        if (m > 11) {
+          m = 0;
+          y += 1;
+        }
+      }
+      section.dataset.calYear = String(y);
+      section.dataset.calMonth = String(m);
+      refreshCalendarMonth(data);
+      return;
+    }
+
+    const cell = e.target.closest('.cal-cell[data-date]:not(.cal-cell-muted)');
+    if (!cell) return;
+    const iso = cell.dataset.date;
+    document.getElementById('cal-detail').innerHTML = formatCalendarDayDetail(data, iso);
+    section.querySelectorAll('.cal-cell-selected').forEach((el) => el.classList.remove('cal-cell-selected'));
+    cell.classList.add('cal-cell-selected');
+  });
+}
+
 function renderOverview(data) {
   const { project, sprints } = data;
   const current = sprints.find(s => s.status === '진행중') || sprints[0];
@@ -313,7 +513,7 @@ function renderApprovals(data) {
         <div class="gate-num ${cls}">${g.id}</div>
         <div class="gate-info">
           <div class="gate-name">${g.name}</div>
-          <div class="gate-desc">${g.description} | 승인: ${g.approvers.join(', ')}${g.approvedDate ? ' | ' + g.approvedDate : ''}</div>
+          <div class="gate-desc">${g.description} | 승인: ${g.approvers.join(', ')}${g.plannedDate ? ' | 예정: ' + g.plannedDate : ''}${g.approvedDate ? ' | 승인일: ' + g.approvedDate : ''}</div>
         </div>
         ${statusBadge(g.status)}
       </div>`;
@@ -420,7 +620,7 @@ function bindEvents(data) {
           <div class="card-title">${sprint.name}</div>
           ${statusBadge(sprint.status)}
         </div>
-        <div style="font-size:13px;margin-bottom:8px"><strong>기간:</strong> ${sprint.weeks}</div>
+        <div style="font-size:13px;margin-bottom:8px"><strong>기간:</strong> ${sprint.weeks}${sprint.startDate && sprint.endDate ? ` (${sprint.startDate} ~ ${sprint.endDate})` : ''}</div>
         <div style="font-size:13px;margin-bottom:8px"><strong>목표:</strong> ${sprint.goal}</div>
         <div style="font-size:13px;margin-bottom:8px"><strong>완료 기준:</strong> ${sprint.exitCriteria}</div>
         <div class="progress-bar"><div class="fill fill-primary" style="width:${sprint.progress}%"></div></div>
@@ -436,6 +636,7 @@ async function init() {
     const data = await loadAll();
     app.innerHTML = [
       renderOverview(data),
+      renderCalendarSection(data),
       renderTimeline(data),
       renderTodos(data),
       renderTodoFlow(data),
@@ -447,6 +648,7 @@ async function init() {
       renderLog(data),
     ].join('');
     bindEvents(data);
+    bindCalendarEvents(data);
   } catch (err) {
     app.innerHTML = `
       <div class="section">
