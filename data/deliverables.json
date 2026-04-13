@@ -1,5 +1,5 @@
 [
-  { "id": 1, "name": "Form Inventory", "nameKr": "폼 인벤토리", "file": "inventory/form_inventory.json", "status": "미시작", "sprint": 1, "progress": 0 },
+  { "id": 1, "name": "Form Inventory", "nameKr": "폼 인벤토리", "file": "inventory/form_inventory.json", "status": "진행중", "sprint": 1, "progress": 15 },
   { "id": 2, "name": "Event Flow Map", "nameKr": "이벤트 흐름 맵", "file": "analysis/event_flow.json", "status": "미시작", "sprint": 1, "progress": 0 },
   { "id": 3, "name": "SQL Catalog", "nameKr": "SQL 카탈로그", "file": "analysis/query_catalog.json", "status": "미시작", "sprint": 1, "progress": 0 },
   { "id": 4, "name": "DB Impact Matrix", "nameKr": "DB 영향도 매트릭스", "file": "analysis/db_impact_matrix.json", "status": "미시작", "sprint": 1, "progress": 0 },

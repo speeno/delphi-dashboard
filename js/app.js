@@ -337,6 +337,14 @@ function renderOverview(data) {
   const teamHTML = project.team
     .map(t => `<div style="font-size:13px;padding:4px 0"><strong>${t.role}</strong> (${t.harnessRole}) &times;${t.count}</div>`)
     .join('');
+  const sourceLoc =
+    project.legacySourceRoot && project.legacySourceNote
+      ? `<div class="card" style="grid-column:1/-1;margin-top:12px">
+          <div class="card-label">레거시 소스 위치 (1차 확보)</div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:6px"><code style="font-size:13px">${project.legacySourceRoot}</code></div>
+          <p style="font-size:12px;color:var(--text-muted);margin:0;line-height:1.5">${project.legacySourceNote}</p>
+        </div>`
+      : '';
 
   return `
     <div class="section">
@@ -359,6 +367,7 @@ function renderOverview(data) {
           <div class="card-label">확보 현황</div>
           ${assetsHTML}
         </div>
+        ${sourceLoc}
       </div>
     </div>`;
 }
