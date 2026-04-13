@@ -35,6 +35,13 @@
     "sprint": 0
   },
   {
+    "date": "2026-04-14",
+    "type": "asset",
+    "title": "MariaDB 접속 대상 호스트 확보",
+    "description": "후보 서버 4대: 115.68.3.153, 115.68.3.154, 115.68.3.155, 115.68.7.138. 비밀번호 등 자격 증명은 레포에 기록하지 않음(.env). 이후 단계: tools/db/schema_extractor.py로 스키마 추출·산출물 #4.",
+    "sprint": 0
+  },
+  {
     "date": "2026-07-17",
     "type": "milestone",
     "title": "베타 오픈(계획 완료일)",
