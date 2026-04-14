@@ -44,8 +44,8 @@
   {
     "date": "2026-04-15",
     "type": "decision",
-    "title": "MariaDB 접속 검증 진행",
-    "description": "연결 정보(.env) 확보 후 실접속 시도 중 현재 실패. 방화벽·VPN·포트·DB명·계정 권한 확인. 해결 시 schema_extractor 실행.",
+    "title": "MariaDB 호스트별 접속 프로브",
+    "description": "포트 3306·클라이언트 charset=utf8 기준 SELECT 1: 115.68.3.153·115.68.7.138 성공. 115.68.3.154·155는 Malformed packet(3306 비MySQL 또는 구버전/중간장비 가능). SSH 22는 DB 프로토콜 아님. 결과 dashboard/data/db-status.json·개요 카드 반영.",
     "sprint": 0
   },
   {

@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-04-15T12:00:00+09:00",
+  "mysqlPort": 3306,
+  "sshPortNote": "SSH는 22번. MariaDB 클라이언트는 3306으로 접속(22는 SSH 프로토콜).",
+  "clientCharset": "utf8",
+  "charsetNote": "일부 서버는 utf8mb4 미지원 → 접속 시 charset=utf8 필요",
+  "hosts": [
+    { "host": "115.68.3.153", "reachable": true, "detail": "SELECT 1 성공 (charset=utf8)" },
+    { "host": "115.68.3.154", "reachable": false, "detail": "3306 응답 비정상(Malformed packet) — MySQL 여부·방화벽·포트 재확인" },
+    { "host": "115.68.3.155", "reachable": false, "detail": "3306 응답 비정상(Malformed packet) — MySQL 여부·방화벽·포트 재확인" },
+    { "host": "115.68.7.138", "reachable": true, "detail": "SELECT 1 성공 (charset=utf8)" }
+  ],
+  "successCount": 2,
+  "totalHosts": 4
+}

@@ -91,6 +91,35 @@ header .subtitle { color: var(--text-muted); font-size: 13px; }
   vertical-align: middle;
 }
 
+.db-status-summary {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.db-status-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(71, 85, 105, 0.25);
+}
+.db-status-meta-line + .db-status-meta-line {
+  margin-top: 2px;
+}
+.db-status-host-list .db-status-host-row {
+  border-bottom-color: rgba(71, 85, 105, 0.15);
+}
+.db-status-ip {
+  font-size: 12px;
+}
+.db-status-detail {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
 .section {
   margin: 24px 0;
 }

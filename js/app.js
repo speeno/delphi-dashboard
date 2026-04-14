@@ -18,21 +18,34 @@ async function loadJSON(file) {
 }
 
 async function loadAll() {
-  const [project, sprints, todos, todoFlow, harness, deliverables, approvals, risks, timeline, evalSummary, releaseMilestones] =
-    await Promise.all([
-      loadJSON('project.json'),
-      loadJSON('sprints.json'),
-      loadJSON('todos.json'),
-      loadJSON('todo-flow.json'),
-      loadJSON('harness.json'),
-      loadJSON('deliverables.json'),
-      loadJSON('approvals.json'),
-      loadJSON('risks.json'),
-      loadJSON('timeline.json'),
-      loadJSON('eval-summary.json'),
-      loadJSON('release-milestones.json'),
-    ]);
-  return { project, sprints, todos, todoFlow, harness, deliverables, approvals, risks, timeline, evalSummary, releaseMilestones };
+  const [
+    project,
+    sprints,
+    todos,
+    todoFlow,
+    harness,
+    deliverables,
+    approvals,
+    risks,
+    timeline,
+    evalSummary,
+    releaseMilestones,
+    dbStatus,
+  ] = await Promise.all([
+    loadJSON('project.json'),
+    loadJSON('sprints.json'),
+    loadJSON('todos.json'),
+    loadJSON('todo-flow.json'),
+    loadJSON('harness.json'),
+    loadJSON('deliverables.json'),
+    loadJSON('approvals.json'),
+    loadJSON('risks.json'),
+    loadJSON('timeline.json'),
+    loadJSON('eval-summary.json'),
+    loadJSON('release-milestones.json'),
+    loadJSON('db-status.json'),
+  ]);
+  return { project, sprints, todos, todoFlow, harness, deliverables, approvals, risks, timeline, evalSummary, releaseMilestones, dbStatus };
 }
 
 function buildTaskMap(todos) {
@@ -59,6 +72,8 @@ function statusBadge(status) {
     '감시중': 'badge-progress',
     '발생함': 'badge-danger',
     '해소됨': 'badge-done',
+    '연결됨': 'badge-done',
+    '실패': 'badge-danger',
   };
   return `<span class="badge ${map[status] || 'badge-wait'}">${status}</span>`;
 }
@@ -328,8 +343,39 @@ function bindCalendarEvents(data) {
   });
 }
 
+function renderDbStatusCard(dbStatus) {
+  if (!dbStatus || !Array.isArray(dbStatus.hosts) || !dbStatus.hosts.length) return '';
+  const meta = [
+    dbStatus.checkedAt ? `측정 시각: ${dbStatus.checkedAt}` : '',
+    dbStatus.mysqlPort != null ? `MySQL/MariaDB 포트: ${dbStatus.mysqlPort}` : '',
+    dbStatus.clientCharset ? `클라이언트 문자집합: ${dbStatus.clientCharset}` : '',
+    dbStatus.sshPortNote || '',
+    dbStatus.charsetNote || '',
+  ]
+    .filter(Boolean)
+    .map((line) => `<div class="db-status-meta-line">${line}</div>`)
+    .join('');
+  const summary = `<div class="db-status-summary">${dbStatus.successCount ?? 0} / ${dbStatus.totalHosts ?? dbStatus.hosts.length}대 연결 성공</div>`;
+  const rows = dbStatus.hosts
+    .map((h) => {
+      const st = h.reachable ? '연결됨' : '실패';
+      const detail = h.detail ? `<div class="db-status-detail">${h.detail}</div>` : '';
+      return `<div class="overview-asset-row db-status-host-row">
+        <span class="overview-asset-desc"><code class="db-status-ip">${h.host}</code>${detail}</span>
+        <span class="overview-asset-badge">${statusBadge(st)}</span>
+      </div>`;
+    })
+    .join('');
+  return `<div class="card db-status-card" style="grid-column:1/-1;margin-top:12px">
+    <div class="card-label">MariaDB 접속 점검 (호스트별)</div>
+    ${summary}
+    <div class="db-status-meta">${meta}</div>
+    <div class="db-status-host-list">${rows}</div>
+  </div>`;
+}
+
 function renderOverview(data) {
-  const { project, sprints } = data;
+  const { project, sprints, dbStatus } = data;
   const current = sprints.find(s => s.status === '진행중') || sprints[0];
   const assetsHTML = Object.entries(project.assets)
     .map(
@@ -374,6 +420,7 @@ function renderOverview(data) {
           ${assetsHTML}
         </div>
         ${sourceLoc}
+        ${renderDbStatusCard(dbStatus)}
       </div>
     </div>`;
 }
