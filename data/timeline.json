@@ -56,6 +56,13 @@
     "sprint": 0
   },
   {
+    "date": "2026-04-17",
+    "type": "milestone",
+    "title": "DB 접속·쿼리 POC 구현·연동 확인",
+    "description": "3306 기준 4대 모두: 모던 클라이언트(153·138) 및 MySQL 3.23 전용 경로(154·155)로 POC 완료. 대시보드 db-status.json·확보 현황 반영. 이후 버전별 schema_extractor·산출물 #4.",
+    "sprint": 0
+  },
+  {
     "date": "2026-07-17",
     "type": "milestone",
     "title": "베타 오픈(계획 완료일)",

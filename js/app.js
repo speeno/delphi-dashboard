@@ -347,6 +347,7 @@ function renderDbStatusCard(dbStatus) {
   if (!dbStatus || !Array.isArray(dbStatus.hosts) || !dbStatus.hosts.length) return '';
   const meta = [
     dbStatus.checkedAt ? `측정 시각: ${dbStatus.checkedAt}` : '',
+    dbStatus.pocStatus ? `POC: ${dbStatus.pocStatus}` : '',
     dbStatus.mysqlPort != null ? `MySQL/MariaDB 포트: ${dbStatus.mysqlPort}` : '',
     dbStatus.clientCharset ? `클라이언트 문자집합: ${dbStatus.clientCharset}` : '',
     dbStatus.sshPortNote || '',
