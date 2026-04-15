@@ -70,6 +70,13 @@
     "sprint": 0
   },
   {
+    "date": "2026-04-20",
+    "type": "milestone",
+    "title": "Sprint 1 — 정적 분석(L2) 1차 완료",
+    "description": "legacy_delphi_source/legacy_source 기준: 산출물 #1~#6·db_impact_matrix·legacy_object_catalog·sprint1_report 갱신. 폼 173·이벤트 바인딩 3490·SQL 카탈로그 1325·검증 규칙 386·고객 분기 6·카탈로그 객체 6236.",
+    "sprint": 1
+  },
+  {
     "date": "2026-07-17",
     "type": "milestone",
     "title": "베타 오픈(계획 완료일)",

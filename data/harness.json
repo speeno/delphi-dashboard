@@ -6,10 +6,10 @@
       "status": "구축",
       "maturity": "구축",
       "coverage": {
-        "dprFiles": 0,
-        "pasFiles": 0,
-        "dfmFiles": 0,
-        "sqlFiles": 0,
+        "dprFiles": 4,
+        "pasFiles": 176,
+        "dfmFiles": 173,
+        "sqlFiles": 1325,
         "dbTables": 0
       },
       "description": "AI가 추론 가능한 구조화 입력으로 레거시 자산 변환"
@@ -17,13 +17,13 @@
     {
       "id": "L2",
       "name": "정적 분석 (Static Analysis)",
-      "status": "설계",
-      "maturity": "설계",
+      "status": "구축",
+      "maturity": "구축",
       "coverage": {
-        "formsAnalyzed": 0,
-        "eventsExtracted": 0,
-        "sqlExtracted": 0,
-        "rulesExtracted": 0
+        "formsAnalyzed": 173,
+        "eventsExtracted": 3490,
+        "sqlExtracted": 1325,
+        "rulesExtracted": 386
       },
       "description": "코드에서 지식을 추출하여 구조화"
     },

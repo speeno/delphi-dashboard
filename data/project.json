@@ -4,10 +4,10 @@
   "startDate": "2026-04-11",
   "totalSprints": 7,
   "currentSprint": 0,
-  "overallProgress": 9,
+  "overallProgress": 28,
   "status": "진행중",
-  "legacySourceRoot": "WeLove_FTP/",
-  "legacySourceNote": "델파이 소스 1차 확보. 도서유통-New·도서유통-출판 등 다중 경로·고객사 변형이 포함되며, 인벤토리 정리 후 tools 분석 파이프라인 연결 예정.",
+  "legacySourceRoot": "legacy_delphi_source/legacy_source/",
+  "legacySourceNote": "1차 정적 분석(L2) 완료: `run_analysis`/파서 기준 `analysis/sprint1_report.json` — 폼 173·이벤트 흐름 3490·SQL 1325·검증 386·고객 분기 6·소스 기반 DB 영향 테이블 53·Legacy Object Catalog 6236건. WeLove_FTP/ 등 다른 트리는 별도 인자로 재실행 가능.",
   "team": [
     {
       "role": "메인개발자",
@@ -40,8 +40,8 @@
   ],
   "assets": {
     "sourceCode": { "status": "완료", "description": "WeLove_FTP/ — .dpr·.pas 등 델파이 소스 1차 반입" },
-    "database": { "status": "진행중", "description": "3306·4대 접속·쿼리 POC 구현·연동 확인 완료(153·138 utf8 모던, 154·155 MySQL 3.23.58 전용·문서 mysql-3.23-legacy-connection-notes.md). 다음: 버전별 schema 추출·산출물 #4" },
-    "dfmFiles": { "status": "완료", "description": "WeLove_FTP/ — .dfm 텍스트(백업 .~dfm·.dcu 혼재 시 스캔 시 제외·정리)" },
+    "database": { "status": "진행중", "description": "3306·4대 접속·쿼리 POC 완료. 소스 기반 산출물 #4(`analysis/db_impact_matrix.json`) 완료. 다음: 모던 인스턴스 `schema_extractor`·3.23 덤프/별도 스키마 합의(mysql-3.23-legacy-connection-notes.md)." },
+    "dfmFiles": { "status": "완료", "description": "legacy_source — .dfm 173건 파싱·form_inventory/event_flow 반영(텍스트 DFM)" },
     "manuals": { "status": "미확인", "description": "운영 매뉴얼/교육 자료 수집 필요" },
     "deviceInfo": { "status": "미확인", "description": "스캐너/프린터/저울 모델 및 연동 방식 조사 필요" },
     "engineeringRepo": { "status": "완료", "description": "저장소 3층·브랜치·CI 전략 문서화(docs/repo-and-engineering-strategy.md), README 역할·중복 정책, 제품 폴더 Git 초기화·main·ci.yml, 허브 tools-smoke.yml" }
