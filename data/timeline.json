@@ -49,6 +49,13 @@
     "sprint": 0
   },
   {
+    "date": "2026-04-16",
+    "type": "asset",
+    "title": "154·155 MySQL 3.23 호환 접속·쿼리 테스트 성공",
+    "description": "115.68.3.154/155는 MySQL 3.23.58. PyMySQL 4.1+ 핸드셰이크 불가 → raw 소켓·CLIENT_LONG_PASSWORD(0x1)·CLIENT_COMPRESS 제거 등으로 해결. SSH는 SSH_ASKPASS. 요약 docs/mysql-3.23-legacy-connection-notes.md. 4대 모두 연결 성공으로 db-status.json 갱신.",
+    "sprint": 0
+  },
+  {
     "date": "2026-07-17",
     "type": "milestone",
     "title": "베타 오픈(계획 완료일)",

@@ -1,15 +1,16 @@
 {
-  "checkedAt": "2026-04-15T12:00:00+09:00",
+  "checkedAt": "2026-04-16T18:00:00+09:00",
   "mysqlPort": 3306,
-  "sshPortNote": "SSH는 22번. MariaDB 클라이언트는 3306으로 접속(22는 SSH 프로토콜).",
+  "sshPortNote": "SSH는 22번. DB는 3306. 154/155는 MySQL 3.23 호환 전용 클라이언트·SSH_ASKPASS 등 테스트 구현으로 접속 성공.",
   "clientCharset": "utf8",
-  "charsetNote": "일부 서버는 utf8mb4 미지원 → 접속 시 charset=utf8 필요",
+  "charsetNote": "153·138: mysql-connector / charset=utf8. 154·155: MySQL 3.23.58 — PyMySQL 호환 불가, 별도 raw 소켓·플래그 조정(문서 docs/mysql-3.23-legacy-connection-notes.md 참고).",
   "hosts": [
-    { "host": "115.68.3.153", "reachable": true, "detail": "SELECT 1 성공 (charset=utf8)" },
-    { "host": "115.68.3.154", "reachable": false, "detail": "3306 응답 비정상(Malformed packet) — MySQL 여부·방화벽·포트 재확인" },
-    { "host": "115.68.3.155", "reachable": false, "detail": "3306 응답 비정상(Malformed packet) — MySQL 여부·방화벽·포트 재확인" },
-    { "host": "115.68.7.138", "reachable": true, "detail": "SELECT 1 성공 (charset=utf8)" }
+    { "host": "115.68.3.153", "reachable": true, "detail": "SELECT·쿼리 검증 (charset=utf8)" },
+    { "host": "115.68.3.154", "reachable": true, "detail": "MySQL 3.23.58 — pymysql_compat raw 소켓·CLIENT_LONG_PASSWORD·CLIENT_COMPRESS 제거 등으로 접속·쿼리 테스트 성공" },
+    { "host": "115.68.3.155", "reachable": true, "detail": "MySQL 3.23.58 — 154와 동일 호환 경로로 접속·쿼리 테스트 성공" },
+    { "host": "115.68.7.138", "reachable": true, "detail": "SELECT·쿼리 검증 (charset=utf8)" }
   ],
-  "successCount": 2,
-  "totalHosts": 4
+  "successCount": 4,
+  "totalHosts": 4,
+  "implementationNote": "154/155 상세 해결: docs/mysql-3.23-legacy-connection-notes.md"
 }

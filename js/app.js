@@ -351,6 +351,7 @@ function renderDbStatusCard(dbStatus) {
     dbStatus.clientCharset ? `클라이언트 문자집합: ${dbStatus.clientCharset}` : '',
     dbStatus.sshPortNote || '',
     dbStatus.charsetNote || '',
+    dbStatus.implementationNote || '',
   ]
     .filter(Boolean)
     .map((line) => `<div class="db-status-meta-line">${line}</div>`)
