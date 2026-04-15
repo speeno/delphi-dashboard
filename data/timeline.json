@@ -63,6 +63,13 @@
     "sprint": 0
   },
   {
+    "date": "2026-04-18",
+    "type": "milestone",
+    "title": "저장소·브랜치·CI·엔지니어링 전략 정리",
+    "description": "docs/repo-and-engineering-strategy.md(3저장소·분석·웹·CI 요약), README 저장소 역할·루트 vs 도서물류관리프로그램 중복 정책. 제품 폴더 독립 Git(main·초기 커밋)·도서물류관리프로그램/.github/workflows/ci.yml. 허브 .github/workflows/tools-smoke.yml(tools compileall).",
+    "sprint": 0
+  },
+  {
     "date": "2026-07-17",
     "type": "milestone",
     "title": "베타 오픈(계획 완료일)",

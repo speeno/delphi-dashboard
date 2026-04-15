@@ -8,5 +8,6 @@
   { "id": 7, "name": "API Contract Spec", "nameKr": "API 계약 명세", "file": "migration/contracts/*.yaml", "status": "미시작", "sprint": 2, "progress": 0 },
   { "id": 8, "name": "Regression Test Pack", "nameKr": "회귀 테스트 팩", "file": "migration/test-cases/*.json", "status": "미시작", "sprint": 2, "progress": 0 },
   { "id": 9, "name": "Migration Decision Log", "nameKr": "마이그레이션 의사결정 기록", "file": "legacy-analysis/decisions.md", "status": "진행중", "sprint": 0, "progress": 30 },
-  { "id": 10, "name": "Known Unknowns List", "nameKr": "미확인 사항 목록", "file": "legacy-analysis/open-questions.md", "status": "진행중", "sprint": 0, "progress": 30 }
+  { "id": 10, "name": "Known Unknowns List", "nameKr": "미확인 사항 목록", "file": "legacy-analysis/open-questions.md", "status": "진행중", "sprint": 0, "progress": 30 },
+  { "id": 11, "name": "Repo & Engineering Strategy", "nameKr": "저장소·CI·엔지니어링 전략", "file": "docs/repo-and-engineering-strategy.md", "status": "완료", "sprint": 0, "progress": 100 }
 ]

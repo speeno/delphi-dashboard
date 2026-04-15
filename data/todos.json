@@ -4,7 +4,7 @@
     "M": {
       "name": "메인개발자 (하네스 아키텍트·핵심 개발 주도)",
       "tasks": [
-        { "id": "M-S0-01", "task": "프로젝트 저장소·브랜치 전략·CI/CD 골격 설계 및 구현", "done": false },
+        { "id": "M-S0-01", "task": "프로젝트 저장소·브랜치 전략·CI/CD 골격 설계 및 구현", "done": true },
         { "id": "M-S0-02", "task": "확보 예정 소스 기준 분석 파이프라인(run_analysis·파서) 설계·구현 주도", "done": false },
         { "id": "M-S0-03", "task": "DB 분석 환경(복제본/덤프)·스키마 추출·격리 수준 조사·자동화 스크립트", "done": false },
         { "id": "M-S0-04", "task": "mariadb-dump·INFORMATION_SCHEMA 기반 메타/스키마 추출 및 서버 간 diff·검증", "done": false },
