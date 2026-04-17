@@ -70,6 +70,13 @@
     "sprint": 0
   },
   {
+    "date": "2026-04-19",
+    "type": "asset",
+    "title": "4대 DB 스키마 메타 추출·서버 간 diff",
+    "description": "데이터/전체 dump 없이 INFORMATION_SCHEMA·MySQL3 SHOW 경로로 테이블·컬럼·키·DDL 일부 수집. debug/output/schema·diff-*.json. 허브 docs/db-schema-porting-readiness.md·dashboard/data/db-schema-analysis.json. M-S0-04 완료 처리.",
+    "sprint": 0
+  },
+  {
     "date": "2026-04-20",
     "type": "milestone",
     "title": "Sprint 1 — 정적 분석(L2) 1차 완료",

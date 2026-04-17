@@ -1,0 +1,82 @@
+{
+  "updatedAt": "2026-04-19T10:00:00+09:00",
+  "purpose": "멀티 DB 스키마 메타(데이터·전체 덤프 없음) 수집·서버 간 diff — 포팅·계약·Eval 전제",
+  "tooling": {
+    "extractScript": "tools/db/extract_server_schema.py",
+    "diffScript": "tools/db/schema_diff.py",
+    "localOutput": "debug/output/schema/ (gitignore — 로컬 재생성)",
+    "legacyNote": "MySQL 3.23(154·155): INFORMATION_SCHEMA 대신 SHOW TABLES/FIELDS/KEYS/CREATE TABLE 메타 경로"
+  },
+  "servers": [
+    {
+      "id": "remote_138",
+      "label": "115.68.7.138 (직접·MySQL 5.1)",
+      "extractionMode": "information_schema",
+      "tableCount": 51
+    },
+    {
+      "id": "remote_153",
+      "label": "115.68.3.153 (SSH+MySQL)",
+      "extractionMode": "information_schema",
+      "tableCount": 79
+    },
+    {
+      "id": "remote_154",
+      "label": "115.68.3.154 (SSH+MySQL 3.23)",
+      "extractionMode": "mysql3_show_meta",
+      "tableCount": 65
+    },
+    {
+      "id": "remote_155",
+      "label": "115.68.3.155 (SSH+MySQL 3.23)",
+      "extractionMode": "mysql3_show_meta",
+      "tableCount": 78
+    }
+  ],
+  "diffPairs": [
+    {
+      "left": "remote_138",
+      "right": "remote_153",
+      "label": "모던 vs 모던 (동일 추출기)",
+      "tablesLeft": 51,
+      "tablesRight": 79,
+      "onlyInRight": 28,
+      "onlyInLeft": 0,
+      "commonTables": 51,
+      "columnIssues": 576,
+      "ddlDiffs": 0,
+      "note": "컬럼 이슈 다수는 타입 문자열·NULL 표기 등 표현 차 포함 가능 — 후속 정규화·중요 테이블 우선 검토"
+    },
+    {
+      "left": "remote_154",
+      "right": "remote_155",
+      "label": "MySQL 3.23 vs 3.23",
+      "tablesLeft": 65,
+      "tablesRight": 78,
+      "onlyInRight": 14,
+      "onlyInLeft": 1,
+      "commonTables": 64,
+      "columnIssues": 160,
+      "ddlDiffs": 8,
+      "note": "155에만 J* 서브테이블 등 추가. 154에만 S1_Logn."
+    }
+  ],
+  "portingReadiness": {
+    "ready": [
+      "서버별 테이블·컬럼·키·인덱스 메타 JSON (schema_bundle)",
+      "동일 계열 서버 간 구조 diff 리포트(JSON+MD)",
+      "레거시 MySQL3용 SHOW 기반 DDL 스냅(길이 상한, 데이터 없음)"
+    ],
+    "nextSteps": [
+      "migration/contracts + test-cases 작성 후 핵심 API·쿼리 동등성 Eval 연결",
+      "diff의 column_issues를 테이블 우선순위(업무·Id_Logn·출고)로 필터링",
+      "OQ-003(서버 간 스키마 정책) 결정과 동기화"
+    ]
+  },
+  "executiveSummary": [
+    "4대 모두 스키마 메타만 추출 완료(행 데이터·전체 dump 없음).",
+    "138 대비 153에 테이블 28개 추가 존재 — 멀티 인스턴스 스키마 드리프트 확인됨.",
+    "154↔155는 3.23 동계열 비교로 테이블·DDL 차이 규모가 상대적으로 작음.",
+    "포팅 본론(계약·Eval·웹 CRUD) 전에 위 diff를 기준으로 영향 테이블 목록을 고정하는 것이 하네스 계획과 부합."
+  ]
+}

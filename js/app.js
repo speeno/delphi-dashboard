@@ -31,6 +31,7 @@ async function loadAll() {
     evalSummary,
     releaseMilestones,
     dbStatus,
+    dbSchemaAnalysis,
   ] = await Promise.all([
     loadJSON('project.json'),
     loadJSON('sprints.json'),
@@ -44,8 +45,9 @@ async function loadAll() {
     loadJSON('eval-summary.json'),
     loadJSON('release-milestones.json'),
     loadJSON('db-status.json'),
+    loadJSON('db-schema-analysis.json'),
   ]);
-  return { project, sprints, todos, todoFlow, harness, deliverables, approvals, risks, timeline, evalSummary, releaseMilestones, dbStatus };
+  return { project, sprints, todos, todoFlow, harness, deliverables, approvals, risks, timeline, evalSummary, releaseMilestones, dbStatus, dbSchemaAnalysis };
 }
 
 function buildTaskMap(todos) {
@@ -376,8 +378,50 @@ function renderDbStatusCard(dbStatus) {
   </div>`;
 }
 
+function renderDbSchemaAnalysisCard(schema) {
+  if (!schema || !Array.isArray(schema.servers) || !schema.servers.length) return '';
+  const meta = [
+    schema.updatedAt ? `갱신: ${schema.updatedAt}` : '',
+    schema.tooling && schema.tooling.extractScript
+      ? `추출: <code style="font-size:11px">${schema.tooling.extractScript}</code>`
+      : '',
+    schema.tooling && schema.tooling.localOutput
+      ? `로컬 산출: <code style="font-size:11px">${schema.tooling.localOutput}</code>`
+      : '',
+  ]
+    .filter(Boolean)
+    .map((line) => `<div class="db-status-meta-line">${line}</div>`)
+    .join('');
+  const rows = schema.servers
+    .map(
+      (s) =>
+        `<div class="overview-asset-row db-status-host-row">
+        <span class="overview-asset-desc"><code class="db-status-ip">${s.id}</code> · ${s.label || ''}<br/><span style="font-size:11px;color:var(--text-muted)">${s.extractionMode} · 테이블 ${s.tableCount}</span></span>
+        <span class="overview-asset-badge">${statusBadge('연결됨')}</span>
+      </div>`
+    )
+    .join('');
+  const diffLines = (schema.diffPairs || [])
+    .map(
+      (d) =>
+        `<li style="margin:4px 0;font-size:12px"><strong>${d.label || d.left + ' vs ' + d.right}</strong>: 공통 ${d.commonTables}, 우측만 +${d.onlyInRight || 0}, 좌측만 ${d.onlyInLeft || 0}, 컬럼 이슈 ${d.columnIssues}${d.ddlDiffs != null ? `, DDL차 ${d.ddlDiffs}` : ''}</li>`
+    )
+    .join('');
+  const bullets = (schema.executiveSummary || [])
+    .map((t) => `<li style="margin:4px 0;font-size:12px;line-height:1.45">${t}</li>`)
+    .join('');
+  return `<div class="card db-status-card" style="grid-column:1/-1;margin-top:12px">
+    <div class="card-label">DB 스키마 메타 분석 (포팅 대비)</div>
+    <div class="db-status-meta">${meta}</div>
+    <div class="db-status-host-list">${rows}</div>
+    <div style="margin-top:10px;font-size:12px;color:var(--text-muted)"><strong>주요 diff</strong><ul style="margin:6px 0;padding-left:18px">${diffLines || '<li>—</li>'}</ul></div>
+    <div style="margin-top:8px;font-size:12px;color:var(--text-muted)"><strong>요약</strong><ul style="margin:6px 0;padding-left:18px">${bullets || '<li>—</li>'}</ul></div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">전체 리포트: 저장소 docs/db-schema-porting-readiness.md</div>
+  </div>`;
+}
+
 function renderOverview(data) {
-  const { project, sprints, dbStatus } = data;
+  const { project, sprints, dbStatus, dbSchemaAnalysis } = data;
   const current = sprints.find(s => s.status === '진행중') || sprints[0];
   const assetsHTML = Object.entries(project.assets)
     .map(
@@ -423,6 +467,7 @@ function renderOverview(data) {
         </div>
         ${sourceLoc}
         ${renderDbStatusCard(dbStatus)}
+        ${renderDbSchemaAnalysisCard(dbSchemaAnalysis)}
       </div>
     </div>`;
 }

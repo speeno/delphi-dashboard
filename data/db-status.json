@@ -1,10 +1,10 @@
 {
-  "checkedAt": "2026-04-17T12:00:00+09:00",
+  "checkedAt": "2026-04-19T10:00:00+09:00",
   "mysqlPort": 3306,
-  "pocStatus": "구현·연동 확인 완료",
+  "pocStatus": "구현·연동 확인 완료 + 스키마 메타 추출·diff",
   "sshPortNote": "SSH는 22번. DB는 3306. 154/155는 MySQL 3.23 호환 전용 클라이언트·SSH_ASKPASS 등으로 POC 검증 완료.",
-  "clientCharset": "utf8",
-  "charsetNote": "153·138: mysql-connector / charset=utf8. 154·155: MySQL 3.23.58 — pymysql_compat 등 전용 경로(문서 docs/mysql-3.23-legacy-connection-notes.md).",
+  "clientCharset": "utf8 / euckr",
+  "charsetNote": "138·153: 제품 연결은 euckr 권장(INFORMATION_SCHEMA 추출). 154·155: MySQL 3.23.58 — pymysql_compat·SHOW 메타 경로(문서 docs/mysql-3.23-legacy-connection-notes.md).",
   "hosts": [
     { "host": "115.68.3.153", "reachable": true, "detail": "SELECT·쿼리 검증 (charset=utf8)" },
     { "host": "115.68.3.154", "reachable": true, "detail": "MySQL 3.23.58 — pymysql_compat raw 소켓·CLIENT_LONG_PASSWORD·CLIENT_COMPRESS 제거 등으로 접속·쿼리 테스트 성공" },
@@ -13,5 +13,5 @@
   ],
   "successCount": 4,
   "totalHosts": 4,
-  "implementationNote": "154/155 상세 해결·POC: docs/mysql-3.23-legacy-connection-notes.md"
+  "implementationNote": "154/155: docs/mysql-3.23-legacy-connection-notes.md. 스키마 메타·diff: tools/db/extract_server_schema.py, dashboard/data/db-schema-analysis.json"
 }
