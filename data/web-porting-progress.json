@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-19",
+  "updatedAt": "2026-04-21",
   "phase": "Phase 1",
   "productNote": "실행 UI는 저장소 `도서물류관리프로그램/` (제품 웹). 본 섹션은 개발 진행용 허브 대시보드 전용.",
   "docLinks": [
@@ -20,7 +20,8 @@
         "FastAPI: `servers.yaml` 프로필 기준 DB 풀·SSH·MySQL 3.x raw 경로",
         "인증: 레거시 `Id_Logn` + 기존 비밀번호 형식·JWT",
         "문자셋: EUCKR 등 서버별 반영",
-        "`tools/db/extract_server_schema.py` — 4대 스키마 메타·diff(데이터 dump 없음)"
+        "`tools/db/extract_server_schema.py` — 4대 스키마 메타·diff(데이터 dump 없음)",
+        "하네스 L4: `schema_extractor`·`query_capture`·접속 프로브·제품 API PoC까지 1차 반영(대시보드 harness.json 동기)"
       ]
     },
     {

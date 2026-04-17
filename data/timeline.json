@@ -84,6 +84,20 @@
     "sprint": 1
   },
   {
+    "date": "2026-04-21",
+    "type": "milestone",
+    "title": "L4 실행 도구 1차 구축·연동 결과",
+    "description": "하네스 L4: tools/db/schema_extractor·extract_server_schema·schema_core/diff·query_capture 골격, harness/db_impact_builder 연계. 운영 점검용 debug 스크립트(접속 프로브·Id_Logn export 등). 제품 도서물류관리프로그램/ FastAPI(JWT·풀·SSH)·Next(AppShell·업무 대시보드) PoC. POC/web/seak80-sample 참고 구현. 잔여: ProxySQL 등 상시 쿼리 캡처·일상 점검 파이프라인.",
+    "sprint": 0
+  },
+  {
+    "date": "2026-04-21",
+    "type": "decision",
+    "title": "진행·DB 메타 대시보드는 허브 dashboard/에만 유지",
+    "description": "제품 Next 대시보드는 업무 KPI 중심, 웹 포팅 진행·DB 스키마 요약은 GitHub Pages용 dashboard/data(JSON)·일정 달력과 동기.",
+    "sprint": 0
+  },
+  {
     "date": "2026-07-17",
     "type": "milestone",
     "title": "베타 오픈(계획 완료일)",

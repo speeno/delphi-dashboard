@@ -8,14 +8,14 @@
         { "id": "M-S0-02", "task": "확보 예정 소스 기준 분석 파이프라인(run_analysis·파서) 설계·구현 주도", "done": true },
         { "id": "M-S0-03", "task": "DB 분석 환경(복제본/덤프)·스키마 추출·격리 수준 조사·자동화 스크립트", "done": false },
         { "id": "M-S0-04", "task": "mariadb-dump·INFORMATION_SCHEMA 기반 메타/스키마 추출 및 서버 간 diff·검증", "done": true },
-        { "id": "M-S0-05", "task": "실행 도구(L4)·쿼리 캡처(ProxySQL 등) 선정·연동·PoC·일상 점검", "done": false },
+        { "id": "M-S0-05", "task": "실행 도구(L4)·쿼리 캡처: 1차 완료(스키마 추출·diff·접속 프로브·query_capture·제품 API PoC). 잔여: ProxySQL 등 운영 연동·일상 점검", "done": false },
         { "id": "M-S0-06", "task": "8계층 하네스 아키텍처 설계 문서 작성", "done": true },
         { "id": "M-S0-07", "task": "가드레일(L5) 문서 작성 및 팀 공유", "done": true },
         { "id": "M-S0-08", "task": "AI 작업 지시 템플릿 + 기능 단위 입력 템플릿 확정", "done": true },
-        { "id": "M-S0-09", "task": "기술 스택·웹 API·하네스 미들웨어 PoC 환경 구축", "done": false },
+        { "id": "M-S0-09", "task": "기술 스택·웹 API·하네스 미들웨어 PoC 환경 구축", "done": true },
         { "id": "M-S0-10", "task": "Migration Contract·Eval 생성·비교/라우팅 하네스 핵심 로직 구현", "done": false },
         { "id": "M-S0-11", "task": "소스 입수 후 인벤토리·분석 산출물 경로·누락 검수", "done": true },
-        { "id": "M-S0-12", "task": "대시보드 JSON 반영·공개 배포(GitHub Pages 등)·CI 워크플로 장애 시 수정", "done": false },
+        { "id": "M-S0-12", "task": "대시보드 JSON 반영·공개 배포(GitHub Pages 등)·CI 워크플로 장애 시 수정", "done": true },
         { "id": "M-S0-13", "task": "산출물·런북·README 형식·링크·오탈자 정리", "done": false },
         { "id": "M-S0-14", "task": "중급·초급 인수인계 일정·범위·접근권한·V1 이후 유지보수 역할 합의", "done": false }
       ]
