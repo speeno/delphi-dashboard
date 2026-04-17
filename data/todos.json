@@ -16,7 +16,7 @@
         { "id": "M-S0-10", "task": "Migration Contract·Eval 생성·비교/라우팅 하네스 핵심 로직 구현", "done": false },
         { "id": "M-S0-11", "task": "소스 입수 후 인벤토리·분석 산출물 경로·누락 검수", "done": true },
         { "id": "M-S0-12", "task": "대시보드 JSON 반영·공개 배포(GitHub Pages 등)·CI 워크플로 장애 시 수정", "done": true },
-        { "id": "M-S0-13", "task": "산출물·런북·README 형식·링크·오탈자 정리", "done": false },
+        { "id": "M-S0-13", "task": "산출물·런북·README 형식·링크·오탈자 정리 (체크리스트·인벤토리·갭·런북·트래커·계약·테스트·5축 초안·DEC-004·게이트 점검·화면카드 계획 상호링크)", "done": true },
         { "id": "M-S0-14", "task": "중급·초급 인수인계 일정·범위·접근권한·V1 이후 유지보수 역할 합의", "done": false }
       ]
     },
@@ -42,13 +42,13 @@
         { "id": "P-S0-02", "task": "인터뷰 질문지 작성", "done": false },
         { "id": "P-S0-03", "task": "기존 시스템 매뉴얼/교육 자료 수집", "done": false },
         { "id": "P-S0-04", "task": "고객사별 커스터마이징 현황 초기 조사", "done": false },
-        { "id": "P-S0-05", "task": "5축 평가(L7) 기준 초안 작성", "done": false },
-        { "id": "P-S0-06", "task": "6개 승인 게이트 일정 및 승인 주체 확정", "done": false },
-        { "id": "P-S0-07", "task": "성공 기준(DoD)·인수 조건 초안 작성", "done": false },
+        { "id": "P-S0-05", "task": "5축 평가(L7) 기준 초안 작성 — docs/eval-axes-and-dod-draft.md (정식 채택은 게이트 #1·#6에서)", "done": true },
+        { "id": "P-S0-06", "task": "6개 승인 게이트 일정 및 승인 주체 확정 — docs/approval-gate-alignment-review.md 정합성 점검 완료, 권고 A1~A5는 회의 후 반영", "done": true },
+        { "id": "P-S0-07", "task": "성공 기준(DoD)·인수 조건 초안 작성 — docs/eval-axes-and-dod-draft.md §2 단계별 DoD", "done": true },
         { "id": "P-S0-08", "task": "대시보드 콘텐츠 1차 검수", "done": false },
         { "id": "P-S0-09", "task": "[QA] 테스트 계획·우선 시나리오·회귀 범위 초안 작성", "done": false },
         { "id": "P-S0-10", "task": "[QA] Eval Case·업무 시나리오와의 매핑 검토, 누락 케이스 제안", "done": false },
-        { "id": "P-S0-11", "task": "[QC] 결함 심각도·재현 절차·차단 기준 정의, UAT 합격 기준 초안", "done": false },
+        { "id": "P-S0-11", "task": "[QC] 결함 심각도·재현 절차·차단 기준 정의, UAT 합격 기준 초안 — docs/eval-axes-and-dod-draft.md §2.4·§3", "done": true },
         { "id": "P-S0-12", "task": "[QC] 승인 게이트 통과 전 체크리스트(산출물·테스트·이슈 잔여) 운영", "done": false }
       ]
     }

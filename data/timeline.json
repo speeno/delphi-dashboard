@@ -98,6 +98,27 @@
     "sprint": 0
   },
   {
+    "date": "2026-04-21",
+    "type": "milestone",
+    "title": "포팅 직전 분석 작업 로드맵 1차 산출물 동결",
+    "description": "현장 인터뷰 템플릿(field-interview-meeting-template.md), 핵심 시나리오 후보(core-scenarios-candidates.md), 쿼리 캡처 트래커(query-capture-rehearsal-tracker.md), Migration Contract 1건(migration/contracts/login.yaml), Regression Test Pack 1건(migration/test-cases/login.json), 5축 평가·DoD 초안(eval-axes-and-dod-draft.md), 승인 게이트 정합성 점검(approval-gate-alignment-review.md), 인쇄·바코드 결정 메모(decision-print-scanner-web.md, DEC-004), 화면 카드 자동 생성 계획(screen-cards-generation-plan.md). 산출물 #7·#8 진행도 0→15.",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-21",
+    "type": "milestone",
+    "title": "대시보드에 사람 처리 항목 섹션 추가 + 진행률 갱신",
+    "description": "dashboard/data/human-action-items.json 신설(11건, 4개 카테고리: 인터뷰·캡처·결정·승인). renderHumanActionItems 섹션 신규 노출. project.overallProgress 39→44, Sprint 0 progress 52→60, Sprint 1 50→56. todos: P-S0-05/06/07/11·M-S0-13 done 처리(초안 동결).",
+    "sprint": 0
+  },
+  {
+    "date": "2026-04-21",
+    "type": "decision",
+    "title": "DEC-004: 인쇄·바코드 웹 대체 1차 방향",
+    "description": "인쇄: 브라우저 인쇄(HTML/CSS) + 라벨 서버 PDF 하이브리드. 바코드: 키보드 웨지(USB-HID) 1차, 시리얼은 베타 후 로컬 브리지/Web Serial 옵션. OQ-002 클로저로 보강.",
+    "sprint": 0
+  },
+  {
     "date": "2026-07-17",
     "type": "milestone",
     "title": "베타 오픈(계획 완료일)",

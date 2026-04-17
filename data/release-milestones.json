@@ -14,7 +14,7 @@
         "베타 참여자에게 알려진 이슈·비범위 항목을 문서/릴리즈 노트로 공유",
         "분석 산출물·Legacy Catalog·계약 초안은 베타 피드백 반영을 위한 기준선으로 유지"
       ],
-      "exitCriteria": "베타 범위 시나리오에서 차단급(데이터 손실·안전·법규) 결함 없음 또는 명시적 완화·모니터링 합의; 그 외 결함은 백로그로 이관 가능"
+      "exitCriteria": "베타 범위 시나리오에서 차단급(데이터 손실·안전·법규) 결함 없음 또는 명시적 완화·모니터링 합의; 그 외 결함은 백로그로 이관 가능. 추가: 베타 라인 핵심 시나리오 C1·C2·C7의 Migration Contract approved + Regression Test Pack 5축 베타 임계값 통과(docs/eval-axes-and-dod-draft.md), DB 로직 검토 게이트(approvals.json id 2) 충족(docs/query-capture-rehearsal-tracker.md 1회 이상 실시)"
     },
     {
       "order": 2,

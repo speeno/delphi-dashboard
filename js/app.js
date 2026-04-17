@@ -33,6 +33,7 @@ async function loadAll() {
     dbStatus,
     dbSchemaAnalysis,
     webPortingProgress,
+    humanActionItems,
   ] = await Promise.all([
     loadJSON('project.json'),
     loadJSON('sprints.json'),
@@ -48,6 +49,7 @@ async function loadAll() {
     loadJSON('db-status.json'),
     loadJSON('db-schema-analysis.json'),
     loadJSON('web-porting-progress.json'),
+    loadJSON('human-action-items.json'),
   ]);
   return {
     project,
@@ -64,6 +66,7 @@ async function loadAll() {
     dbStatus,
     dbSchemaAnalysis,
     webPortingProgress,
+    humanActionItems,
   };
 }
 
@@ -496,6 +499,75 @@ function renderWebPortingProgressSection(data) {
       ${portingBody}
       ${dbTitle}
       ${dbHtml || ''}
+    </div>`;
+}
+
+function renderHumanActionItems(data) {
+  const ha = data.humanActionItems;
+  if (!ha || !Array.isArray(ha.categories) || ha.categories.length === 0) return '';
+
+  const allItems = ha.categories.flatMap((c) => c.items || []);
+  const total = allItems.length;
+  const counts = { '대기': 0, '진행중': 0, '완료': 0, '지연': 0 };
+  allItems.forEach((it) => { if (counts[it.status] != null) counts[it.status] += 1; });
+  const doneRate = total ? Math.round((counts['완료'] / total) * 100) : 0;
+
+  const summaryHTML = `
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-label">사람 처리 진행 요약</div>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:6px 0 10px">
+        <div style="font-size:24px;font-weight:700">${counts['완료']} / ${total}</div>
+        <div style="font-size:12px;color:var(--text-muted)">완료 ${counts['완료']} · 진행중 ${counts['진행중']} · 대기 ${counts['대기']}${counts['지연'] ? ' · 지연 ' + counts['지연'] : ''}</div>
+      </div>
+      <div class="progress-bar"><div class="fill ${doneRate >= 80 ? 'fill-success' : 'fill-primary'}" style="width:${doneRate}%"></div></div>
+      ${ha.description ? `<p style="font-size:12px;color:var(--text-muted);margin:10px 0 0;line-height:1.55">${escapeHtml(ha.description)}</p>` : ''}
+      ${ha.updatedAt ? `<p style="font-size:11px;color:var(--text-muted);margin:6px 0 0">갱신: ${escapeHtml(ha.updatedAt)}</p>` : ''}
+    </div>`;
+
+  const catHTML = ha.categories.map((cat) => {
+    const items = (cat.items || []).map((it) => {
+      const outputs = (it.outputs || []).map((o) => `<li style="margin:2px 0">${escapeHtml(o)}</li>`).join('');
+      const blocks = (it.blocks || []).map((b) => `<span class="badge badge-wait" style="margin-right:4px">${escapeHtml(b)}</span>`).join('');
+      const trackerLine = it.tracker
+        ? `<div style="font-size:11px;color:var(--text-muted);margin-top:4px">트래커: <code style="font-size:11px">${escapeHtml(it.tracker)}</code></div>`
+        : '';
+      const ownerLine = it.owner
+        ? `<div style="font-size:11px;color:var(--text-muted)">담당: ${escapeHtml(it.owner)}${it.due ? ' · 기한 ' + escapeHtml(it.due) : ''}</div>`
+        : '';
+      const outBlock = outputs
+        ? `<div style="margin-top:6px;font-size:12px"><strong>산출/결과 반영</strong><ul style="margin:4px 0;padding-left:18px;color:var(--text-muted)">${outputs}</ul></div>`
+        : '';
+      const blockLine = blocks
+        ? `<div style="margin-top:6px;font-size:11px;color:var(--text-muted)">차단되는 게이트/단계: ${blocks}</div>`
+        : '';
+      return `
+        <div class="card" style="padding:12px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+            <div>
+              <div style="font-size:11px;color:var(--text-muted)"><code style="font-size:11px">${escapeHtml(it.id)}</code></div>
+              <div style="font-size:14px;font-weight:600;margin-top:2px">${escapeHtml(it.title)}</div>
+              ${ownerLine}
+              ${trackerLine}
+            </div>
+            <div>${statusBadge(it.status || '대기')}</div>
+          </div>
+          ${outBlock}
+          ${blockLine}
+        </div>`;
+    }).join('');
+    return `
+      <div style="margin-top:14px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">${escapeHtml(cat.title)}</div>
+        ${cat.description ? `<p style="font-size:12px;color:var(--text-muted);margin:0 0 8px;line-height:1.5">${escapeHtml(cat.description)}</p>` : ''}
+        <div class="grid grid-2">${items}</div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="section" id="human-action-items-section">
+      <div class="section-title">${escapeHtml(ha.title || '사람 처리 필요 항목')}</div>
+      ${summaryHTML}
+      ${catHTML}
     </div>`;
 }
 
@@ -968,6 +1040,7 @@ async function init() {
     const data = await loadAll();
     app.innerHTML = [
       renderOverview(data),
+      renderHumanActionItems(data),
       renderWebPortingProgressSection(data),
       renderCalendarSection(data),
       renderReleaseMilestones(data),

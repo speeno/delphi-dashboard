@@ -4,7 +4,7 @@
   "startDate": "2026-04-11",
   "totalSprints": 7,
   "currentSprint": 0,
-  "overallProgress": 39,
+  "overallProgress": 44,
   "status": "진행중",
   "legacySourceRoot": "legacy_delphi_source/legacy_source/",
   "legacySourceNote": "1차 정적 분석(L2) 완료: `run_analysis`/파서 기준 `analysis/sprint1_report.json` — 폼 173·이벤트 흐름 3490·SQL 1325·검증 386·고객 분기 6·소스 기반 DB 영향 테이블 53·Legacy Object Catalog 6236건. WeLove_FTP/ 등 다른 트리는 별도 인자로 재실행 가능.",
