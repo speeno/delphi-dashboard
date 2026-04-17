@@ -87,7 +87,7 @@
     "date": "2026-04-21",
     "type": "milestone",
     "title": "L4 실행 도구 1차 구축·연동 결과",
-    "description": "하네스 L4: tools/db/schema_extractor·extract_server_schema·schema_core/diff·query_capture 골격, harness/db_impact_builder 연계. 운영 점검용 debug 스크립트(접속 프로브·Id_Logn export 등). 제품 도서물류관리프로그램/ FastAPI(JWT·풀·SSH)·Next(AppShell·업무 대시보드) PoC. POC/web/seak80-sample 참고 구현. 잔여: ProxySQL 등 상시 쿼리 캡처·일상 점검 파이프라인.",
+    "description": "하네스 L4: tools/db/schema_extractor·extract_server_schema·schema_core/diff·query_capture(일반 로그 tail·table 모드), harness/db_impact_builder 연계. 운영 점검용 debug 스크립트(접속 프로브·Id_Logn export 등). 제품 도서물류관리프로그램/ FastAPI(JWT·풀·SSH)·Next(AppShell·업무 대시보드) PoC. POC/web/seak80-sample 참고 구현. 쿼리 캡처는 저장소 도구 범위에서 완료; ProxySQL 등은 현장 인프라에서 선택 적용.",
     "sprint": 0
   },
   {

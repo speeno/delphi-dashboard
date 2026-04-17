@@ -40,7 +40,7 @@
   ],
   "assets": {
     "sourceCode": { "status": "완료", "description": "WeLove_FTP/ — .dpr·.pas 등 델파이 소스 1차 반입" },
-    "database": { "status": "진행중", "description": "4대 스키마 메타·diff 완료(L4 tools/db). 접속 프로브·운영 스크립트(debug/). 계약·Eval·ProxySQL 상시 캡처 연결 전. 요약 docs/db-schema-porting-readiness.md·dashboard/data/db-schema-analysis.json." },
+    "database": { "status": "진행중", "description": "4대 스키마 메타·diff·query_capture(L4 tools/db). 접속 프로브·운영 스크립트(debug/). 계약·Eval 연결 전. 요약 docs/db-schema-porting-readiness.md·dashboard/data/db-schema-analysis.json." },
     "dfmFiles": { "status": "완료", "description": "legacy_source — .dfm 173건 파싱·form_inventory/event_flow 반영(텍스트 DFM)" },
     "manuals": { "status": "미확인", "description": "운영 매뉴얼/교육 자료 수집 필요" },
     "deviceInfo": { "status": "미확인", "description": "스캐너/프린터/저울 모델 및 연동 방식 조사 필요" },

@@ -44,14 +44,15 @@
       "status": "구축",
       "maturity": "구축",
       "coverage": {
-        "toolsReady": 4,
+        "toolsReady": 5,
         "toolsTotal": 10,
         "schemaMetaExtract": "tools/db/schema_extractor·extract_server_schema·diff",
         "dbProbeScripts": "debug/probe·export·bootstrap (저장소 내)",
         "harnessDbLayer": "tools/db/query_capture·db_impact_builder 등",
-        "productApiPoc": "도서물류관리프로그램/ FastAPI+JWT+풀·SSH 패턴"
+        "productApiPoc": "도서물류관리프로그램/ FastAPI+JWT+풀·SSH 패턴",
+        "queryCaptureScript": "tools/db/query_capture.py (general log / DB table)"
       },
-      "description": "레포에서 재현 가능한 실행 도구 1차 가동: 4대 스키마 메타·diff, 레거시 MySQL 접속 경로, 제품 API PoC. ProxySQL 등 상시 쿼리 캡처·운영 점검 자동화는 잔여 과제."
+      "description": "레포에서 재현 가능한 실행 도구: 4대 스키마 메타·diff, 레거시 MySQL 접속 경로, query_capture, 제품 API PoC. 상시 프록시(ProxySQL)는 배포 환경에서 선택."
     },
     {
       "id": "L5",
