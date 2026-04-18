@@ -1,10 +1,10 @@
 {
   "name": "델파이 도서 물류 시스템 무중단 웹 포팅",
-  "description": "8계층 하네스 엔지니어링 기반 델파이→웹 포팅 프로젝트",
+  "description": "8계층 하네스 엔지니어링 기반 델파이→웹 포팅 프로젝트. 핵심 시나리오 5~10개 합의는 docs/core-scenarios-candidates.md·합의 기한 2026-07-10·대시보드 release-milestones·human-action-items와 연동.",
   "startDate": "2026-04-11",
   "totalSprints": 7,
   "currentSprint": 0,
-  "overallProgress": 44,
+  "overallProgress": 45,
   "status": "진행중",
   "legacySourceRoot": "legacy_delphi_source/legacy_source/",
   "legacySourceNote": "1차 정적 분석(L2) 완료: `run_analysis`/파서 기준 `analysis/sprint1_report.json` — 폼 173·이벤트 흐름 3490·SQL 1325·검증 386·고객 분기 6·소스 기반 DB 영향 테이블 53·Legacy Object Catalog 6236건. WeLove_FTP/ 등 다른 트리는 별도 인자로 재실행 가능.",

@@ -1,7 +1,7 @@
 {
   "title": "사람 처리 필요 항목 (Human Action Items)",
   "description": "자동 도구·정적 분석으로는 닫을 수 없고, 사람의 결정·인터뷰·운영 실행이 필요한 작업들. 각 항목은 추적용 문서(트래커/템플릿)에 직접 연결되며, 결과가 들어오면 분석 도구·갭 리포트가 자동 갱신됩니다.",
-  "updatedAt": "2026-04-21",
+  "updatedAt": "2026-04-18",
   "legend": {
     "대기": "착수 전",
     "진행중": "회의·실시 진행 중",
@@ -12,7 +12,7 @@
     {
       "id": "interview",
       "title": "1. 현장 인터뷰·도메인 합의",
-      "description": "체크리스트(§1~§6) 답변과 OQ 클로저, 핵심 시나리오 5~10개 합의를 1회 인터뷰로 처리.",
+      "description": "체크리스트(§1~§6) 답변과 OQ 클로저, 핵심 시나리오 5~10개 합의를 1회 인터뷰로 처리. 시나리오 트래커는 다양성 축·C11~C15 확장 관점·§3.1 상세까지 포함해 회의 안건으로 사용.",
       "items": [
         {
           "id": "HA-INT-01",
@@ -29,14 +29,15 @@
         },
         {
           "id": "HA-INT-02",
-          "title": "핵심 시나리오 5~10개 확정",
+          "title": "핵심 시나리오 5~10개 확정 (다양성·확장 관점 반영)",
           "owner": "기획자 + 메인개발자",
           "due": "2026-07-10",
           "status": "대기",
           "tracker": "docs/core-scenarios-candidates.md",
           "outputs": [
-            "결정된 시나리오를 migration/contracts/ 와 migration/test-cases/ 신규 파일로 추가",
-            "dashboard/data/release-milestones.json beta.exitCriteria 보강"
+            "후보 표 §1·§1b 결정 칸 ✅, §3·§3.1에 채택 ID별 화면·버튼 단계·기대 결과",
+            "결정된 시나리오를 migration/contracts/ · migration/test-cases/ 신규 파일로 추가",
+            "dashboard/data/release-milestones.json beta.goals/exitCriteria와 본 human-action-items 갱신 동기화"
           ],
           "blocks": ["API 계약 승인 #3"]
         },

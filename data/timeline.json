@@ -70,6 +70,13 @@
     "sprint": 0
   },
   {
+    "date": "2026-04-18",
+    "type": "milestone",
+    "title": "핵심 시나리오 후보 문서 확장 (다양성 축·C11~C15)",
+    "description": "docs/core-scenarios-candidates.md: 다양성 축(역할·DB리스크·통합·예외·동등성·병행), 확장 후보 C11~C15, §3.1 상세 템플릿, 합의 기한 2026-07-10. dashboard/data/release-milestones.json·human-action-items.json과 문구 동기화, 산출물 목록에 항목 추가.",
+    "sprint": 0
+  },
+  {
     "date": "2026-04-19",
     "type": "asset",
     "title": "4대 DB 스키마 메타 추출·서버 간 diff",

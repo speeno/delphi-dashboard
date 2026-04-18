@@ -903,7 +903,7 @@ function renderDeliverables(data) {
   const done = deliverables.filter(d => d.status === '완료').length;
   return `
     <div class="section">
-      <div class="section-title">10대 표준 산출물 (${done}/${deliverables.length} 완료)</div>
+      <div class="section-title">표준 산출물 (${done}/${deliverables.length} 완료)</div>
       <div class="card">${items}</div>
     </div>`;
 }
