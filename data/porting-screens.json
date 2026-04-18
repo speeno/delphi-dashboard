@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-18",
+  "updatedAt": "2026-04-18 (C2 런타임 검증 + 핫픽스 반영)",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     { "id": 0, "name": "인증·세션 (전제)", "dec003": "전제", "gate": 1, "gateId": 1 },
@@ -217,7 +217,52 @@
       "contract": "migration/contracts/outbound_order.yaml (v1.0.0 approved)",
       "testpack": "migration/test-cases/outbound_order.json (v1.0.0-phase1 approved)",
       "evaluation_report": "docs/c2-outbound-evaluation-report.md (v0.1, 단위 14건 PASS)",
-      "phase1_test_results": "test/test_c2_outbound_phase1.py — 14 passed (2026-04-25)",
+      "phase1_test_results": "test/test_c2_outbound_phase1.py — 14 passed (2026-04-18 재실행)",
+      "runtime_check": {
+        "performed_at": "2026-04-18",
+        "browser_url": "http://127.0.0.1:3000/outbound/orders",
+        "backend_routes_registered": [
+          "GET /api/v1/outbound/orders",
+          "GET /api/v1/outbound/orders/{order_key}",
+          "POST /api/v1/outbound/orders",
+          "PUT /api/v1/outbound/orders/{order_key}",
+          "PATCH /api/v1/outbound/orders/{order_key}/cancel",
+          "GET /api/v1/masters/customers",
+          "GET /api/v1/masters/products"
+        ],
+        "result": "백엔드 OpenAPI 등록 OK · uvicorn --reload 모드 운영 · 단위 14건 회귀 PASS"
+      },
+      "hotfixes": [
+        {
+          "id": "HOT-OUT-1",
+          "date": "2026-04-18",
+          "summary": "SQL 1064 회피 — `COUNT(*) AS lines` 별칭이 일부 MySQL 버전에서 LOAD DATA 예약어와 충돌. `line_count` 로 일반화하고 응답 dict 매핑 단계에서 `lines` 필드명 유지 (외부 API 계약 변경 0)",
+          "files": [
+            "도서물류관리프로그램/backend/app/services/outbound_service.py"
+          ],
+          "verified_by": "test/test_c2_outbound_phase1.py 14 passed + uvicorn --reload 자동 반영"
+        },
+        {
+          "id": "HOT-OUT-2",
+          "date": "2026-04-18",
+          "summary": "사이드바 정식 메뉴 등록 — 임시 직접 링크 제거하고 FormMeta.route + Sobo27 로 델파이 MainMenu1.Menu207 (출고관리 > 출고접수관리) 와 1:1 매핑. `phase: phase1` 항목은 사이드바에 녹색 체크 + 자동 펼침. 향후 C3/C4 정식 포팅 화면도 동일 1줄 패턴으로 흡수 (SOLID OCP).",
+          "files": [
+            "도서물류관리프로그램/frontend/src/lib/form-registry.ts",
+            "도서물류관리프로그램/frontend/src/components/app-shell/sidebar.tsx"
+          ],
+          "verified_by": "tsc --noEmit 0 error · eslint 0 warning · ReadLints clean"
+        },
+        {
+          "id": "HOT-OUT-3",
+          "date": "2026-04-18",
+          "summary": "허브 대시보드 바로가기 일반화 — 시나리오 카드에 `web.app_url` 이 정의되면 카드 우상단에 '화면 열기 ↗' 버튼 자동 노출. `delphi.menu_path` 추가로 메뉴 추적성 강화. 향후 모든 시나리오에 동일 패턴.",
+          "files": [
+            "dashboard/data/porting-screens.json (web.app_url + delphi.menu_path)",
+            "dashboard/js/app.js (renderPortingScreens 일반화)",
+            "dashboard/css/style.css (.porting-app-link)"
+          ]
+        }
+      ],
       "deferrals": [
         "DEC-009 권한키 (F21/F22/F26) → 후속 C10 권한 관리",
         "DEC-010 바코드 (Tong08) → 후속 C8 바코드",

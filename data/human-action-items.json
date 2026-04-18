@@ -1,7 +1,7 @@
 {
   "title": "사람 처리 필요 항목 (Human Action Items)",
   "description": "자동 도구·정적 분석으로는 닫을 수 없고, 사람의 결정·인터뷰·운영 실행이 필요한 작업들. 각 항목은 추적용 문서(트래커/템플릿)에 직접 연결되며, 결과가 들어오면 분석 도구·갭 리포트가 자동 갱신됩니다.",
-  "updatedAt": "2026-04-18",
+  "updatedAt": "2026-04-18 (C2 런타임 검증 + 핫픽스 반영)",
   "legend": {
     "대기": "착수 전",
     "진행중": "회의·실시 진행 중",
@@ -178,7 +178,11 @@
             "DEC-011 (D-OUT-3) — 인쇄 트리거 1차 미노출. 후속 C7 인쇄 시나리오로 이관.",
             "DEC-012 (D-OUT-4) — 주문 전체 물리 삭제 1차 미지원. 소프트 취소(Yesno='2')만. 참조 무결성 검토 후 후속 결정.",
             "단위테스트 14건 PASS — test/test_c2_outbound_phase1.py",
-            "평가 보고서 — docs/c2-outbound-evaluation-report.md (5축 사전 평가)"
+            "평가 보고서 — docs/c2-outbound-evaluation-report.md (5축 사전 평가)",
+            "[2026-04-18 런타임 검증] uvicorn --reload 모드로 백엔드 라우트 7건 등록 확인 (OpenAPI), 단위 14건 회귀 PASS",
+            "[2026-04-18 핫픽스 HOT-OUT-1] SQL 1064 회피 — `COUNT(*) AS lines` → `line_count` (MySQL `LINES` 예약어 충돌). 응답 dict 매핑 단계에서 `lines` 필드명 유지하여 외부 API 계약 변경 0",
+            "[2026-04-18 핫픽스 HOT-OUT-2] 사이드바 임시 직접 링크 제거 → FormMeta.route + Sobo27 등록으로 델파이 MainMenu1.Menu207 (출고관리 > 출고접수관리)와 1:1 매핑. 1차 포팅 화면 일반화 (SOLID OCP) — 향후 C3/C4 도 동일 1줄 패턴 흡수",
+            "[2026-04-18 핫픽스 HOT-OUT-3] 허브 대시보드 시나리오 카드에 `web.app_url` 바로가기 + `delphi.menu_path` 추적성 추가 (모든 시나리오 재사용 가능)"
           ],
           "follow_up": [
             "OQ-OUT-1 후속 — Yesno='1' 처리완료 흐름 운영 검증 후 재도입 여부 결정",

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-18",
+  "updatedAt": "2026-04-18 (C2 출고접수 1차 포팅 + 핫픽스 반영)",
   "phase": "Phase 1",
   "productNote": "실행 UI는 저장소 `도서물류관리프로그램/` (제품 웹). 본 섹션은 개발 진행용 허브 대시보드 전용.",
   "docLinks": [
@@ -33,7 +33,10 @@
         "인증: 레거시 `Id_Logn` + 기존 비밀번호 형식·JWT",
         "문자셋: EUCKR 등 서버별 반영",
         "`tools/db/extract_server_schema.py` — 4대 스키마 메타·diff(데이터 dump 없음)",
-        "하네스 L4: `schema_extractor`·`query_capture`·접속 프로브·제품 API PoC까지 1차 반영(대시보드 harness.json 동기)"
+        "하네스 L4: `schema_extractor`·`query_capture`·접속 프로브·제품 API PoC까지 1차 반영(대시보드 harness.json 동기)",
+        "C1 인증(`/api/v1/auth/*`) + C2 출고접수(`/api/v1/outbound/*`, `/api/v1/masters/*`) 라우트 등록 — uvicorn `--reload` 운영, OpenAPI 7건 라우트 검증 (2026-04-18)",
+        "C2 트랜잭션 경계: `app/core/db.py::execute_in_transaction` (aiomysql + mysql3_compat 양쪽 지원, BEGIN→N×SQL→COMMIT/ROLLBACK)",
+        "C2 SQL 호환 핫픽스 — `COUNT(*) AS lines` 가 일부 MySQL에서 LOAD DATA 예약어와 충돌 → `line_count` 일반화 (응답 필드 `lines` 유지)"
       ]
     },
     {
@@ -42,7 +45,9 @@
       "items": [
         "Next.js + AppShell + 랜딩·로그인",
         "Next rewrites로 API 동일 출처 프록시(개발 CORS 완화)",
-        "제품 대시보드는 업무 KPI·빠른 접근 중심 — 포팅 진행 본문은 이 허브 대시보드에만 표시"
+        "제품 대시보드는 업무 KPI·빠른 접근 중심 — 포팅 진행 본문은 이 허브 대시보드에만 표시",
+        "C2 출고접수 화면 — `/outbound/orders` (목록·신규·상세·수정·소프트취소) 가동, 거래처/제품 자동완성 + 라인 그리드",
+        "사이드바 정식 메뉴 등록 — `FormMeta.route + phase` 일반화로 델파이 `MainMenu1.Menu207 (출고관리 > 출고접수관리)` 와 1:1, 1차 포팅 화면은 녹색 체크 표시. 향후 정식 포팅 화면도 1줄 추가만으로 흡수 (SOLID OCP)"
       ]
     },
     {

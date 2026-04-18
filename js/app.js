@@ -603,6 +603,57 @@ function aggregateProgress(scenarios) {
   return { done, total, pct: total ? Math.round((done / total) * 100) : 0 };
 }
 
+function renderRuntimeCheck(rc) {
+  if (!rc || typeof rc !== 'object') return '';
+  const routes = Array.isArray(rc.backend_routes_registered)
+    ? rc.backend_routes_registered.map((r) => `<li><code style="font-size:11px">${escapeHtml(r)}</code></li>`).join('')
+    : '';
+  const url = rc.browser_url
+    ? `<li>브라우저 진입 URL: <a href="${escapeHtml(rc.browser_url)}" target="_blank" rel="noopener noreferrer"><code style="font-size:11px">${escapeHtml(rc.browser_url)}</code></a></li>`
+    : '';
+  return `
+    <div style="margin-top:10px;font-size:12px">
+      <div style="font-weight:600;margin-bottom:4px">런타임 검증 ${rc.performed_at ? `<span style="color:var(--text-muted);font-weight:400">(${escapeHtml(rc.performed_at)})</span>` : ''}</div>
+      <ul style="margin:0;padding-left:18px;color:var(--text-muted)">
+        ${url}
+        ${routes ? `<li>등록 라우트: <ul style="margin:2px 0;padding-left:18px">${routes}</ul></li>` : ''}
+        ${rc.result ? `<li>결과: ${escapeHtml(rc.result)}</li>` : ''}
+      </ul>
+    </div>`;
+}
+
+function renderHotfixes(list) {
+  if (!Array.isArray(list) || list.length === 0) return '';
+  const items = list.map((h) => {
+    const files = Array.isArray(h.files) && h.files.length
+      ? `<ul style="margin:2px 0;padding-left:18px">${h.files.map((f) => `<li><code style="font-size:11px">${escapeHtml(f)}</code></li>`).join('')}</ul>`
+      : '';
+    return `
+      <li style="margin-bottom:6px">
+        <span style="font-family:ui-monospace,monospace;font-size:11px;color:var(--primary-light)">${escapeHtml(h.id || '')}</span>
+        ${h.date ? ` <span style="color:var(--text-muted);font-size:11px">(${escapeHtml(h.date)})</span>` : ''}
+        <div style="margin:2px 0;line-height:1.45">${escapeHtml(h.summary || '')}</div>
+        ${files}
+        ${h.verified_by ? `<div style="font-size:11px;color:var(--text-muted)">검증: ${escapeHtml(h.verified_by)}</div>` : ''}
+      </li>`;
+  }).join('');
+  return `
+    <div style="margin-top:10px;font-size:12px">
+      <div style="font-weight:600;margin-bottom:4px">핫픽스 / 후속 보강</div>
+      <ul style="margin:0;padding-left:18px;color:var(--text-muted)">${items}</ul>
+    </div>`;
+}
+
+function renderDeferrals(list) {
+  if (!Array.isArray(list) || list.length === 0) return '';
+  const items = list.map((d) => `<li>${escapeHtml(d)}</li>`).join('');
+  return `
+    <div style="margin-top:10px;font-size:12px">
+      <div style="font-weight:600;margin-bottom:4px">1차 보류 / 후속 이관</div>
+      <ul style="margin:0;padding-left:18px;color:var(--text-muted)">${items}</ul>
+    </div>`;
+}
+
 function renderPortingScreens(data) {
   const ps = data.portingScreens;
   if (!ps || !Array.isArray(ps.scenarios) || ps.scenarios.length === 0) return '';
@@ -771,10 +822,15 @@ function renderPortingScreens(data) {
               <ul style="margin:0;padding-left:18px;color:var(--text-muted)">
                 <li>Migration Contract: <code style="font-size:11px">${escapeHtml(sc.contract || '-')}</code></li>
                 <li>Test Pack: <code style="font-size:11px">${escapeHtml(sc.testpack || '-')}</code></li>
+                ${sc.evaluation_report ? `<li>5축 평가 보고서: <code style="font-size:11px">${escapeHtml(sc.evaluation_report)}</code></li>` : ''}
+                ${sc.phase1_test_results ? `<li>1차 테스트: <code style="font-size:11px">${escapeHtml(sc.phase1_test_results)}</code></li>` : ''}
                 ${subs ? `<li>흡수된 하위 시나리오: <ul style="margin:2px 0;padding-left:18px">${subs}</ul></li>` : ''}
                 ${gate ? `<li>게이트 의존: <strong>#${gate.id} ${escapeHtml(gate.name)}</strong> (예정 ${escapeHtml(gate.plannedDate || '-')})</li>` : ''}
               </ul>
             </div>
+            ${renderRuntimeCheck(sc.runtime_check)}
+            ${renderHotfixes(sc.hotfixes)}
+            ${renderDeferrals(sc.deferrals)}
           </details>
         </div>`;
     }).join('');
