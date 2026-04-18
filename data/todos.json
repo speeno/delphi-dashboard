@@ -4,62 +4,238 @@
     "M": {
       "name": "메인개발자 (하네스 아키텍트·핵심 개발 주도)",
       "tasks": [
-        { "id": "M-S0-01", "task": "프로젝트 저장소·브랜치 전략·CI/CD 골격 설계 및 구현", "done": true },
-        { "id": "M-S0-02", "task": "확보 예정 소스 기준 분석 파이프라인(run_analysis·파서) 설계·구현 주도", "done": true },
-        { "id": "M-S0-03", "task": "DB 분석 환경(복제본/덤프)·스키마 추출·격리 수준 조사·자동화 스크립트", "done": false },
-        { "id": "M-S0-04", "task": "mariadb-dump·INFORMATION_SCHEMA 기반 메타/스키마 추출 및 서버 간 diff·검증", "done": true },
-        { "id": "M-S0-05", "task": "실행 도구(L4)·쿼리 캡처: 완료 — 스키마 추출·diff·접속 프로브·query_capture(일반 로그/테이블 모드)·제품 API PoC. ProxySQL은 인프라 선택 시 별도 과제", "done": true },
-        { "id": "M-S0-06", "task": "8계층 하네스 아키텍처 설계 문서 작성", "done": true },
-        { "id": "M-S0-07", "task": "가드레일(L5) 문서 작성 및 팀 공유", "done": true },
-        { "id": "M-S0-08", "task": "AI 작업 지시 템플릿 + 기능 단위 입력 템플릿 확정", "done": true },
-        { "id": "M-S0-09", "task": "기술 스택·웹 API·하네스 미들웨어 PoC 환경 구축", "done": true },
-        { "id": "M-S0-10", "task": "Migration Contract·Eval 생성·비교/라우팅 하네스 핵심 로직 구현", "done": false },
-        { "id": "M-S0-11", "task": "소스 입수 후 인벤토리·분석 산출물 경로·누락 검수", "done": true },
-        { "id": "M-S0-12", "task": "대시보드 JSON 반영·공개 배포(GitHub Pages 등)·CI 워크플로 장애 시 수정", "done": true },
-        { "id": "M-S0-13", "task": "산출물·런북·README 형식·링크·오탈자 정리 (체크리스트·인벤토리·갭·런북·트래커·계약·테스트·5축 초안·DEC-004·게이트 점검·화면카드 계획 상호링크)", "done": true },
-        { "id": "M-S0-14", "task": "중급·초급 인수인계 일정·범위·접근권한·V1 이후 유지보수 역할 합의", "done": false },
-        { "id": "M-S1-PORT-C1", "task": "C1 로그인·세션 시작 — T1~T8 진행 (단계 0, 게이트 #1, porting-screens.json 참조)", "done": true },
-        { "id": "M-S1-PORT-C6", "task": "C6 거래/잔액 조회 4폼 동시 (Sobo21/31/61/62 + S1_Memo UPSERT) — T1~T8 완료, 단위 20 PASS, C14 동등성 캡처 2건, DEC-016~018 신설 (단계 1, 게이트 #1)", "done": true },
-        { "id": "M-S1-PORT-C9", "task": "C9 상품·고객 마스터 등록 — T1~T8 진행 (단계 2, 게이트 #2)", "done": false },
-        { "id": "M-S1-PORT-C3", "task": "C3 입고 접수 — T1~T8 진행 (단계 2, 게이트 #2)", "done": false },
-        { "id": "M-S1-PORT-C2", "task": "C2 출고 접수(주문 입력, +C11 수정/취소) — T1~T8 진행 (단계 3, 게이트 #3)", "done": false },
-        { "id": "M-S1-PORT-C4", "task": "C4 반품 처리 — T1~T8 진행 (단계 3, 게이트 #3)", "done": false },
-        { "id": "M-S1-PORT-C5", "task": "C5 정산(일·월 마감, +C12 마감 후 차단) — T1~T8 진행 (단계 3, 게이트 #3)", "done": false },
-        { "id": "M-S1-PORT-C7", "task": "C7 라벨/송장 인쇄 — T1~T8 진행 (단계 4, 게이트 #5 인쇄 결과 승인)", "done": false },
-        { "id": "M-S1-PORT-C8", "task": "C8 바코드 스캔 → 출고/입고/반품 매칭 — T1~T8 진행 (단계 4)", "done": false },
-        { "id": "M-S1-PORT-C10", "task": "C10 권한 관리(f11~f89, +C13/C15) — T1~T8 진행 (단계 5, 게이트 #4 고객사별 차이 승인)", "done": false }
+        {
+          "id": "M-S0-01",
+          "task": "프로젝트 저장소·브랜치 전략·CI/CD 골격 설계 및 구현",
+          "done": true
+        },
+        {
+          "id": "M-S0-02",
+          "task": "확보 예정 소스 기준 분석 파이프라인(run_analysis·파서) 설계·구현 주도",
+          "done": true
+        },
+        {
+          "id": "M-S0-03",
+          "task": "DB 분석 환경(복제본/덤프)·스키마 추출·격리 수준 조사·자동화 스크립트",
+          "done": false
+        },
+        {
+          "id": "M-S0-04",
+          "task": "mariadb-dump·INFORMATION_SCHEMA 기반 메타/스키마 추출 및 서버 간 diff·검증",
+          "done": true
+        },
+        {
+          "id": "M-S0-05",
+          "task": "실행 도구(L4)·쿼리 캡처: 완료 — 스키마 추출·diff·접속 프로브·query_capture(일반 로그/테이블 모드)·제품 API PoC. ProxySQL은 인프라 선택 시 별도 과제",
+          "done": true
+        },
+        {
+          "id": "M-S0-06",
+          "task": "8계층 하네스 아키텍처 설계 문서 작성",
+          "done": true
+        },
+        {
+          "id": "M-S0-07",
+          "task": "가드레일(L5) 문서 작성 및 팀 공유",
+          "done": true
+        },
+        {
+          "id": "M-S0-08",
+          "task": "AI 작업 지시 템플릿 + 기능 단위 입력 템플릿 확정",
+          "done": true
+        },
+        {
+          "id": "M-S0-09",
+          "task": "기술 스택·웹 API·하네스 미들웨어 PoC 환경 구축",
+          "done": true
+        },
+        {
+          "id": "M-S0-10",
+          "task": "Migration Contract·Eval 생성·비교/라우팅 하네스 핵심 로직 구현",
+          "done": false
+        },
+        {
+          "id": "M-S0-11",
+          "task": "소스 입수 후 인벤토리·분석 산출물 경로·누락 검수",
+          "done": true
+        },
+        {
+          "id": "M-S0-12",
+          "task": "대시보드 JSON 반영·공개 배포(GitHub Pages 등)·CI 워크플로 장애 시 수정",
+          "done": true
+        },
+        {
+          "id": "M-S0-13",
+          "task": "산출물·런북·README 형식·링크·오탈자 정리 (체크리스트·인벤토리·갭·런북·트래커·계약·테스트·5축 초안·DEC-004·게이트 점검·화면카드 계획 상호링크)",
+          "done": true
+        },
+        {
+          "id": "M-S0-14",
+          "task": "중급·초급 인수인계 일정·범위·접근권한·V1 이후 유지보수 역할 합의",
+          "done": false
+        },
+        {
+          "id": "M-S1-PORT-C1",
+          "task": "C1 로그인·세션 시작 — T1~T8 진행 (단계 0, 게이트 #1, porting-screens.json 참조)",
+          "done": true
+        },
+        {
+          "id": "M-S1-PORT-C6",
+          "task": "C6 거래/잔액 조회 4폼 동시 (Sobo21/31/61/62 + S1_Memo UPSERT) — T1~T8 완료, 단위 20 PASS, C14 동등성 캡처 2건, DEC-016~018 신설 (단계 1, 게이트 #1)",
+          "done": true
+        },
+        {
+          "id": "M-S1-PORT-C9",
+          "task": "C9 기초관리 마스터 + Wave D 웹관리 1차 완료 — 단일 원천 6폼(Sobo11/14/17/38/39/45) READ + 거래처/도서 PATCH + admin 4페이지 + DEC-019~023 동결 (단계 2, 게이트 #2)",
+          "done": true,
+          "note": "회귀 가드 34/34 PASS · tsc 0 · eslint 0 · yaml/json OK · form-registry 35폼 중복 0"
+        },
+        {
+          "id": "M-S1-PORT-C3",
+          "task": "C3 입고 접수 — T1~T8 진행 (단계 2, 게이트 #2)",
+          "done": false
+        },
+        {
+          "id": "M-S1-PORT-C2",
+          "task": "C2 출고 접수(주문 입력, +C11 수정/취소) — T1~T8 진행 (단계 3, 게이트 #3)",
+          "done": false
+        },
+        {
+          "id": "M-S1-PORT-C4",
+          "task": "C4 반품 처리 — T1~T8 진행 (단계 3, 게이트 #3)",
+          "done": false
+        },
+        {
+          "id": "M-S1-PORT-C5",
+          "task": "C5 정산(일·월 마감, +C12 마감 후 차단) — T1~T8 진행 (단계 3, 게이트 #3)",
+          "done": false
+        },
+        {
+          "id": "M-S1-PORT-C7",
+          "task": "C7 라벨/송장 인쇄 — T1~T8 진행 (단계 4, 게이트 #5 인쇄 결과 승인)",
+          "done": false
+        },
+        {
+          "id": "M-S1-PORT-C8",
+          "task": "C8 바코드 스캔 → 출고/입고/반품 매칭 — T1~T8 진행 (단계 4)",
+          "done": false
+        },
+        {
+          "id": "M-S1-PORT-C10",
+          "task": "C10 권한 관리(f11~f89, +C13/C15) — T1~T8 진행 (단계 5, 게이트 #4 고객사별 차이 승인)",
+          "done": false
+        },
+        {
+          "id": "M-S1-PORT-C9-WD",
+          "task": "Wave D 웹 관리 플레인 (사용자/서버/역할/환경설정 개정) — admin_web_platform.yaml 신설, /api/v1/admin/* 11 엔드포인트, /admin 4 페이지, DEC-020/021/022 동결",
+          "done": true,
+          "note": "backend/data/web_admin.json 영속, audit.admin 로거, history 강제 적재 + 롤백"
+        },
+        {
+          "id": "M-S1-DOC-DEC-019-023",
+          "task": "DEC-019~023 결정 5건 신규 등록 — legacy-analysis/decisions.md 본문 + master_data.yaml + admin_web_platform.yaml 1차 동결",
+          "done": true
+        }
       ]
     },
     "S-Mid": {
       "name": "서브개발자 중급 (인수인계·유지보수)",
       "tasks": [
-        { "id": "SM-S0-01", "task": "기술 인수인계: 하네스·분석 스크립트·CI/L4·비밀·에스컬 절차 (메인 핸드오프·기록)", "done": false },
-        { "id": "SM-S0-02", "task": "유지보수: 합의 주기 점검(도구/러너/권한), 이슈·변경 요청은 메인 전달·코드 변경 없음 원칙", "done": false }
+        {
+          "id": "SM-S0-01",
+          "task": "기술 인수인계: 하네스·분석 스크립트·CI/L4·비밀·에스컬 절차 (메인 핸드오프·기록)",
+          "done": false
+        },
+        {
+          "id": "SM-S0-02",
+          "task": "유지보수: 합의 주기 점검(도구/러너/권한), 이슈·변경 요청은 메인 전달·코드 변경 없음 원칙",
+          "done": false
+        }
       ]
     },
     "S-Jr": {
       "name": "서브개발자 초급 (인수인계·유지보수)",
       "tasks": [
-        { "id": "SJ-S0-01", "task": "상태 추적(L6)·프로젝트 대시보드 v1·초기 JSON 구축", "done": true },
-        { "id": "SJ-S0-02", "task": "운영 인수인계: 대시보드·JSON·배포 절차를 문서화하고 메인과 1회 동기 확인", "done": false },
-        { "id": "SJ-S0-03", "task": "유지보수: 기획·메인 요청 시 JSON·대시보드 반영·배포 실행만 (개발·설계 변경 없음)", "done": false }
+        {
+          "id": "SJ-S0-01",
+          "task": "상태 추적(L6)·프로젝트 대시보드 v1·초기 JSON 구축",
+          "done": true
+        },
+        {
+          "id": "SJ-S0-02",
+          "task": "운영 인수인계: 대시보드·JSON·배포 절차를 문서화하고 메인과 1회 동기 확인",
+          "done": false
+        },
+        {
+          "id": "SJ-S0-03",
+          "task": "유지보수: 기획·메인 요청 시 JSON·대시보드 반영·배포 실행만 (개발·설계 변경 없음)",
+          "done": false
+        }
       ]
     },
     "P": {
       "name": "기획자 (하네스 검증자·QA/QC)",
       "tasks": [
-        { "id": "P-S0-01", "task": "핵심 사용자 그룹 식별 (입고팀, 출고팀, 관리자 등)", "done": false },
-        { "id": "P-S0-02", "task": "인터뷰 질문지 작성", "done": false },
-        { "id": "P-S0-03", "task": "기존 시스템 매뉴얼/교육 자료 수집", "done": false },
-        { "id": "P-S0-04", "task": "고객사별 커스터마이징 현황 초기 조사", "done": false },
-        { "id": "P-S0-05", "task": "5축 평가(L7) 기준 초안 작성 — docs/eval-axes-and-dod-draft.md (정식 채택은 게이트 #1·#6에서)", "done": true },
-        { "id": "P-S0-06", "task": "6개 승인 게이트 일정 및 승인 주체 확정 — docs/approval-gate-alignment-review.md 정합성 점검 완료, 권고 A1~A5는 회의 후 반영", "done": true },
-        { "id": "P-S0-07", "task": "성공 기준(DoD)·인수 조건 초안 작성 — docs/eval-axes-and-dod-draft.md §2 단계별 DoD", "done": true },
-        { "id": "P-S0-08", "task": "대시보드 콘텐츠 1차 검수", "done": false },
-        { "id": "P-S0-09", "task": "[QA] 테스트 계획·우선 시나리오·회귀 범위 초안 작성", "done": false },
-        { "id": "P-S0-10", "task": "[QA] Eval Case·업무 시나리오와의 매핑 검토, 누락 케이스 제안", "done": false },
-        { "id": "P-S0-11", "task": "[QC] 결함 심각도·재현 절차·차단 기준 정의, UAT 합격 기준 초안 — docs/eval-axes-and-dod-draft.md §2.4·§3", "done": true },
-        { "id": "P-S0-12", "task": "[QC] 승인 게이트 통과 전 체크리스트(산출물·테스트·이슈 잔여) 운영", "done": false }
+        {
+          "id": "P-S0-01",
+          "task": "핵심 사용자 그룹 식별 (입고팀, 출고팀, 관리자 등)",
+          "done": false
+        },
+        {
+          "id": "P-S0-02",
+          "task": "인터뷰 질문지 작성",
+          "done": false
+        },
+        {
+          "id": "P-S0-03",
+          "task": "기존 시스템 매뉴얼/교육 자료 수집",
+          "done": false
+        },
+        {
+          "id": "P-S0-04",
+          "task": "고객사별 커스터마이징 현황 초기 조사",
+          "done": false
+        },
+        {
+          "id": "P-S0-05",
+          "task": "5축 평가(L7) 기준 초안 작성 — docs/eval-axes-and-dod-draft.md (정식 채택은 게이트 #1·#6에서)",
+          "done": true
+        },
+        {
+          "id": "P-S0-06",
+          "task": "6개 승인 게이트 일정 및 승인 주체 확정 — docs/approval-gate-alignment-review.md 정합성 점검 완료, 권고 A1~A5는 회의 후 반영",
+          "done": true
+        },
+        {
+          "id": "P-S0-07",
+          "task": "성공 기준(DoD)·인수 조건 초안 작성 — docs/eval-axes-and-dod-draft.md §2 단계별 DoD",
+          "done": true
+        },
+        {
+          "id": "P-S0-08",
+          "task": "대시보드 콘텐츠 1차 검수",
+          "done": false
+        },
+        {
+          "id": "P-S0-09",
+          "task": "[QA] 테스트 계획·우선 시나리오·회귀 범위 초안 작성",
+          "done": false
+        },
+        {
+          "id": "P-S0-10",
+          "task": "[QA] Eval Case·업무 시나리오와의 매핑 검토, 누락 케이스 제안",
+          "done": false
+        },
+        {
+          "id": "P-S0-11",
+          "task": "[QC] 결함 심각도·재현 절차·차단 기준 정의, UAT 합격 기준 초안 — docs/eval-axes-and-dod-draft.md §2.4·§3",
+          "done": true
+        },
+        {
+          "id": "P-S0-12",
+          "task": "[QC] 승인 게이트 통과 전 체크리스트(산출물·테스트·이슈 잔여) 운영",
+          "done": false
+        }
       ]
     }
   }

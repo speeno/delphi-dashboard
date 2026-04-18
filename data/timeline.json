@@ -131,5 +131,12 @@
     "title": "베타 오픈(계획 완료일)",
     "description": "Sprint 0~1 종료 기준. 러프 구현·알려진 버그 허용 범위에서 핵심 흐름 1차 검증 후 제한 오픈(일정은 sprints.json·release-milestones와 동기화).",
     "sprint": 1
+  },
+  {
+    "date": "2026-04-18",
+    "type": "decision",
+    "title": "DEC-024: list 응답 paging 표준 + DataGrid 페이저",
+    "description": "C2/C6/C9 + 후속 list/aggregate 응답을 {items, page:{limit,offset,total,has_more}} 단일 컨벤션으로 통일. backend/app/core/pagination.py 헬퍼(clamp_limit/clamp_offset/build_page/with_page) 도입. C9 마스터 6개(customer/book/publisher/book-code/discount/logistics-cost) page 단독, C2/C6 list/report 1차 BC(평면 total/limit/offset 보존, Phase 2 deprecation). C6 reports 2개 가상 페이징(full aggregate→in-memory slice). 프론트 DataGridPager 컴포넌트(기본 100, 옵션 50/100/200/500) 모든 list 페이지(8개) 적용. 회귀: pytest 69건(34 기존 + 28 신규 paging + 7 c1) 통과, tsc 클린.",
+    "sprint": 1
   }
 ]

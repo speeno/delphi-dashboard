@@ -1,21 +1,94 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-18 (C6 1차 완료 + 제품 UX 핫픽스 HOT-APP-1/2 · HOT-INQ-1)",
+  "updatedAt": "2026-04-18 (C9 단일 원천 + Wave D 웹관리 1차 완료 — DEC-019~023 동결)",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
-    { "id": 0, "name": "인증·세션 (전제)", "dec003": "전제", "gate": 1, "gateId": 1 },
-    { "id": 1, "name": "읽기 전용 조회", "dec003": "읽기", "gate": 1, "gateId": 1 },
-    { "id": 2, "name": "신규 등록 (마스터·입고)", "dec003": "등록", "gate": 2, "gateId": 2 },
-    { "id": 3, "name": "수정·취소·정산", "dec003": "수정/취소", "gate": 3, "gateId": 3 },
-    { "id": 4, "name": "배치·인쇄·장비", "dec003": "배치/인쇄/장비", "gate": 5, "gateId": 5 },
-    { "id": 5, "name": "권한·고객사 분기", "dec003": "고객사 분기", "gate": 4, "gateId": 4 }
+    {
+      "id": 0,
+      "name": "인증·세션 (전제)",
+      "dec003": "전제",
+      "gate": 1,
+      "gateId": 1
+    },
+    {
+      "id": 1,
+      "name": "읽기 전용 조회",
+      "dec003": "읽기",
+      "gate": 1,
+      "gateId": 1
+    },
+    {
+      "id": 2,
+      "name": "신규 등록 (마스터·입고)",
+      "dec003": "등록",
+      "gate": 2,
+      "gateId": 2
+    },
+    {
+      "id": 3,
+      "name": "수정·취소·정산",
+      "dec003": "수정/취소",
+      "gate": 3,
+      "gateId": 3
+    },
+    {
+      "id": 4,
+      "name": "배치·인쇄·장비",
+      "dec003": "배치/인쇄/장비",
+      "gate": 5,
+      "gateId": 5
+    },
+    {
+      "id": 5,
+      "name": "권한·고객사 분기",
+      "dec003": "고객사 분기",
+      "gate": 4,
+      "gateId": 4
+    }
   ],
-  "dashboardOrder": [0, 1, 2, 3, 4, 5],
+  "dashboardOrder": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
   "lines": {
-    "betaMinimumLine": { "label": "베타 최소", "members": ["C1", "C2", "C7"] },
-    "betaRecommendedLine": { "label": "베타 권장", "members": ["C1", "C2", "C6", "C7", "C8"] },
-    "internalOpenLine": { "label": "내부오픈", "members": ["C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10"] }
+    "betaMinimumLine": {
+      "label": "베타 최소",
+      "members": [
+        "C1",
+        "C2",
+        "C7"
+      ]
+    },
+    "betaRecommendedLine": {
+      "label": "베타 권장",
+      "members": [
+        "C1",
+        "C2",
+        "C6",
+        "C7",
+        "C8"
+      ]
+    },
+    "internalOpenLine": {
+      "label": "내부오픈",
+      "members": [
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+        "C7",
+        "C8",
+        "C9",
+        "C10"
+      ]
+    }
   },
   "taskTemplate": {
     "T1": "화면 카드 생성 (analysis/screen_cards/<form>.md)",
@@ -45,23 +118,58 @@
       "permission_keys": [],
       "db_impact": "SELECT (Id_Logn) + UPDATE (Id_Logn.Gcode 비번 변경)",
       "web": {
-        "routes": ["/(public)/login"],
-        "endpoints": ["POST /api/auth/login"],
-        "backend": ["도서물류관리프로그램/backend/app/routers/auth.py", "도서물류관리프로그램/backend/app/services/auth_service.py"],
-        "frontend": ["도서물류관리프로그램/frontend/src/app/(public)/login/"]
+        "routes": [
+          "/(public)/login"
+        ],
+        "endpoints": [
+          "POST /api/auth/login"
+        ],
+        "backend": [
+          "도서물류관리프로그램/backend/app/routers/auth.py",
+          "도서물류관리프로그램/backend/app/services/auth_service.py"
+        ],
+        "frontend": [
+          "도서물류관리프로그램/frontend/src/app/(public)/login/"
+        ]
       },
       "contract": "migration/contracts/login.yaml",
       "testpack": "migration/test-cases/login.json",
-      "subscenarios_absorbed": ["C13 세션 만료·재로그인"],
+      "subscenarios_absorbed": [
+        "C13 세션 만료·재로그인"
+      ],
       "tasks": {
-        "T1": { "status": "done", "note": "screen_card_builder.py 신규(~430 LOC) + analysis/screen_cards/Subu00.md + INDEX.md 1차 생성" },
-        "T2": { "status": "done", "note": "Chul.pas L441/L1956 인용 완료" },
-        "T3": { "status": "done", "note": "login.yaml v1.1.1 approved (scope_phase=phase1). 1차 합격선 '기존 ID/PW 로그인'. D-LOGIN-1~4 모두 in_scope_phase1=false (DEC-005~008 1차 후속 이관). endpoints /api/v1/auth/login 실 구현 정렬" },
-        "T4": { "status": "done", "note": "login.json v1.1.0-phase1 approved. 1차 in_scope 8건 / out_of_scope 4건(TC-LOGIN-002/010/011/012 보존, 후속 재개). fixtures tenant_id·G7_Ggeo 제거" },
-        "T5": { "status": "done", "note": "EUC-KR + JWT 적용. 도서물류관리프로그램/backend audit_service.py 신규 (TC-LOGIN-009 audit.auth 구조화 로깅)" },
-        "T6": { "status": "done", "note": "AppShell + 로그인 폼. 1차 구현 갭 해소: UserInfo.hcode 필드 노출 (백엔드+프론트), header.tsx hcode 뱃지 표시 (헤더 hname+hcode 동등성), audit 로그 라우터 통합" },
-        "T7": { "status": "done", "note": "정적 4축 사전 평가 docs/c1-login-evaluation-report.md 1차 범위 동결. 1차 in_scope 8건만 채점 대상. 캡처 1회는 DBA 일정 차단(외부 의존) — GAP-001/OQ-DBL-003 부분 완화" },
-        "T8": { "status": "done", "note": "DEC-005~008 모두 1차 포팅 범위 외로 동결(사용자 결정). login.yaml approved v1.1.0. 1차 합격선 단순화: '기존 사용자가 기존 ID/PW 로 로그인'. 멀티테넌시·해시·라이선스·슈퍼유저 분기는 후속 이관" }
+        "T1": {
+          "status": "done",
+          "note": "screen_card_builder.py 신규(~430 LOC) + analysis/screen_cards/Subu00.md + INDEX.md 1차 생성"
+        },
+        "T2": {
+          "status": "done",
+          "note": "Chul.pas L441/L1956 인용 완료"
+        },
+        "T3": {
+          "status": "done",
+          "note": "login.yaml v1.1.1 approved (scope_phase=phase1). 1차 합격선 '기존 ID/PW 로그인'. D-LOGIN-1~4 모두 in_scope_phase1=false (DEC-005~008 1차 후속 이관). endpoints /api/v1/auth/login 실 구현 정렬"
+        },
+        "T4": {
+          "status": "done",
+          "note": "login.json v1.1.0-phase1 approved. 1차 in_scope 8건 / out_of_scope 4건(TC-LOGIN-002/010/011/012 보존, 후속 재개). fixtures tenant_id·G7_Ggeo 제거"
+        },
+        "T5": {
+          "status": "done",
+          "note": "EUC-KR + JWT 적용. 도서물류관리프로그램/backend audit_service.py 신규 (TC-LOGIN-009 audit.auth 구조화 로깅)"
+        },
+        "T6": {
+          "status": "done",
+          "note": "AppShell + 로그인 폼. 1차 구현 갭 해소: UserInfo.hcode 필드 노출 (백엔드+프론트), header.tsx hcode 뱃지 표시 (헤더 hname+hcode 동등성), audit 로그 라우터 통합"
+        },
+        "T7": {
+          "status": "done",
+          "note": "정적 4축 사전 평가 docs/c1-login-evaluation-report.md 1차 범위 동결. 1차 in_scope 8건만 채점 대상. 캡처 1회는 DBA 일정 차단(외부 의존) — GAP-001/OQ-DBL-003 부분 완화"
+        },
+        "T8": {
+          "status": "done",
+          "note": "DEC-005~008 모두 1차 포팅 범위 외로 동결(사용자 결정). login.yaml approved v1.1.0. 1차 합격선 단순화: '기존 사용자가 기존 ID/PW 로 로그인'. 멀티테넌시·해시·라이선스·슈퍼유저 분기는 후속 이관"
+        }
       }
     },
     {
@@ -80,9 +188,18 @@
         "dfm": "Subu21.dfm",
         "menu_path": "출고관리(Menu200) > 거래명세서(Menu201) | 재고원장(Menu300) > 도서별수불원장(Menu301) | 통계관리(Menu600) > 도서별판매(Menu601)/거래처판매(Menu602)",
         "menu_id": "Menu201/Menu301/Menu601/Menu602",
-        "related_forms": ["TSobo61 (Subu61.pas)", "TSobo62 (Subu62.pas)", "TSobo31 (Subu31.pas)"]
+        "related_forms": [
+          "TSobo61 (Subu61.pas)",
+          "TSobo62 (Subu62.pas)",
+          "TSobo31 (Subu31.pas)"
+        ]
       },
-      "permission_keys": ["F24", "F61", "F62", "F31"],
+      "permission_keys": [
+        "F24",
+        "F61",
+        "F62",
+        "F31"
+      ],
       "db_impact": "SELECT 위주 + S1_Memo UPSERT (Sobo21)",
       "web": {
         "app_url": "http://127.0.0.1:3000/transactions/sales-statement",
@@ -176,49 +293,270 @@
           "verified_by": "tsc 0 error"
         }
       ],
-      "subscenarios_absorbed": ["C14 핵심 보고서 동등성 (Sobo61/62)"],
+      "subscenarios_absorbed": [
+        "C14 핵심 보고서 동등성 (Sobo61/62)"
+      ],
       "deferrals": [
-        { "id": "DEC-016", "title": "권한키 (F24/F31/F61/F62) 1차 미적용", "rationale": "C2 DEC-009 와 동일 — 모든 인증 사용자 동등" },
-        { "id": "DEC-017", "title": "인쇄 기능 (qrep) 1차 제외", "rationale": "웹 PDF/인쇄는 후속 페이즈" },
-        { "id": "DEC-018", "title": "바코드 입력 1차 제외", "rationale": "Tong08/Tong18 결합은 C3/C8 후속" }
+        {
+          "id": "DEC-016",
+          "title": "권한키 (F24/F31/F61/F62) 1차 미적용",
+          "rationale": "C2 DEC-009 와 동일 — 모든 인증 사용자 동등"
+        },
+        {
+          "id": "DEC-017",
+          "title": "인쇄 기능 (qrep) 1차 제외",
+          "rationale": "웹 PDF/인쇄는 후속 페이즈"
+        },
+        {
+          "id": "DEC-018",
+          "title": "바코드 입력 1차 제외",
+          "rationale": "Tong08/Tong18 결합은 C3/C8 후속"
+        }
       ],
       "tasks": {
-        "T1": { "status": "done", "note": "screen_cards Sobo21/31/61/62 기존 자료 매핑만, 신규 생성 0" },
-        "T2": { "status": "done", "note": "analysis/c6_inquiry_flow.md 신설 — 4폼 SQL/이벤트 통합" },
-        "T3": { "status": "done", "note": "sales_inquiry.yaml v1.0.0 approved (6 endpoints, C14 동등성 흡수)" },
-        "T4": { "status": "done", "note": "sales_inquiry.json — 12 케이스 (5축 functional/data/audit) 작성" },
-        "T5": { "status": "done", "note": "transactions/inventory/reports 라우터·서비스 + main.py 등록 (예약어 별칭 금지 컨벤션 준수)" },
-        "T6": { "status": "done", "note": "4 페이지 + 공통 DataGrid + form-registry 4줄 (Sobo21/31/61/62) + column-labels 보강" },
-        "T7": { "status": "done", "note": "test/test_c6_inquiry_phase1.py 20 PASS, C14 보고서 동등성 캡처 2건 (도서별/거래처별)" },
-        "T8": { "status": "done", "note": "porting-screens / web-porting-progress / human-action-items / todos 4개 JSON 동기화 + runtime_check·hotfixes(HOT-INQ-1/HOT-APP-1/2) 후속 반영" }
+        "T1": {
+          "status": "done",
+          "note": "screen_cards Sobo21/31/61/62 기존 자료 매핑만, 신규 생성 0"
+        },
+        "T2": {
+          "status": "done",
+          "note": "analysis/c6_inquiry_flow.md 신설 — 4폼 SQL/이벤트 통합"
+        },
+        "T3": {
+          "status": "done",
+          "note": "sales_inquiry.yaml v1.0.0 approved (6 endpoints, C14 동등성 흡수)"
+        },
+        "T4": {
+          "status": "done",
+          "note": "sales_inquiry.json — 12 케이스 (5축 functional/data/audit) 작성"
+        },
+        "T5": {
+          "status": "done",
+          "note": "transactions/inventory/reports 라우터·서비스 + main.py 등록 (예약어 별칭 금지 컨벤션 준수)"
+        },
+        "T6": {
+          "status": "done",
+          "note": "4 페이지 + 공통 DataGrid + form-registry 4줄 (Sobo21/31/61/62) + column-labels 보강"
+        },
+        "T7": {
+          "status": "done",
+          "note": "test/test_c6_inquiry_phase1.py 20 PASS, C14 보고서 동등성 캡처 2건 (도서별/거래처별)"
+        },
+        "T8": {
+          "status": "done",
+          "note": "porting-screens / web-porting-progress / human-action-items / todos 4개 JSON 동기화 + runtime_check·hotfixes(HOT-INQ-1/HOT-APP-1/2) 후속 반영"
+        }
       }
     },
     {
       "order": 3,
       "stage": 2,
       "id": "C9",
-      "name": "상품·고객 마스터 등록",
+      "name": "기초관리 마스터 등록 (1차 — 6폼 단일 원천 + Wave D 웹관리)",
       "gateId": 2,
-      "purpose": "마스터 데이터 CRUD (거래처·도서·출판사·입고처·특별)",
-      "summary": "G6_Ggeo 등 마스터 INSERT/UPDATE/DELETE",
+      "purpose": "기초 마스터 데이터 단일 원천 확정 후 조회·수정 활성 + 웹 전용 관리(사용자/서버/권한/환경설정 개정) 도입",
+      "summary": "Sobo11(거래처)/Sobo14(도서)/Sobo17(출판사)/Sobo38(도서코드)/Sobo39(할인율)/Sobo45(물류비) READ + 거래처/도서 PATCH + Wave D admin 플레인",
+      "phase1_status": "completed",
+      "phase1_acceptance_goal": "C9 단일 원천 6폼 사이드바 노출 + READ 전체 + PATCH 2폼(거래처/도서) + Wave D /admin 4페이지 + DEC-019~023 동결",
       "delphi": {
-        "primary_form": "TSobo11 (거래처-통합)",
+        "primary_form": "TSobo11 (거래처-마스터)",
         "primary_unit": "Subu11.pas",
         "dfm": "Subu11.dfm",
-        "related_forms": ["TSobo15 거래처-개별", "TSobo14 도서", "TSobo17 출판사", "TSobo12 입고처", "TSobo16 특별관리"]
+        "menu_path": "MainMenu1 > 기초관리 > 거래처/도서/출판사/할인율/물류비",
+        "single_source_map": {
+          "customer": "Sobo11 (G1_Ggeo + G1_Gbun)",
+          "book": "Sobo14 (G4_Book + G4_Gbun)",
+          "publisher_g7": "Sobo17 (G7_Ggeo + G7_Gbun, 자동완성과 동일)",
+          "book_code": "Sobo38 (G4_Book READ)",
+          "discount": "Sobo39 (G7_Ggeo.Gpper, 4 변종 중 대표 1폼)",
+          "logistics_cost": "Sobo45 (G5_Ggeo.Gposa READ)"
+        },
+        "related_forms_excluded_as_stats": [
+          "TSobo36 거래처(통계)",
+          "TSobo37 도서(통계)",
+          "TSobo43 출판사(통계)"
+        ]
       },
-      "permission_keys": ["F11", "F12", "F13", "F14", "F15", "F16", "F17"],
-      "db_impact": "INSERT/UPDATE/DELETE",
+      "permission_keys": [
+        "F11",
+        "F12",
+        "F13",
+        "F14",
+        "F15",
+        "F16",
+        "F17"
+      ],
+      "db_impact": "READ + PATCH (INSERT/DELETE 는 DEC-019 에 따라 후속)",
       "web": {
-        "routes": ["/master/customer", "/master/book", "/master/publisher", "/master/inbound-source"],
-        "endpoints": ["GET/POST/PUT/DELETE /api/master/<entity>"],
-        "backend": ["도서물류관리프로그램/backend/app/routers/master.py (신규)"],
-        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/master/* (신규)"]
+        "routes": [
+          "/master",
+          "/master/customer",
+          "/master/customer/[gcode]",
+          "/master/book",
+          "/master/book/[gcode]",
+          "/master/publisher",
+          "/master/book-code",
+          "/master/discount",
+          "/master/logistics-cost",
+          "/admin",
+          "/admin/user-servers",
+          "/admin/rbac",
+          "/admin/settings"
+        ],
+        "endpoints": [
+          "GET /api/v1/master/customer",
+          "GET /api/v1/master/customer/{gcode}",
+          "PATCH /api/v1/master/customer/{gcode}",
+          "GET /api/v1/master/book",
+          "GET /api/v1/master/book/{gcode}",
+          "PATCH /api/v1/master/book/{gcode}",
+          "GET /api/v1/master/publisher",
+          "GET /api/v1/master/book-code",
+          "GET /api/v1/master/discount",
+          "GET /api/v1/master/logistics-cost",
+          "GET|POST /api/v1/admin/users",
+          "POST /api/v1/admin/user-servers",
+          "GET|POST /api/v1/admin/roles",
+          "POST /api/v1/admin/user-roles",
+          "GET /api/v1/admin/legacy-permission-map",
+          "GET|POST /api/v1/admin/settings",
+          "GET /api/v1/admin/settings/history",
+          "POST /api/v1/admin/settings/rollback"
+        ],
+        "backend": [
+          "도서물류관리프로그램/backend/app/services/masters_service.py (확장)",
+          "도서물류관리프로그램/backend/app/routers/masters.py (CRUD endpoints)",
+          "도서물류관리프로그램/backend/app/models/master.py (신규 Pydantic)",
+          "도서물류관리프로그램/backend/app/services/admin_service.py (Wave D 신규)",
+          "도서물류관리프로그램/backend/app/routers/admin.py (Wave D 신규)",
+          "도서물류관리프로그램/backend/app/models/admin.py (Wave D 신규)"
+        ],
+        "frontend": [
+          "도서물류관리프로그램/frontend/src/app/(app)/master/* (6 페이지)",
+          "도서물류관리프로그램/frontend/src/app/(app)/admin/* (4 페이지)",
+          "도서물류관리프로그램/frontend/src/lib/master-api.ts",
+          "도서물류관리프로그램/frontend/src/lib/admin-api.ts",
+          "도서물류관리프로그램/frontend/src/lib/form-registry.ts (master + admin 메뉴 그룹 추가)"
+        ],
+        "app_url": "http://127.0.0.1:3000/master"
       },
-      "contract": "migration/contracts/master_customer.yaml + master_book.yaml + master_publisher.yaml (신규)",
-      "testpack": "migration/test-cases/master_*.json (신규)",
-      "subscenarios_absorbed": [],
-      "tasks": { "T1": {"status":"not_started"}, "T2": {"status":"not_started"}, "T3": {"status":"not_started"}, "T4": {"status":"not_started"}, "T5": {"status":"not_started"}, "T6": {"status":"not_started"}, "T7": {"status":"not_started"}, "T8": {"status":"not_started"} }
+      "contract": "migration/contracts/master_data.yaml + migration/contracts/admin_web_platform.yaml",
+      "testpack": "test/test_c2_outbound_phase1.py + test/test_c6_inquiry_phase1.py (회귀 가드 34건 PASS)",
+      "evaluation_report": "회귀 가드 34/34 PASS, tsc 0 error, eslint 0 warning, yaml/json 무결성 OK, form-registry 35폼/15라우트 중복 0",
+      "phase1_test_results": {
+        "pytest_count": 34,
+        "pytest_passed": 34,
+        "tsc_errors": 0,
+        "eslint_warnings": 0
+      },
+      "runtime_check": {
+        "master_index": "GET /api/v1/master/customer 200",
+        "admin_settings": "POST /api/v1/admin/settings → revision +1, history append, audit.admin 1줄"
+      },
+      "hotfixes": [
+        {
+          "id": "HOT-MAS-1",
+          "date": "2026-04-18",
+          "summary": "C9 단일 원천 확정 (DEC-023) — Sobo36/37/43 통계 폼을 마스터에서 분리하고 사이드바 라벨에 '(통계)' 표기. Sobo14 의 misleading '재고조회' 매핑을 '도서관리(마스터)' 로 정정.",
+          "files": [
+            "도서물류관리프로그램/frontend/src/lib/form-registry.ts"
+          ],
+          "verified_by": "form-registry 35 폼 / 15 라우트 중복 0"
+        },
+        {
+          "id": "HOT-MAS-2",
+          "date": "2026-04-18",
+          "summary": "execute_in_transaction 시그니처 일치 — masters_service.update_customer_master/update_book 가 _txn 함수 직접 전달 → list[(sql, params)] 형태로 정정. mysql3 rowcount=0 폴백 SELECT 추가.",
+          "files": [
+            "도서물류관리프로그램/backend/app/services/masters_service.py"
+          ],
+          "verified_by": "pytest 34/34 PASS"
+        },
+        {
+          "id": "HOT-ADM-1",
+          "date": "2026-04-18",
+          "summary": "Wave D web_admin.json 직렬화 — useServers 미존재 훅 제거 후 api.get('/api/v1/servers') 직접 호출 패턴으로 전환 (login/page.tsx 와 일치).",
+          "files": [
+            "도서물류관리프로그램/frontend/src/app/(app)/admin/user-servers/page.tsx"
+          ],
+          "verified_by": "tsc 0 error · eslint 0 warning"
+        }
+      ],
+      "deferrals": [
+        {
+          "id": "D-MAS-1",
+          "title": "마스터 INSERT 1차 제외",
+          "rationale": "DEC-019 — 신규 등록은 다른 시나리오와 참조 무결성 일괄 검토 후 후속",
+          "target_phase": "phase2"
+        },
+        {
+          "id": "D-MAS-2",
+          "title": "마스터 DELETE 영구 봉쇄",
+          "rationale": "DEC-019 — 소프트 비활성화로 대체 (Phase 2 정책 결정)",
+          "target_phase": "phase2"
+        },
+        {
+          "id": "D-MAS-3",
+          "title": "할인율 4 변종 통합",
+          "rationale": "Sobo39 대표 1폼만 1차 — 고객사 분기 (Hcode 별) 후속",
+          "target_phase": "phase2"
+        },
+        {
+          "id": "D-ADM-1",
+          "title": "RBAC 미들웨어 강제",
+          "rationale": "1차 MVP 는 인증된 사용자=모두 가능 (DEC-009 패턴), require_role('admin') 가드 미적용",
+          "target_phase": "phase2"
+        },
+        {
+          "id": "D-ADM-2",
+          "title": "web_admin.json → RDB 마이그레이션",
+          "rationale": "1차 단일 워커 권장, 멀티 워커 운영 시 RDB 이전 필수",
+          "target_phase": "phase2"
+        },
+        {
+          "id": "D-ADM-3",
+          "title": "사용자 인증 통합",
+          "rationale": "현재 레거시 Id_Logn 그대로 — 비밀번호 해시·SSO 후속",
+          "target_phase": "phase2"
+        }
+      ],
+      "subscenarios_absorbed": [
+        "Wave D (웹 관리 플레인 — 사용자/서버/역할/환경설정 개정)"
+      ],
+      "tasks": {
+        "T1": {
+          "status": "completed",
+          "note": "analysis/screen_cards/Sobo{11,14,17,38,39,45}*.md 단일 원천 확정"
+        },
+        "T2": {
+          "status": "completed",
+          "note": "Subu11/14/17/38/39/45 SQL 추출 + DEC-023 결정"
+        },
+        "T3": {
+          "status": "completed",
+          "note": "master_data.yaml + admin_web_platform.yaml v1.0.0 작성"
+        },
+        "T4": {
+          "status": "completed",
+          "note": "C2/C6 회귀 가드 34건 활용 (마스터 회귀 영향 없음 확인)"
+        },
+        "T5": {
+          "status": "completed",
+          "note": "masters_service 6 함수 + admin_service Wave D 풀스택"
+        },
+        "T6": {
+          "status": "completed",
+          "note": "/master 6 페이지 + /admin 4 페이지 + form-registry master/admin 그룹"
+        },
+        "T7": {
+          "status": "completed",
+          "note": "회귀 가드: pytest 34/34, tsc 0, eslint 0, yaml/json OK"
+        },
+        "T8": {
+          "status": "completed",
+          "note": "DEC-019~023 동결, dashboard 동기화 완료"
+        }
+      }
     },
     {
       "order": 4,
@@ -232,20 +570,64 @@
         "primary_form": "TSobo22 (입고명세서)",
         "primary_unit": "Subu22.pas",
         "dfm": "Subu22.dfm",
-        "related_forms": ["TSobo54 일별 입고내역서", "TSobo57 기간별 입고내역서", "TSobo38 전송자료받기(FTP)"]
+        "related_forms": [
+          "TSobo54 일별 입고내역서",
+          "TSobo57 기간별 입고내역서",
+          "TSobo38 전송자료받기(FTP)"
+        ]
       },
-      "permission_keys": ["F25", "F52", "F56", "F29"],
+      "permission_keys": [
+        "F25",
+        "F52",
+        "F56",
+        "F29"
+      ],
       "db_impact": "INSERT 위주 + 일부 UPDATE (마감)",
       "web": {
-        "routes": ["/inbound/receipts", "/inbound/reports"],
-        "endpoints": ["POST /api/inbound/receipts", "GET /api/inbound/reports"],
-        "backend": ["도서물류관리프로그램/backend/app/routers/inbound.py (신규)"],
-        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/inbound/* (신규)"]
+        "routes": [
+          "/inbound/receipts",
+          "/inbound/reports"
+        ],
+        "endpoints": [
+          "POST /api/inbound/receipts",
+          "GET /api/inbound/reports"
+        ],
+        "backend": [
+          "도서물류관리프로그램/backend/app/routers/inbound.py (신규)"
+        ],
+        "frontend": [
+          "도서물류관리프로그램/frontend/src/app/(app)/inbound/* (신규)"
+        ]
       },
       "contract": "migration/contracts/inbound_receipt.yaml (신규)",
       "testpack": "migration/test-cases/inbound_receipt.json (신규)",
       "subscenarios_absorbed": [],
-      "tasks": { "T1": {"status":"not_started"}, "T2": {"status":"not_started"}, "T3": {"status":"not_started"}, "T4": {"status":"not_started"}, "T5": {"status":"not_started"}, "T6": {"status":"not_started"}, "T7": {"status":"not_started"}, "T8": {"status":"not_started"} }
+      "tasks": {
+        "T1": {
+          "status": "not_started"
+        },
+        "T2": {
+          "status": "not_started"
+        },
+        "T3": {
+          "status": "not_started"
+        },
+        "T4": {
+          "status": "not_started"
+        },
+        "T5": {
+          "status": "not_started"
+        },
+        "T6": {
+          "status": "not_started"
+        },
+        "T7": {
+          "status": "not_started"
+        },
+        "T8": {
+          "status": "not_started"
+        }
+      }
     },
     {
       "order": 5,
@@ -263,9 +645,17 @@
         "dfm": "Subu27.dfm",
         "menu_path": "출고관리(Menu200) > 출고접수관리(Menu207)",
         "menu_id": "Menu207",
-        "related_forms": ["TSobo26 출고접수현황", "TSobo28 출고택배관리", "TSobo23 반품명세서(연계)"]
+        "related_forms": [
+          "TSobo26 출고접수현황",
+          "TSobo28 출고택배관리",
+          "TSobo23 반품명세서(연계)"
+        ]
       },
-      "permission_keys": ["F21", "F22", "F26"],
+      "permission_keys": [
+        "F21",
+        "F22",
+        "F26"
+      ],
       "db_impact": "INSERT/UPDATE/DELETE (트랜잭션 경계 중요)",
       "web": {
         "app_url": "http://127.0.0.1:3000/outbound/orders",
@@ -362,16 +752,42 @@
         "DEC-011 인쇄 트리거 → 후속 C7 인쇄",
         "DEC-012 물리 삭제 → 참조 무결성 검토 후"
       ],
-      "subscenarios_absorbed": ["C11 출고 수정/취소"],
+      "subscenarios_absorbed": [
+        "C11 출고 수정/취소"
+      ],
       "tasks": {
-        "T1": {"status": "completed", "note": "analysis/screen_cards/Sobo27.md (자동 + 수동 §10)"},
-        "T2": {"status": "completed", "note": "analysis/c2_outbound_flow.md (Subu27.pas 인용 + POC sobo67 diff)"},
-        "T3": {"status": "completed", "note": "outbound_order.yaml v1.0.0 approved"},
-        "T4": {"status": "completed", "note": "outbound_order.json v1.0.0-phase1 approved (12 cases)"},
-        "T5": {"status": "completed", "note": "backend models/services/routers/audit/db 모두 추가"},
-        "T6": {"status": "completed", "note": "frontend outbound 페이지 + 컴포넌트 + column-labels"},
-        "T7": {"status": "completed", "note": "test/test_c2_outbound_phase1.py 14건 PASS + 평가 보고서"},
-        "T8": {"status": "completed", "note": "dashboard JSON 동기화 완료"}
+        "T1": {
+          "status": "completed",
+          "note": "analysis/screen_cards/Sobo27.md (자동 + 수동 §10)"
+        },
+        "T2": {
+          "status": "completed",
+          "note": "analysis/c2_outbound_flow.md (Subu27.pas 인용 + POC sobo67 diff)"
+        },
+        "T3": {
+          "status": "completed",
+          "note": "outbound_order.yaml v1.0.0 approved"
+        },
+        "T4": {
+          "status": "completed",
+          "note": "outbound_order.json v1.0.0-phase1 approved (12 cases)"
+        },
+        "T5": {
+          "status": "completed",
+          "note": "backend models/services/routers/audit/db 모두 추가"
+        },
+        "T6": {
+          "status": "completed",
+          "note": "frontend outbound 페이지 + 컴포넌트 + column-labels"
+        },
+        "T7": {
+          "status": "completed",
+          "note": "test/test_c2_outbound_phase1.py 14건 PASS + 평가 보고서"
+        },
+        "T8": {
+          "status": "completed",
+          "note": "dashboard JSON 동기화 완료"
+        }
       }
     },
     {
@@ -386,20 +802,66 @@
         "primary_form": "TSobo23 (반품명세서)",
         "primary_unit": "Subu23.pas",
         "dfm": "Subu23.dfm",
-        "related_forms": ["TSobo23_1 반품과 변형", "TSobo35 반품재고(폐기)", "TSobo51 반품재고(변경)", "TSobo55 일별 반품내역서", "Subu40 패스워드 모달"]
+        "related_forms": [
+          "TSobo23_1 반품과 변형",
+          "TSobo35 반품재고(폐기)",
+          "TSobo51 반품재고(변경)",
+          "TSobo55 일별 반품내역서",
+          "Subu40 패스워드 모달"
+        ]
       },
-      "permission_keys": ["F26", "F35", "F36", "F37", "F53"],
+      "permission_keys": [
+        "F26",
+        "F35",
+        "F36",
+        "F37",
+        "F53"
+      ],
       "db_impact": "UPDATE/DELETE 동반",
       "web": {
-        "routes": ["/returns", "/returns/[id]"],
-        "endpoints": ["GET/POST/PUT/DELETE /api/returns"],
-        "backend": ["도서물류관리프로그램/backend/app/routers/returns.py (신규)"],
-        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/returns/* (신규)"]
+        "routes": [
+          "/returns",
+          "/returns/[id]"
+        ],
+        "endpoints": [
+          "GET/POST/PUT/DELETE /api/returns"
+        ],
+        "backend": [
+          "도서물류관리프로그램/backend/app/routers/returns.py (신규)"
+        ],
+        "frontend": [
+          "도서물류관리프로그램/frontend/src/app/(app)/returns/* (신규)"
+        ]
       },
       "contract": "migration/contracts/return_receipt.yaml (신규)",
       "testpack": "migration/test-cases/return_receipt.json (신규)",
       "subscenarios_absorbed": [],
-      "tasks": { "T1": {"status":"not_started"}, "T2": {"status":"not_started"}, "T3": {"status":"not_started"}, "T4": {"status":"not_started"}, "T5": {"status":"not_started"}, "T6": {"status":"not_started"}, "T7": {"status":"not_started"}, "T8": {"status":"not_started"} }
+      "tasks": {
+        "T1": {
+          "status": "not_started"
+        },
+        "T2": {
+          "status": "not_started"
+        },
+        "T3": {
+          "status": "not_started"
+        },
+        "T4": {
+          "status": "not_started"
+        },
+        "T5": {
+          "status": "not_started"
+        },
+        "T6": {
+          "status": "not_started"
+        },
+        "T7": {
+          "status": "not_started"
+        },
+        "T8": {
+          "status": "not_started"
+        }
+      }
     },
     {
       "order": 7,
@@ -413,20 +875,71 @@
         "primary_form": "TSobo45 (청구서관리)",
         "primary_unit": "Subu45.pas",
         "dfm": "Subu45.dfm",
-        "related_forms": ["TSobo47 청구금액(년월)", "TSobo46 청구서출력", "TSobo49 세금계산서", "TSobo41/42 입금관리", "Subu40 패스워드 모달"]
+        "related_forms": [
+          "TSobo47 청구금액(년월)",
+          "TSobo46 청구서출력",
+          "TSobo49 세금계산서",
+          "TSobo41/42 입금관리",
+          "Subu40 패스워드 모달"
+        ]
       },
-      "permission_keys": ["F43", "F44", "F45", "F46", "F47"],
+      "permission_keys": [
+        "F43",
+        "F44",
+        "F45",
+        "F46",
+        "F47"
+      ],
       "db_impact": "UPDATE 위주 (집계·마감)",
       "web": {
-        "routes": ["/settlement/billing", "/settlement/tax-invoice", "/settlement/payments"],
-        "endpoints": ["POST /api/settlement/billing/close-month", "GET /api/settlement/*"],
-        "backend": ["도서물류관리프로그램/backend/app/routers/settlement.py (신규, 배치 작업)"],
-        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/settlement/* (신규)"]
+        "routes": [
+          "/settlement/billing",
+          "/settlement/tax-invoice",
+          "/settlement/payments"
+        ],
+        "endpoints": [
+          "POST /api/settlement/billing/close-month",
+          "GET /api/settlement/*"
+        ],
+        "backend": [
+          "도서물류관리프로그램/backend/app/routers/settlement.py (신규, 배치 작업)"
+        ],
+        "frontend": [
+          "도서물류관리프로그램/frontend/src/app/(app)/settlement/* (신규)"
+        ]
       },
       "contract": "migration/contracts/settlement_billing.yaml (신규)",
       "testpack": "migration/test-cases/settlement_billing.json (신규)",
-      "subscenarios_absorbed": ["C12 마감 후 편집 차단", "C14 보고서 동등성(일부)"],
-      "tasks": { "T1": {"status":"not_started"}, "T2": {"status":"not_started"}, "T3": {"status":"not_started"}, "T4": {"status":"not_started"}, "T5": {"status":"not_started"}, "T6": {"status":"not_started"}, "T7": {"status":"not_started"}, "T8": {"status":"not_started"} }
+      "subscenarios_absorbed": [
+        "C12 마감 후 편집 차단",
+        "C14 보고서 동등성(일부)"
+      ],
+      "tasks": {
+        "T1": {
+          "status": "not_started"
+        },
+        "T2": {
+          "status": "not_started"
+        },
+        "T3": {
+          "status": "not_started"
+        },
+        "T4": {
+          "status": "not_started"
+        },
+        "T5": {
+          "status": "not_started"
+        },
+        "T6": {
+          "status": "not_started"
+        },
+        "T7": {
+          "status": "not_started"
+        },
+        "T8": {
+          "status": "not_started"
+        }
+      }
     },
     {
       "order": 8,
@@ -440,21 +953,59 @@
         "primary_form": "(인쇄 진입점 묶음)",
         "primary_unit": "Tong04.pas (Print_*)",
         "dfm": "Tong06.dfm (frBarCodeObject)",
-        "related_forms": ["Seep13.pas 라벨 캔버스", "Tong01.pas TPrintDialog/TPrinterSetupDialog"]
+        "related_forms": [
+          "Seep13.pas 라벨 캔버스",
+          "Tong01.pas TPrintDialog/TPrinterSetupDialog"
+        ]
       },
-      "permission_keys": ["호출 화면 권한 적용"],
+      "permission_keys": [
+        "호출 화면 권한 적용"
+      ],
       "db_impact": "SELECT 위주 + 일부 마킹 UPDATE",
       "web": {
-        "routes": ["/print/preview/[type]/[id]"],
-        "endpoints": ["GET /api/print/<type>/<id> (PDF/HTML)"],
-        "backend": ["도서물류관리프로그램/backend/app/routers/print.py (신규, WeasyPrint/Playwright)"],
-        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/print/* (신규, window.print 또는 PDF iframe)"]
+        "routes": [
+          "/print/preview/[type]/[id]"
+        ],
+        "endpoints": [
+          "GET /api/print/<type>/<id> (PDF/HTML)"
+        ],
+        "backend": [
+          "도서물류관리프로그램/backend/app/routers/print.py (신규, WeasyPrint/Playwright)"
+        ],
+        "frontend": [
+          "도서물류관리프로그램/frontend/src/app/(app)/print/* (신규, window.print 또는 PDF iframe)"
+        ]
       },
       "contract": "migration/contracts/print_invoice.yaml + print_label.yaml (신규)",
       "testpack": "migration/test-cases/print_*.json (신규, PDF diff 포함)",
       "subscenarios_absorbed": [],
       "gate_dependency": "인쇄 결과 승인 #5",
-      "tasks": { "T1": {"status":"not_started"}, "T2": {"status":"not_started"}, "T3": {"status":"not_started"}, "T4": {"status":"not_started"}, "T5": {"status":"not_started"}, "T6": {"status":"not_started"}, "T7": {"status":"not_started"}, "T8": {"status":"not_started"} }
+      "tasks": {
+        "T1": {
+          "status": "not_started"
+        },
+        "T2": {
+          "status": "not_started"
+        },
+        "T3": {
+          "status": "not_started"
+        },
+        "T4": {
+          "status": "not_started"
+        },
+        "T5": {
+          "status": "not_started"
+        },
+        "T6": {
+          "status": "not_started"
+        },
+        "T7": {
+          "status": "not_started"
+        },
+        "T8": {
+          "status": "not_started"
+        }
+      }
     },
     {
       "order": 9,
@@ -468,20 +1019,57 @@
         "primary_form": "(별도 화면 없음, 진입점)",
         "primary_unit": "Tong08.pas (ComPortRxChar, #13 종결)",
         "dfm": "Tong08.dfm",
-        "related_forms": ["FTong07.Button104Click → Sobo21/22/23"]
+        "related_forms": [
+          "FTong07.Button104Click → Sobo21/22/23"
+        ]
       },
-      "permission_keys": ["호출 화면 권한 (F24/F25/F26)"],
+      "permission_keys": [
+        "호출 화면 권한 (F24/F25/F26)"
+      ],
       "db_impact": "SELECT/UPDATE",
       "web": {
-        "routes": ["(C2/C3/C4 화면에 통합)"],
-        "endpoints": ["POST /api/<flow>/scan-match"],
-        "backend": ["기존 outbound/inbound/returns router에 scan-match 엔드포인트 추가"],
-        "frontend": ["도서물류관리프로그램/frontend/src/lib/scanner.ts (keydown 핸들러, CR 종결)"]
+        "routes": [
+          "(C2/C3/C4 화면에 통합)"
+        ],
+        "endpoints": [
+          "POST /api/<flow>/scan-match"
+        ],
+        "backend": [
+          "기존 outbound/inbound/returns router에 scan-match 엔드포인트 추가"
+        ],
+        "frontend": [
+          "도서물류관리프로그램/frontend/src/lib/scanner.ts (keydown 핸들러, CR 종결)"
+        ]
       },
       "contract": "migration/contracts/barcode_scan.yaml (신규)",
       "testpack": "migration/test-cases/barcode_scan.json (신규)",
       "subscenarios_absorbed": [],
-      "tasks": { "T1": {"status":"not_started"}, "T2": {"status":"not_started"}, "T3": {"status":"not_started"}, "T4": {"status":"not_started"}, "T5": {"status":"not_started"}, "T6": {"status":"not_started"}, "T7": {"status":"not_started"}, "T8": {"status":"not_started"} }
+      "tasks": {
+        "T1": {
+          "status": "not_started"
+        },
+        "T2": {
+          "status": "not_started"
+        },
+        "T3": {
+          "status": "not_started"
+        },
+        "T4": {
+          "status": "not_started"
+        },
+        "T5": {
+          "status": "not_started"
+        },
+        "T6": {
+          "status": "not_started"
+        },
+        "T7": {
+          "status": "not_started"
+        },
+        "T8": {
+          "status": "not_started"
+        }
+      }
     },
     {
       "order": 10,
@@ -495,24 +1083,88 @@
         "primary_form": "TSubu10 (환경설정 - 메인 메뉴 진입점)",
         "primary_unit": "Subu10.pas",
         "dfm": "Subu10.dfm",
-        "related_forms": ["사용자 관리 폼은 메인 메뉴에 없을 수 있음 → 체크리스트 §3.4 확인", "Subu40 패스워드 모달"]
+        "related_forms": [
+          "사용자 관리 폼은 메인 메뉴에 없을 수 있음 → 체크리스트 §3.4 확인",
+          "Subu40 패스워드 모달"
+        ]
       },
-      "permission_keys": ["F18 + 슈퍼유저 0000"],
+      "permission_keys": [
+        "F18 + 슈퍼유저 0000"
+      ],
       "db_impact": "UPDATE (Id_Logn 권한 컬럼)",
       "web": {
-        "routes": ["/admin/users", "/admin/permissions"],
-        "endpoints": ["GET/POST/PUT/DELETE /api/admin/users", "PUT /api/admin/permissions"],
-        "backend": ["도서물류관리프로그램/backend/app/routers/admin.py (신규)"],
-        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/admin/* (신규)"]
+        "routes": [
+          "/admin/users",
+          "/admin/permissions"
+        ],
+        "endpoints": [
+          "GET/POST/PUT/DELETE /api/admin/users",
+          "PUT /api/admin/permissions"
+        ],
+        "backend": [
+          "도서물류관리프로그램/backend/app/routers/admin.py (신규)"
+        ],
+        "frontend": [
+          "도서물류관리프로그램/frontend/src/app/(app)/admin/* (신규)"
+        ]
       },
       "contract": "migration/contracts/admin_permissions.yaml (신규)",
       "testpack": "migration/test-cases/admin_permissions.json (신규)",
-      "subscenarios_absorbed": ["C13 세션 만료·권한 부족", "C15 병행 충돌 방지"],
+      "subscenarios_absorbed": [
+        "C13 세션 만료·권한 부족",
+        "C15 병행 충돌 방지"
+      ],
       "gate_dependency": "고객사별 차이 승인 #4",
-      "tasks": { "T1": {"status":"not_started"}, "T2": {"status":"not_started"}, "T3": {"status":"not_started"}, "T4": {"status":"not_started"}, "T5": {"status":"not_started"}, "T6": {"status":"not_started"}, "T7": {"status":"not_started"}, "T8": {"status":"not_started"} }
+      "tasks": {
+        "T1": {
+          "status": "not_started"
+        },
+        "T2": {
+          "status": "not_started"
+        },
+        "T3": {
+          "status": "not_started"
+        },
+        "T4": {
+          "status": "not_started"
+        },
+        "T5": {
+          "status": "not_started"
+        },
+        "T6": {
+          "status": "not_started"
+        },
+        "T7": {
+          "status": "not_started"
+        },
+        "T8": {
+          "status": "not_started"
+        }
+      }
     }
   ],
-  "betaMinimumLine": ["C1", "C2", "C7"],
-  "betaRecommendedLine": ["C1", "C2", "C6", "C7", "C8"],
-  "internalOpenLine": ["C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10"]
+  "betaMinimumLine": [
+    "C1",
+    "C2",
+    "C7"
+  ],
+  "betaRecommendedLine": [
+    "C1",
+    "C2",
+    "C6",
+    "C7",
+    "C8"
+  ],
+  "internalOpenLine": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7",
+    "C8",
+    "C9",
+    "C10"
+  ]
 }

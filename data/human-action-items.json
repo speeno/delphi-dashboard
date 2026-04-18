@@ -1,7 +1,7 @@
 {
   "title": "사람 처리 필요 항목 (Human Action Items)",
   "description": "자동 도구·정적 분석으로는 닫을 수 없고, 사람의 결정·인터뷰·운영 실행이 필요한 작업들. 각 항목은 추적용 문서(트래커/템플릿)에 직접 연결되며, 결과가 들어오면 분석 도구·갭 리포트가 자동 갱신됩니다.",
-  "updatedAt": "2026-04-18 (C6 완료 + HA-DEC-10 제품 UX 핫픽스 출력 보강)",
+  "updatedAt": "2026-04-18 (C9 단일 원천 + Wave D 웹관리 1차 완료 — HA-DEC-11/12 신규)",
   "legend": {
     "대기": "착수 전",
     "진행중": "회의·실시 진행 중",
@@ -25,7 +25,10 @@
             "docs/delphi-developer-confirmation-checklist.md (§1~§6 답변)",
             "legacy-analysis/open-questions.md (OQ-001/002/003/DBL-001~003 클로저)"
           ],
-          "blocks": ["베타 게이트 #1", "DB 로직 게이트 #2"]
+          "blocks": [
+            "베타 게이트 #1",
+            "DB 로직 게이트 #2"
+          ]
         },
         {
           "id": "HA-INT-02",
@@ -39,7 +42,9 @@
             "결정된 시나리오를 migration/contracts/ · migration/test-cases/ 신규 파일로 추가",
             "dashboard/data/release-milestones.json beta.goals/exitCriteria와 본 human-action-items 갱신 동기화"
           ],
-          "blocks": ["API 계약 승인 #3"]
+          "blocks": [
+            "API 계약 승인 #3"
+          ]
         },
         {
           "id": "HA-INT-03",
@@ -48,8 +53,12 @@
           "due": "2026-07-17",
           "status": "대기",
           "tracker": "dashboard/data/release-milestones.json",
-          "outputs": ["beta.goals / beta.exitCriteria 갱신"],
-          "blocks": ["베타 게이트 #1"]
+          "outputs": [
+            "beta.goals / beta.exitCriteria 갱신"
+          ],
+          "blocks": [
+            "베타 게이트 #1"
+          ]
         }
       ]
     },
@@ -65,8 +74,12 @@
           "due": "2026-07-03",
           "status": "대기",
           "tracker": "docs/query-capture-rehearsal-tracker.md",
-          "outputs": ["트래커 §2 사전 체크 모두 ✅"],
-          "blocks": ["HA-CAP-02"]
+          "outputs": [
+            "트래커 §2 사전 체크 모두 ✅"
+          ],
+          "blocks": [
+            "HA-CAP-02"
+          ]
         },
         {
           "id": "HA-CAP-02",
@@ -79,7 +92,9 @@
             "debug/output/captured_queries_<server>_<date>.json",
             "python3 tools/db/db_logic_cross_reference.py --capture <file> 실행 결과 반영"
           ],
-          "blocks": ["DB 로직 게이트 #2"]
+          "blocks": [
+            "DB 로직 게이트 #2"
+          ]
         },
         {
           "id": "HA-CAP-03",
@@ -92,7 +107,9 @@
             "docs/db-logic-porting-gap-report.md §1·§2 갱신",
             "legacy-analysis/open-questions.md OQ-DBL-003 상태/해결 방법 기록"
           ],
-          "blocks": ["DB 로직 게이트 #2"]
+          "blocks": [
+            "DB 로직 게이트 #2"
+          ]
         }
       ]
     },
@@ -112,7 +129,10 @@
             "OQ-003 클로저",
             "docs/db-schema-porting-readiness.md §정책 절 추가"
           ],
-          "blocks": ["DB 로직 게이트 #2", "분석 산출물 승인 #1"]
+          "blocks": [
+            "DB 로직 게이트 #2",
+            "분석 산출물 승인 #1"
+          ]
         },
         {
           "id": "HA-DEC-02",
@@ -125,7 +145,9 @@
             "OQ-002 클로저",
             "DEC-004 후속 — 라벨 직결/Web Serial/로컬 브리지 채택 여부 메모"
           ],
-          "blocks": ["인쇄 결과 승인 #5"]
+          "blocks": [
+            "인쇄 결과 승인 #5"
+          ]
         },
         {
           "id": "HA-DEC-03",
@@ -144,7 +166,9 @@
             "후속 사이클: 별도 DEC-XXX 로 해시 정책 + lazy migration 일정 동결 (D-LOGIN-1)",
             "후속 사이클: 서버측 License_Tenant + JWT claim 정책 동결 (D-LOGIN-2)"
           ],
-          "blocks": ["API 계약 승인 #3"]
+          "blocks": [
+            "API 계약 승인 #3"
+          ]
         },
         {
           "id": "HA-DEC-06",
@@ -162,7 +186,9 @@
           "follow_up": [
             "후속 사이클: 옵션 A/B/C 합의 → 별도 DEC-XXX → DB 마이그레이션 + 모든 시나리오 RLS 패치"
           ],
-          "blocks": ["고객사별 차이 승인 #4"]
+          "blocks": [
+            "고객사별 차이 승인 #4"
+          ]
         },
         {
           "id": "HA-DEC-09",
@@ -192,7 +218,9 @@
             "HA-OUT-PRINT — 베타 운영자에게 인쇄 미지원 사전 안내 (DEC-011)",
             "HA-OUT-PERF — DBA 인덱스 정합성 점검 (S1_Ssub composite, G4_Book.Gname LIKE)"
           ],
-          "blocks": ["API 계약 승인 #3"]
+          "blocks": [
+            "API 계약 승인 #3"
+          ]
         },
         {
           "id": "HA-DEC-10",
@@ -219,7 +247,9 @@
             "Subu31.pas L426~L457 X/Z 분기 — 1차 단순화(_accumulate_row 비품/폐기 묶음) 후속 정밀화",
             "HA-INQ-PRINT — 베타 운영자에게 인쇄 미지원 사전 안내 (DEC-017)"
           ],
-          "blocks": ["API 계약 승인 #3 (C6 부분)"]
+          "blocks": [
+            "API 계약 승인 #3 (C6 부분)"
+          ]
         },
         {
           "id": "HA-DEC-04",
@@ -232,7 +262,9 @@
             "draft → approved 표기",
             "approvals.json 게이트 #6 description 보강"
           ],
-          "blocks": ["UAT 승인 #6"]
+          "blocks": [
+            "UAT 승인 #6"
+          ]
         },
         {
           "id": "HA-DEC-05",
@@ -244,7 +276,39 @@
           "outputs": [
             "approvals.json 게이트 #2 승인자(DBA), #5 승인자(현장 운영자) 추가 등 합의된 변경 반영"
           ],
-          "blocks": ["DB 로직 게이트 #2"]
+          "blocks": [
+            "DB 로직 게이트 #2"
+          ]
+        },
+        {
+          "id": "HA-DEC-11",
+          "title": "C9 기초관리 1차 포팅 범위 동결 (master_data.yaml + DEC-019/023)",
+          "owner": "메인개발자",
+          "due": "2026-04-18",
+          "status": "완료",
+          "tracker": "legacy-analysis/decisions.md DEC-019, DEC-023",
+          "outputs": [
+            "단일 원천 6폼 확정 (Sobo11/14/17/38/39/45)",
+            "통계 폼(Sobo36/37/43) 사이드바 라벨 분리",
+            "PATCH 활성 = 거래처/도서 만, INSERT/DELETE 후속 (D-MAS-1/2)",
+            "할인율 4 변종 → 대표 1폼만 1차 (D-MAS-3)"
+          ],
+          "blocks": []
+        },
+        {
+          "id": "HA-DEC-12",
+          "title": "Wave D 웹 관리 플레인 1차 정책 동결 (admin_web_platform.yaml + DEC-020/021/022)",
+          "owner": "메인개발자 + 운영자(추후)",
+          "due": "2026-04-18",
+          "status": "완료",
+          "tracker": "legacy-analysis/decisions.md DEC-020/021/022",
+          "outputs": [
+            "웹 RBAC 별도 + 레거시 Fxx 매핑 1단 (DEC-020)",
+            "사용자별 server_id 화이트리스트 (DEC-021, 비어있을 때 모두 허용 폴백)",
+            "환경설정 모든 변경 history 강제 + 물리 삭제 금지 (DEC-022)",
+            "1차 가드 미적용 (D-ADM-1), JSON 파일 영속 (D-ADM-2)"
+          ],
+          "blocks": []
         }
       ]
     },
@@ -260,8 +324,12 @@
           "due": "2026-07-10",
           "status": "대기",
           "tracker": "dashboard/data/approvals.json",
-          "outputs": ["approvals.json id 2 status 갱신"],
-          "blocks": ["베타"]
+          "outputs": [
+            "approvals.json id 2 status 갱신"
+          ],
+          "blocks": [
+            "베타"
+          ]
         },
         {
           "id": "HA-APV-01",
@@ -270,8 +338,12 @@
           "due": "2026-07-17",
           "status": "대기",
           "tracker": "dashboard/data/approvals.json",
-          "outputs": ["approvals.json id 1 status 갱신"],
-          "blocks": ["베타"]
+          "outputs": [
+            "approvals.json id 1 status 갱신"
+          ],
+          "blocks": [
+            "베타"
+          ]
         }
       ]
     }
