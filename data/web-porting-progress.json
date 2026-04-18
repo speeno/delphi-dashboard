@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-18 — C9 Phase1 완료·실DB 검증 반영(porting-screens: `/api/v1/masters/*`·런타임 블록) · DEC-024~026 · buk.io 톤 1단계",
+  "updatedAt": "2026-04-19 — 트래커 task 상태 어휘 정정(completed→done) · C9 카드 0/8→8/8 정상 표시 · 그 외 C2/C6 동시 회복 · 실DB HOT-MAS-3 유지",
   "phase": "Phase 1",
   "productNote": "실행 UI는 저장소 `도서물류관리프로그램/` (제품 웹). 본 섹션은 개발 진행용 허브 대시보드 전용.",
   "docLinks": [

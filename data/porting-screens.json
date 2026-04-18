@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-18 — C9 Phase1 완료 · API `/api/v1/masters/*` 정합 · 실DB HOT-MAS-3 · Wave D · DEC-019~023",
+  "updatedAt": "2026-04-19 — 트래커 task 어휘 정정(완료 카운트 회복: completed→done, 80건) · C9/C2/C6 진행률 100% 정상 표시 · API `/api/v1/masters/*` · 실DB HOT-MAS-3",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {
@@ -356,7 +356,7 @@
       "gateId": 2,
       "purpose": "기초 마스터 데이터 단일 원천 확정 후 조회·수정 활성 + 웹 전용 관리(사용자/서버/권한/환경설정 개정) 도입",
       "summary": "Sobo11·14·17·38·39·45 READ + 거래처/도서 PATCH + Wave D /admin. Phase1 수용 완료. 실DB 검증: G1_Ggeo 주소(Gadd1/2)·G4_Book 비정규 문자열 HOT-MAS-3 반영. Phase2·INSERT/RBAC 등은 deferrals.",
-      "phase1_status": "completed",
+      "phase1_status": "complete",
       "phase1_acceptance_goal": "C9 단일 원천 6폼 사이드바 노출 + READ 전체 + PATCH 2폼(거래처/도서) + Wave D /admin 4페이지 + DEC-019~023 동결",
       "delphi": {
         "primary_form": "TSobo11 (거래처-마스터)",
@@ -545,35 +545,35 @@
       ],
       "tasks": {
         "T1": {
-          "status": "completed",
+          "status": "done",
           "note": "analysis/screen_cards/Sobo{11,14,17,38,39,45}*.md 단일 원천 확정"
         },
         "T2": {
-          "status": "completed",
+          "status": "done",
           "note": "Subu11/14/17/38/39/45 SQL 추출 + DEC-023 결정"
         },
         "T3": {
-          "status": "completed",
+          "status": "done",
           "note": "master_data.yaml + admin_web_platform.yaml v1.0.0 작성"
         },
         "T4": {
-          "status": "completed",
+          "status": "done",
           "note": "C2/C6 회귀 가드 34건 활용 (마스터 회귀 영향 없음 확인)"
         },
         "T5": {
-          "status": "completed",
+          "status": "done",
           "note": "masters_service 6 함수 + admin_service Wave D 풀스택"
         },
         "T6": {
-          "status": "completed",
+          "status": "done",
           "note": "/master 6 페이지 + /admin 4 페이지 + form-registry master/admin 그룹"
         },
         "T7": {
-          "status": "completed",
+          "status": "done",
           "note": "회귀 가드: pytest 34/34, tsc 0, eslint 0, yaml/json OK · HOT-MAS-3 운영 DB·문자셋 보강 후 루트 test 마스터·페이징 계약 재통과"
         },
         "T8": {
-          "status": "completed",
+          "status": "done",
           "note": "DEC-019~023 동결 · 대시보드 C9 API masters 경로·런타임 블록·실DB 진행 문구 반영"
         }
       }
@@ -777,35 +777,35 @@
       ],
       "tasks": {
         "T1": {
-          "status": "completed",
+          "status": "done",
           "note": "analysis/screen_cards/Sobo27.md (자동 + 수동 §10)"
         },
         "T2": {
-          "status": "completed",
+          "status": "done",
           "note": "analysis/c2_outbound_flow.md (Subu27.pas 인용 + POC sobo67 diff)"
         },
         "T3": {
-          "status": "completed",
+          "status": "done",
           "note": "outbound_order.yaml v1.0.0 approved"
         },
         "T4": {
-          "status": "completed",
+          "status": "done",
           "note": "outbound_order.json v1.0.0-phase1 approved (12 cases)"
         },
         "T5": {
-          "status": "completed",
+          "status": "done",
           "note": "backend models/services/routers/audit/db 모두 추가"
         },
         "T6": {
-          "status": "completed",
+          "status": "done",
           "note": "frontend outbound 페이지 + 컴포넌트 + column-labels"
         },
         "T7": {
-          "status": "completed",
+          "status": "done",
           "note": "test/test_c2_outbound_phase1.py 14건 PASS + 평가 보고서"
         },
         "T8": {
-          "status": "completed",
+          "status": "done",
           "note": "dashboard JSON 동기화 완료"
         }
       }
