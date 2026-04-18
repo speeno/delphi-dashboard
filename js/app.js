@@ -34,6 +34,7 @@ async function loadAll() {
     dbSchemaAnalysis,
     webPortingProgress,
     humanActionItems,
+    portingScreens,
   ] = await Promise.all([
     loadJSON('project.json'),
     loadJSON('sprints.json'),
@@ -50,6 +51,7 @@ async function loadAll() {
     loadJSON('db-schema-analysis.json'),
     loadJSON('web-porting-progress.json'),
     loadJSON('human-action-items.json'),
+    loadJSON('porting-screens.json'),
   ]);
   return {
     project,
@@ -67,6 +69,7 @@ async function loadAll() {
     dbSchemaAnalysis,
     webPortingProgress,
     humanActionItems,
+    portingScreens,
   };
 }
 
@@ -571,6 +574,226 @@ function renderHumanActionItems(data) {
     </div>`;
 }
 
+function tStatusLabel(status) {
+  return {
+    not_started: '미착수',
+    in_progress: '진행중',
+    review: '리뷰',
+    done: '완료',
+    blocked: '차단',
+  }[status] || status || '미착수';
+}
+
+function scenarioProgress(sc) {
+  const tasks = sc.tasks || {};
+  const keys = Object.keys(tasks);
+  if (!keys.length) return { done: 0, total: 0, pct: 0 };
+  const done = keys.filter((k) => tasks[k]?.status === 'done').length;
+  return { done, total: keys.length, pct: Math.round((done / keys.length) * 100) };
+}
+
+function aggregateProgress(scenarios) {
+  let done = 0;
+  let total = 0;
+  scenarios.forEach((sc) => {
+    const p = scenarioProgress(sc);
+    done += p.done;
+    total += p.total;
+  });
+  return { done, total, pct: total ? Math.round((done / total) * 100) : 0 };
+}
+
+function renderPortingScreens(data) {
+  const ps = data.portingScreens;
+  if (!ps || !Array.isArray(ps.scenarios) || ps.scenarios.length === 0) return '';
+
+  const stages = ps.stages || [];
+  const stageById = {};
+  stages.forEach((s) => { stageById[s.id] = s; });
+
+  const approvalsById = {};
+  (data.approvals || []).forEach((a) => { approvalsById[a.id] = a; });
+
+  const scenarios = [...ps.scenarios].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const totals = aggregateProgress(scenarios);
+
+  const stageOrder = (ps.dashboardOrder && ps.dashboardOrder.length)
+    ? ps.dashboardOrder
+    : stages.map((s) => s.id);
+
+  const stageBars = stageOrder.map((sid) => {
+    const stage = stageById[sid];
+    if (!stage) return '';
+    const inStage = scenarios.filter((sc) => sc.stage === sid);
+    const agg = aggregateProgress(inStage);
+    return `
+      <div style="margin:6px 0">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:2px">
+          <span>단계 ${sid} · ${escapeHtml(stage.name)}</span>
+          <span>${agg.done}/${agg.total} (${agg.pct}%)</span>
+        </div>
+        <div class="progress-bar"><div class="fill ${agg.pct >= 80 ? 'fill-success' : 'fill-primary'}" style="width:${agg.pct}%"></div></div>
+      </div>`;
+  }).join('');
+
+  const lines = ps.lines || {};
+  const lineKeys = Object.keys(lines);
+  const lineBars = lineKeys.map((lk) => {
+    const line = lines[lk];
+    const members = (line.members || []);
+    const memberScenarios = scenarios.filter((sc) => members.includes(sc.id));
+    const agg = aggregateProgress(memberScenarios);
+    return `
+      <div style="margin:6px 0">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:2px">
+          <span>${escapeHtml(line.label || lk)} (${members.join(', ')})</span>
+          <span>${agg.done}/${agg.total} (${agg.pct}%)</span>
+        </div>
+        <div class="progress-bar"><div class="fill ${agg.pct >= 80 ? 'fill-success' : 'fill-primary'}" style="width:${agg.pct}%"></div></div>
+      </div>`;
+  }).join('');
+
+  const summaryHTML = `
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-label">시나리오·T1~T8 진행 요약</div>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:6px 0 10px">
+        <div style="font-size:24px;font-weight:700">${totals.done} / ${totals.total}</div>
+        <div style="font-size:12px;color:var(--text-muted)">T 단계 완료 (시나리오 ${scenarios.length}건 × T1~T8 = ${totals.total}건)</div>
+      </div>
+      <div class="progress-bar" style="margin-bottom:12px"><div class="fill ${totals.pct >= 80 ? 'fill-success' : 'fill-primary'}" style="width:${totals.pct}%"></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px">
+        <div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:4px">단계별 진행률</div>
+          ${stageBars}
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:4px">라인별 진행률</div>
+          ${lineBars || '<div style="font-size:11px;color:var(--text-muted)">라인 정의 없음</div>'}
+        </div>
+      </div>
+      ${ps.updatedAt ? `<p style="font-size:11px;color:var(--text-muted);margin:10px 0 0">갱신: ${escapeHtml(ps.updatedAt)} · 트래커: <code style="font-size:11px">dashboard/data/porting-screens.json</code> · 계획서: <code style="font-size:11px">${escapeHtml(ps.planDoc || 'docs/core-scenarios-porting-plan.md')}</code></p>` : ''}
+    </div>`;
+
+  const lineFilters = [
+    { key: 'all', label: '전체', members: scenarios.map((s) => s.id) },
+    ...lineKeys.map((lk) => ({ key: lk, label: lines[lk].label || lk, members: lines[lk].members || [] })),
+  ];
+  const filterTabsHTML = lineFilters.map((f, i) =>
+    `<button class="tab ${i === 0 ? 'active' : ''}" data-porting-line="${escapeHtml(f.key)}" data-porting-members="${escapeHtml((f.members || []).join(','))}">${escapeHtml(f.label)}</button>`
+  ).join('');
+
+  const tList = ['T1','T2','T3','T4','T5','T6','T7','T8'];
+  const taskTemplate = ps.taskTemplate || {};
+
+  const stageGroupsHTML = stageOrder.map((sid) => {
+    const stage = stageById[sid];
+    if (!stage) return '';
+    const inStage = scenarios.filter((sc) => sc.stage === sid);
+    if (!inStage.length) return '';
+    const stageGate = stage.gateId ? approvalsById[stage.gateId] : null;
+    const stageGateLine = stageGate
+      ? `<span class="flow-badge flow-badge-serial" style="margin-left:8px">게이트 #${stageGate.id} · ${escapeHtml(stageGate.name)}</span>`
+      : '';
+
+    const cards = inStage.map((sc) => {
+      const prog = scenarioProgress(sc);
+      const gate = sc.gateId ? approvalsById[sc.gateId] : null;
+      const chips = tList.map((tk) => {
+        const t = sc.tasks?.[tk] || { status: 'not_started' };
+        const fullTitle = `${tk} · ${taskTemplate[tk] || ''}\n상태: ${tStatusLabel(t.status)}${t.note ? '\n메모: ' + t.note : ''}`;
+        return `<span class="porting-tchip" data-status="${escapeHtml(t.status || 'not_started')}" title="${escapeHtml(fullTitle)}">${tk}</span>`;
+      }).join('');
+
+      const meta = [
+        `단계 ${sc.stage}`,
+        sc.permission_keys && sc.permission_keys.length ? `권한 ${sc.permission_keys.join('/')}` : '',
+        gate ? `게이트 #${gate.id}` : '',
+        sc.db_impact ? `DB ${sc.db_impact}` : '',
+      ].filter(Boolean).join(' · ');
+
+      const delphi = sc.delphi || {};
+      const relatedForms = (delphi.related_forms || []).map((f) => `<li>${escapeHtml(f)}</li>`).join('');
+      const routes = (sc.web?.routes || []).map((r) => `<li><code style="font-size:11px">${escapeHtml(r)}</code></li>`).join('');
+      const endpoints = (sc.web?.endpoints || []).map((r) => `<li><code style="font-size:11px">${escapeHtml(r)}</code></li>`).join('');
+      const backend = (sc.web?.backend || []).map((r) => `<li><code style="font-size:11px">${escapeHtml(r)}</code></li>`).join('');
+      const frontend = (sc.web?.frontend || []).map((r) => `<li><code style="font-size:11px">${escapeHtml(r)}</code></li>`).join('');
+      const subs = (sc.subscenarios_absorbed || []).map((s) => `<li>${escapeHtml(s)}</li>`).join('');
+
+      return `
+        <div class="card porting-screen-card" data-scenario-id="${escapeHtml(sc.id)}" style="padding:12px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px">
+            <div>
+              <div style="font-size:11px;color:var(--text-muted)"><code style="font-size:11px">${escapeHtml(sc.id)}</code></div>
+              <div style="font-size:14px;font-weight:600;margin-top:2px">${escapeHtml(sc.name)}</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${escapeHtml(meta)}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:18px;font-weight:700">${prog.pct}%</div>
+              <div style="font-size:11px;color:var(--text-muted)">${prog.done}/${prog.total}</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);margin:4px 0 8px;line-height:1.45">${escapeHtml(sc.summary || sc.purpose || '')}</div>
+          <div class="porting-tchip-row">${chips}</div>
+          <div class="progress-bar" style="margin-top:8px"><div class="fill ${prog.pct >= 80 ? 'fill-success' : 'fill-primary'}" style="width:${prog.pct}%"></div></div>
+          <details style="margin-top:10px">
+            <summary style="font-size:12px;cursor:pointer;color:var(--text-muted)">세부 정보 (델파이 폼 · 웹 라우트 · 산출물)</summary>
+            <div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px">
+              <div>
+                <div style="font-weight:600;margin-bottom:4px">델파이</div>
+                <ul style="margin:0;padding-left:18px;color:var(--text-muted)">
+                  <li>주 폼: <code style="font-size:11px">${escapeHtml(delphi.primary_form || '-')}</code></li>
+                  <li>유닛: <code style="font-size:11px">${escapeHtml(delphi.primary_unit || '-')}</code></li>
+                  <li>DFM: <code style="font-size:11px">${escapeHtml(delphi.dfm || '-')}</code></li>
+                  ${relatedForms ? `<li>관련: <ul style="margin:2px 0;padding-left:18px">${relatedForms}</ul></li>` : ''}
+                </ul>
+              </div>
+              <div>
+                <div style="font-weight:600;margin-bottom:4px">웹 (제안)</div>
+                <ul style="margin:0;padding-left:18px;color:var(--text-muted)">
+                  ${routes ? `<li>라우트: <ul style="margin:2px 0;padding-left:18px">${routes}</ul></li>` : ''}
+                  ${endpoints ? `<li>엔드포인트: <ul style="margin:2px 0;padding-left:18px">${endpoints}</ul></li>` : ''}
+                  ${backend ? `<li>백엔드: <ul style="margin:2px 0;padding-left:18px">${backend}</ul></li>` : ''}
+                  ${frontend ? `<li>프론트엔드: <ul style="margin:2px 0;padding-left:18px">${frontend}</ul></li>` : ''}
+                </ul>
+              </div>
+            </div>
+            <div style="margin-top:10px;font-size:12px">
+              <div style="font-weight:600;margin-bottom:4px">산출물</div>
+              <ul style="margin:0;padding-left:18px;color:var(--text-muted)">
+                <li>Migration Contract: <code style="font-size:11px">${escapeHtml(sc.contract || '-')}</code></li>
+                <li>Test Pack: <code style="font-size:11px">${escapeHtml(sc.testpack || '-')}</code></li>
+                ${subs ? `<li>흡수된 하위 시나리오: <ul style="margin:2px 0;padding-left:18px">${subs}</ul></li>` : ''}
+                ${gate ? `<li>게이트 의존: <strong>#${gate.id} ${escapeHtml(gate.name)}</strong> (예정 ${escapeHtml(gate.plannedDate || '-')})</li>` : ''}
+              </ul>
+            </div>
+          </details>
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="porting-stage-group" data-stage="${sid}" style="margin-top:14px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+          <div style="font-size:14px;font-weight:600">단계 ${sid} — ${escapeHtml(stage.name)}</div>
+          ${stageGateLine}
+        </div>
+        <div class="grid grid-2">${cards}</div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="section" id="porting-screens-section">
+      <div class="section-title">${escapeHtml(ps.title || '핵심 10 시나리오 — 화면 단위 포팅 진행')}</div>
+      ${summaryHTML}
+      <div class="card" style="padding:10px;margin-bottom:8px">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">라인 필터</div>
+        <div class="tabs" id="porting-line-tabs">${filterTabsHTML}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px">상태 색: <span class="porting-tchip" data-status="not_started">미착수</span> <span class="porting-tchip" data-status="in_progress">진행중</span> <span class="porting-tchip" data-status="review">리뷰</span> <span class="porting-tchip" data-status="done">완료</span> <span class="porting-tchip" data-status="blocked">차단</span></div>
+      </div>
+      ${stageGroupsHTML}
+      <p style="font-size:11px;color:var(--text-muted);margin-top:14px;line-height:1.55">운영 규칙은 <code style="font-size:11px">${escapeHtml(ps.planDoc || 'docs/core-scenarios-porting-plan.md')}</code> §5 참조. 상태 갱신은 트래커 JSON 편집(DEC-002 정적 사이트 원칙).</p>
+    </div>`;
+}
+
 function renderOverview(data) {
   const { project, sprints, dbStatus } = data;
   const current = sprints.find(s => s.status === '진행중') || sprints[0];
@@ -1013,6 +1236,25 @@ function bindEvents(data) {
     });
   });
 
+  document.querySelectorAll('#porting-line-tabs .tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('#porting-line-tabs .tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const lineKey = tab.dataset.portingLine;
+      const members = (tab.dataset.portingMembers || '').split(',').filter(Boolean);
+      const memberSet = new Set(members);
+      document.querySelectorAll('#porting-screens-section .porting-screen-card').forEach((card) => {
+        const sid = card.dataset.scenarioId;
+        card.style.display = (lineKey === 'all' || memberSet.has(sid)) ? '' : 'none';
+      });
+      document.querySelectorAll('#porting-screens-section .porting-stage-group').forEach((group) => {
+        const visible = Array.from(group.querySelectorAll('.porting-screen-card'))
+          .some((c) => c.style.display !== 'none');
+        group.style.display = visible ? '' : 'none';
+      });
+    });
+  });
+
   document.querySelectorAll('.timeline-item').forEach(item => {
     item.addEventListener('click', () => {
       const id = parseInt(item.dataset.sprint);
@@ -1042,6 +1284,7 @@ async function init() {
       renderOverview(data),
       renderHumanActionItems(data),
       renderWebPortingProgressSection(data),
+      renderPortingScreens(data),
       renderCalendarSection(data),
       renderReleaseMilestones(data),
       renderTimeline(data),

@@ -925,3 +925,28 @@ footer {
   .cal-day-num { font-size: 11px; }
   .cal-dot { width: 5px; height: 5px; }
 }
+
+.porting-tchip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.porting-tchip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text-muted);
+  cursor: help;
+}
+.porting-tchip[data-status="not_started"] { background: var(--surface-alt); color: var(--text-muted); border-color: var(--border); }
+.porting-tchip[data-status="in_progress"] { background: var(--primary); color: #fff; border-color: var(--primary); }
+.porting-tchip[data-status="review"]      { background: var(--warning); color: #1e293b; border-color: var(--warning); }
+.porting-tchip[data-status="done"]        { background: var(--success); color: #fff; border-color: var(--success); }
+.porting-tchip[data-status="blocked"]     { background: var(--danger); color: #fff; border-color: var(--danger); }

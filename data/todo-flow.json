@@ -20,6 +20,41 @@
       "id": "V1",
       "name": "1차 기능 완료(합의된 범위)",
       "note": "이후 중급·초급 인수인계·유지보수 본격화"
+    },
+    {
+      "id": "GATE-1",
+      "name": "분석 산출물 승인 (approvals #1)",
+      "note": "10대 산출물 #1~#6 + Legacy Object Catalog 검증 — 단계 0~1 진입 조건"
+    },
+    {
+      "id": "GATE-2",
+      "name": "DB 로직 검토 게이트 (approvals #2)",
+      "note": "OQ-DBL 클로저 + query_capture 1회 — 단계 2(등록) 진입 조건"
+    },
+    {
+      "id": "GATE-3",
+      "name": "API 계약 승인 (approvals #3)",
+      "note": "Migration Contract + Eval Case — 단계 3(수정/취소·정산) 진입 조건"
+    },
+    {
+      "id": "GATE-4",
+      "name": "고객사별 차이 승인 (approvals #4)",
+      "note": "Customer Variant Matrix 확정 — 단계 5(권한·고객사) 진입 조건"
+    },
+    {
+      "id": "GATE-5",
+      "name": "인쇄 결과 승인 (approvals #5)",
+      "note": "라벨/송장/리포트 출력 동일성 — 단계 4(인쇄) 통과 조건"
+    },
+    {
+      "id": "GATE-6",
+      "name": "UAT 승인 (approvals #6)",
+      "note": "5축 eval 동등성 입증 — 공식오픈 진입 조건"
+    },
+    {
+      "id": "GATE-7",
+      "name": "Cut-over 승인 (approvals #7)",
+      "note": "Routing 100% 전환 최종 결정"
     }
   ],
   "phases": [
@@ -150,6 +185,44 @@
           "taskIds": ["SM-S0-01", "SM-S0-02", "SJ-S0-02", "SJ-S0-03"]
         }
       ]
+    },
+    {
+      "id": "F-PORT",
+      "order": 99,
+      "name": "핵심 10 시나리오 화면 단위 포팅 (DEC-003 단계 0~5)",
+      "gateAfter": "GATE-1",
+      "stages": [
+        {
+          "mode": "serial",
+          "label": "단계 0 — 인증·세션 (전제, 게이트 #1)",
+          "taskIds": ["M-S1-PORT-C1"]
+        },
+        {
+          "mode": "parallel",
+          "label": "단계 1 — 읽기 전용 조회 (게이트 #1)",
+          "taskIds": ["M-S1-PORT-C6"]
+        },
+        {
+          "mode": "parallel",
+          "label": "단계 2 — 신규 등록 (게이트 #2 통과 후)",
+          "taskIds": ["M-S1-PORT-C9", "M-S1-PORT-C3"]
+        },
+        {
+          "mode": "serial",
+          "label": "단계 3 — 수정·취소·정산 (게이트 #3 통과 후)",
+          "taskIds": ["M-S1-PORT-C2", "M-S1-PORT-C4", "M-S1-PORT-C5"]
+        },
+        {
+          "mode": "parallel",
+          "label": "단계 4 — 배치·인쇄·장비 (게이트 #5 산출물 입력)",
+          "taskIds": ["M-S1-PORT-C7", "M-S1-PORT-C8"]
+        },
+        {
+          "mode": "serial",
+          "label": "단계 5 — 권한·고객사 분기 (게이트 #4)",
+          "taskIds": ["M-S1-PORT-C10"]
+        }
+      ]
     }
   ],
   "dependencyNotes": [
@@ -157,6 +230,11 @@
     { "taskIds": ["M-S0-03", "M-S0-04"], "requires": "DB 접속 또는 덤프 (게이트 DB)" },
     { "taskIds": ["M-S0-10"], "requires": "분석 파이프라인(M-S0-02) 및 평가 기준(P-S0-05) 초안 권장" },
     { "taskIds": ["P-S0-10"], "requires": "Migration Contract·Eval 산출 경로 가동 시 매핑 검토가 유효" },
-    { "taskIds": ["SM-S0-01", "SM-S0-02", "SJ-S0-02", "SJ-S0-03"], "requires": "M-S0-14 합의 후, V1(게이트) 이후 본격 운영" }
+    { "taskIds": ["SM-S0-01", "SM-S0-02", "SJ-S0-02", "SJ-S0-03"], "requires": "M-S0-14 합의 후, V1(게이트) 이후 본격 운영" },
+    { "taskIds": ["M-S1-PORT-C1", "M-S1-PORT-C6"], "requires": "GATE-1 분석 산출물 승인 (approvals #1)" },
+    { "taskIds": ["M-S1-PORT-C9", "M-S1-PORT-C3"], "requires": "GATE-2 DB 로직 검토 게이트 (approvals #2)" },
+    { "taskIds": ["M-S1-PORT-C2", "M-S1-PORT-C4", "M-S1-PORT-C5"], "requires": "GATE-3 API 계약 승인 (approvals #3)" },
+    { "taskIds": ["M-S1-PORT-C7"], "requires": "GATE-5 인쇄 결과 승인 (approvals #5) — 단계 4 통과 조건" },
+    { "taskIds": ["M-S1-PORT-C10"], "requires": "GATE-4 고객사별 차이 승인 (approvals #4)" }
   ]
 }

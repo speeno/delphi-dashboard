@@ -4,13 +4,19 @@
   "updatedAt": "2026-04-18",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
-    { "id": 0, "name": "인증·세션 (전제)", "dec003": "전제", "gate": 1 },
-    { "id": 1, "name": "읽기 전용 조회", "dec003": "읽기", "gate": 1 },
-    { "id": 2, "name": "신규 등록 (마스터·입고)", "dec003": "등록", "gate": 2 },
-    { "id": 3, "name": "수정·취소·정산", "dec003": "수정/취소", "gate": 3 },
-    { "id": 4, "name": "배치·인쇄·장비", "dec003": "배치/인쇄/장비", "gate": 5 },
-    { "id": 5, "name": "권한·고객사 분기", "dec003": "고객사 분기", "gate": 4 }
+    { "id": 0, "name": "인증·세션 (전제)", "dec003": "전제", "gate": 1, "gateId": 1 },
+    { "id": 1, "name": "읽기 전용 조회", "dec003": "읽기", "gate": 1, "gateId": 1 },
+    { "id": 2, "name": "신규 등록 (마스터·입고)", "dec003": "등록", "gate": 2, "gateId": 2 },
+    { "id": 3, "name": "수정·취소·정산", "dec003": "수정/취소", "gate": 3, "gateId": 3 },
+    { "id": 4, "name": "배치·인쇄·장비", "dec003": "배치/인쇄/장비", "gate": 5, "gateId": 5 },
+    { "id": 5, "name": "권한·고객사 분기", "dec003": "고객사 분기", "gate": 4, "gateId": 4 }
   ],
+  "dashboardOrder": [0, 1, 2, 3, 4, 5],
+  "lines": {
+    "betaMinimumLine": { "label": "베타 최소", "members": ["C1", "C2", "C7"] },
+    "betaRecommendedLine": { "label": "베타 권장", "members": ["C1", "C2", "C6", "C7", "C8"] },
+    "internalOpenLine": { "label": "내부오픈", "members": ["C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10"] }
+  },
   "taskTemplate": {
     "T1": "화면 카드 생성 (analysis/screen_cards/<form>.md)",
     "T2": "레거시 흐름·SQL 인용 추출",
@@ -27,6 +33,7 @@
       "stage": 0,
       "id": "C1",
       "name": "로그인·세션 시작",
+      "gateId": 1,
       "purpose": "사용자 인증·세션 발급·헤더에 Hcode/Hname 노출",
       "summary": "Id_Logn 조회 → JWT 발급 / Hcode='0000' 슈퍼유저 분기",
       "delphi": {
@@ -62,6 +69,7 @@
       "stage": 1,
       "id": "C6",
       "name": "거래/잔액 조회 (읽기 전용)",
+      "gateId": 1,
       "purpose": "거래·재고·잔액 그리드 조회 (변경 0)",
       "summary": "거래명세·도서별판매·거래처판매·도서별수불원장 SELECT only",
       "delphi": {
@@ -97,6 +105,7 @@
       "stage": 2,
       "id": "C9",
       "name": "상품·고객 마스터 등록",
+      "gateId": 2,
       "purpose": "마스터 데이터 CRUD (거래처·도서·출판사·입고처·특별)",
       "summary": "G6_Ggeo 등 마스터 INSERT/UPDATE/DELETE",
       "delphi": {
@@ -123,6 +132,7 @@
       "stage": 2,
       "id": "C3",
       "name": "입고 접수",
+      "gateId": 2,
       "purpose": "신규 입고 INSERT 위주 + FTP 자료 수신",
       "summary": "입고 본 테이블 INSERT, Sobo38 FTP 자료받기, Tong08 바코드 결합 가능",
       "delphi": {
@@ -149,6 +159,7 @@
       "stage": 3,
       "id": "C2",
       "name": "출고 접수(주문 입력)",
+      "gateId": 3,
       "purpose": "핵심 매출 흐름 (등록·수정·취소)",
       "summary": "S1_Ssub·Sg_Csum INSERT/UPDATE, Tong08 바코드 결합. C11(수정/취소) 흡수",
       "delphi": {
@@ -175,6 +186,7 @@
       "stage": 3,
       "id": "C4",
       "name": "반품 처리",
+      "gateId": 3,
       "purpose": "반품 + 재고 영향 + 정산 영향",
       "summary": "UPDATE/DELETE 동반, 정품/반품/폐기 재고 분기, 패스워드 모달 보호",
       "delphi": {
@@ -201,6 +213,7 @@
       "stage": 3,
       "id": "C5",
       "name": "정산(일·월 마감)",
+      "gateId": 3,
       "purpose": "일·월 집계·청구·세금계산서·입금 정산",
       "summary": "집계 테이블 UPDATE, C12(마감 후 차단) 흡수, Subu40 패스워드 모달 보호",
       "delphi": {
@@ -227,6 +240,7 @@
       "stage": 4,
       "id": "C7",
       "name": "라벨/송장 인쇄",
+      "gateId": 5,
       "purpose": "거래명세·라벨·송장·세무 출력",
       "summary": "DEC-004: HTML 인쇄 + 라벨 PDF 하이브리드. QuickReport/Printer.Canvas → HTML/PDF 매핑",
       "delphi": {
@@ -254,6 +268,7 @@
       "stage": 4,
       "id": "C8",
       "name": "바코드 스캔 → 출고/입고/반품 매칭",
+      "gateId": 5,
       "purpose": "스캔 1건마다 매칭 SELECT/UPDATE",
       "summary": "DEC-004: USB-HID 키보드 웨지 1차 (Web Serial은 베타 후 OQ-002 결과로 재검토)",
       "delphi": {
@@ -280,6 +295,7 @@
       "stage": 5,
       "id": "C10",
       "name": "권한 관리(f11~f89)",
+      "gateId": 4,
       "purpose": "사용자·권한 매트릭스 관리",
       "summary": "Id_Logn UPDATE. C13(세션 만료·권한 부족), C15(병행 충돌) 연계 E2E",
       "delphi": {
