@@ -14,6 +14,14 @@
     {
       "label": "핵심 시나리오 후보·합의 (5~10·다양성 축)",
       "path": "docs/core-scenarios-candidates.md"
+    },
+    {
+      "label": "핵심 10 시나리오 — 화면 단위 포팅 계획·진행표",
+      "path": "docs/core-scenarios-porting-plan.md"
+    },
+    {
+      "label": "포팅 진행 트래커 (머신리더블)",
+      "path": "dashboard/data/porting-screens.json"
     }
   ],
   "blocks": [
