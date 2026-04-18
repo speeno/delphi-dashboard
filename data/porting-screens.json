@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-18 (C9 단일 원천 + Wave D 웹관리 1차 완료 — DEC-019~023 동결)",
+  "updatedAt": "2026-04-18 (C9 운영 DB 핫픽스 G1 주소/G4 문자 디코드 + 단일 원천·Wave D — DEC-019~023 동결)",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {
@@ -480,6 +480,16 @@
             "도서물류관리프로그램/frontend/src/app/(app)/admin/user-servers/page.tsx"
           ],
           "verified_by": "tsc 0 error · eslint 0 warning"
+        },
+        {
+          "id": "HOT-MAS-3",
+          "date": "2026-04-18",
+          "summary": "운영 DB 정합 — G1_Ggeo 주소는 `Gadd1`/`Gadd2`(스키마에 `Gjuso` 없음): masters_service list/get은 CONCAT_WS AS gjuso, PATCH는 gjuso→Gadd1·Gadd2 분할. G4_Book list 대량 페이징: 비정규 EUC-KR 바이트로 PyMySQL UnicodeDecodeError → db.py 풀 use_unicode=False + execute_query에서 euc-kr errors=replace 정규화.",
+          "files": [
+            "도서물류관리프로그램/backend/app/services/masters_service.py",
+            "도서물류관리프로그램/backend/app/core/db.py"
+          ],
+          "verified_by": "현장 remote_138 목록·페이징 500 재현 해소 · test/test_pagination_contracts.py·test_masters_q_search.py 회귀"
         }
       ],
       "deferrals": [
@@ -550,7 +560,7 @@
         },
         "T7": {
           "status": "completed",
-          "note": "회귀 가드: pytest 34/34, tsc 0, eslint 0, yaml/json OK"
+          "note": "회귀 가드: pytest 34/34, tsc 0, eslint 0, yaml/json OK · HOT-MAS-3 운영 DB·문자셋 보강 후 루트 test 마스터·페이징 계약 재통과"
         },
         "T8": {
           "status": "completed",

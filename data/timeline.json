@@ -138,5 +138,26 @@
     "title": "DEC-024: list 응답 paging 표준 + DataGrid 페이저",
     "description": "C2/C6/C9 + 후속 list/aggregate 응답을 {items, page:{limit,offset,total,has_more}} 단일 컨벤션으로 통일. backend/app/core/pagination.py 헬퍼(clamp_limit/clamp_offset/build_page/with_page) 도입. C9 마스터 6개(customer/book/publisher/book-code/discount/logistics-cost) page 단독, C2/C6 list/report 1차 BC(평면 total/limit/offset 보존, Phase 2 deprecation). C6 reports 2개 가상 페이징(full aggregate→in-memory slice). 프론트 DataGridPager 컴포넌트(기본 100, 옵션 50/100/200/500) 모든 list 페이지(8개) 적용. 회귀: pytest 69건(34 기존 + 28 신규 paging + 7 c1) 통과, tsc 클린.",
     "sprint": 1
+  },
+  {
+    "date": "2026-04-18",
+    "type": "decision",
+    "title": "DEC-026: 마스터 PK NULL/빈 row 가드 + DataGrid rowKey 안전 폴백",
+    "description": "도서코드 마스터 화면 상단 빈 행 노출 + React duplicate key warning 핵스. (1) backend masters_service._build_master_where 헬퍼 신설 — 6 종 마스터 list (customer/book/publisher/book-code/discount/logistics-cost) 가 Gcode IS NOT NULL AND Gcode <> '' PK 가드를 자동 통과 (DRY/OCP). 검색 컬럼만 호출자에서 명시. (2) frontend DataGrid 의 row 렌더러를 renderBodyRows 로 추출, 호출자 rowKey 가 빈 문자열/NULL/중복을 반환해도 index 합성으로 React 경고 차단 (LSP). 6 마스터 + outbound + sales-statement + reports 2 화면 자동 보호. (3) 회귀 가드: test/test_masters_q_search.py MasterPkGuard 클래스 5 testcase / 12 subtest 추가, 누적 16/30 PASS.",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-18",
+    "type": "decision",
+    "title": "DEC-025: 마스터 q 검색 회귀 가드 + 동적 페이저 + buk.io 톤앤매너 1단계",
+    "description": "(1) 백엔드 root fix — app/core/db._escape_mysql3_value 가 int/float/bool 을 quote 없이 인라인하도록 수정 (MySQL 3.x LIMIT/OFFSET quoted-string 거부 회귀 차단). (2) masters_service._likify 헬퍼로 6 종 마스터 list 의 LIKE 패턴 생성 단일화 (와일드카드 escape, 후속 charset 가드 자리 1곳, SOLID OCP). BLS_DEBUG_MASTER_SEARCH=1 게이트로 q raw/pattern/SQL/params 캡처. 진단 보조: debug/diagnose_master_search.py. 회귀 가드: test/test_masters_q_search.py — 빈/ASCII/한글 q × 6 마스터 = 18 케이스 + db escape 단위 = 11 testcase / 18 subtest. (3) 프론트 DataGridPager 에 「자동(N)」 옵션 + components/data-grid/{recommend-page-size,use-dynamic-page-size}.ts (ResizeObserver+localStorage 수동 우선) 신설, 8 개 list 페이지(master 6 + outbound + sales-statement + reports 2) 일괄 적용. (4) buk.io 서브도메인 입주 톤앤매너 1단계 — globals.css 토큰만 변경(컴포넌트 구조 무변경): Pretendard Variable 로딩 + 잉크 네이비/따뜻한 코랄 액센트 + radius 0.625rem.",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-18",
+    "type": "milestone",
+    "title": "C9 마스터 운영 DB 정합 + aiomysql 문자 디코딩 안정화",
+    "description": "실 DB(예: remote_138) 검증 중 `/master/customer`·`/master/book` HTTP 500. 근본 원인 (1) 거래처 `G1_Ggeo`: 레거시 스키마는 주소가 `Gadd1`/`Gadd2` — 코드가 존재하지 않는 `Gjuso` 참조로 MySQL 1054. API `gjuso`는 CONCAT_WS로 노출, PATCH는 90+90자 분할 저장. (2) 도서 `G4_Book`: 일부 행 문자열이 EUC-KR 비정규 바이트 → aiomysql/PyMySQL wire 디코드에서 UnicodeDecodeError 후 연결 패킷 오염. `도서물류관리프로그램/backend/app/core/db.py` 풀 `use_unicode=False` + `execute_query`에서 바이트를 `euc-kr`(errors=replace)로 정규화. 대시보드 project.overallProgress·Sprint1 갱신, web-porting-progress·porting-screens HOT-MAS-3 반영.",
+    "sprint": 1
   }
 ]
