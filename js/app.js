@@ -706,6 +706,7 @@ function renderPortingScreens(data) {
 
       const meta = [
         `단계 ${sc.stage}`,
+        sc.delphi && sc.delphi.menu_path ? `메뉴 ${sc.delphi.menu_path}` : '',
         sc.permission_keys && sc.permission_keys.length ? `권한 ${sc.permission_keys.join('/')}` : '',
         gate ? `게이트 #${gate.id}` : '',
         sc.db_impact ? `DB ${sc.db_impact}` : '',
@@ -719,17 +720,25 @@ function renderPortingScreens(data) {
       const frontend = (sc.web?.frontend || []).map((r) => `<li><code style="font-size:11px">${escapeHtml(r)}</code></li>`).join('');
       const subs = (sc.subscenarios_absorbed || []).map((s) => `<li>${escapeHtml(s)}</li>`).join('');
 
+      // 1차 포팅 화면 바로가기(web.app_url) — 정의된 경우에만 노출.
+      // 일반화: 어느 시나리오든 web.app_url 만 채우면 동일하게 버튼이 추가됨.
+      const appUrl = sc.web && sc.web.app_url ? String(sc.web.app_url) : '';
+      const appUrlButton = appUrl
+        ? `<a class="porting-app-link" href="${escapeHtml(appUrl)}" target="_blank" rel="noopener noreferrer" title="웹 화면 열기 (${escapeHtml(appUrl)})">화면 열기 ↗</a>`
+        : '';
+
       return `
         <div class="card porting-screen-card" data-scenario-id="${escapeHtml(sc.id)}" style="padding:12px">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px">
-            <div>
+            <div style="min-width:0;flex:1">
               <div style="font-size:11px;color:var(--text-muted)"><code style="font-size:11px">${escapeHtml(sc.id)}</code></div>
               <div style="font-size:14px;font-weight:600;margin-top:2px">${escapeHtml(sc.name)}</div>
               <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${escapeHtml(meta)}</div>
             </div>
-            <div style="text-align:right">
+            <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px">
               <div style="font-size:18px;font-weight:700">${prog.pct}%</div>
               <div style="font-size:11px;color:var(--text-muted)">${prog.done}/${prog.total}</div>
+              ${appUrlButton}
             </div>
           </div>
           <div style="font-size:12px;color:var(--text-muted);margin:4px 0 8px;line-height:1.45">${escapeHtml(sc.summary || sc.purpose || '')}</div>

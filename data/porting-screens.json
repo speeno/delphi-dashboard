@@ -168,11 +168,15 @@
         "primary_form": "TSobo27 (출고접수관리)",
         "primary_unit": "Subu27.pas",
         "dfm": "Subu27.dfm",
+        "menu_path": "출고관리(Menu200) > 출고접수관리(Menu207)",
+        "menu_id": "Menu207",
         "related_forms": ["TSobo26 출고접수현황", "TSobo28 출고택배관리", "TSobo23 반품명세서(연계)"]
       },
       "permission_keys": ["F21", "F22", "F26"],
       "db_impact": "INSERT/UPDATE/DELETE (트랜잭션 경계 중요)",
       "web": {
+        "app_url": "http://127.0.0.1:3000/outbound/orders",
+        "menu_path": "출고관리 > 출고접수관리",
         "routes": [
           "/outbound/orders",
           "/outbound/orders/new",
@@ -206,7 +210,8 @@
           "도서물류관리프로그램/frontend/src/app/(app)/outbound/orders/page.tsx",
           "도서물류관리프로그램/frontend/src/app/(app)/outbound/orders/new/page.tsx",
           "도서물류관리프로그램/frontend/src/app/(app)/outbound/orders/[orderKey]/page.tsx",
-          "도서물류관리프로그램/frontend/src/components/app-shell/sidebar.tsx (outbound 메뉴 추가)"
+          "도서물류관리프로그램/frontend/src/lib/form-registry.ts (FormMeta.route + Sobo27 등록 — 델파이 Menu207 정합)",
+          "도서물류관리프로그램/frontend/src/components/app-shell/sidebar.tsx (route 일반화 — 1차 포팅 화면을 동일 메뉴 트리에 흡수)"
         ]
       },
       "contract": "migration/contracts/outbound_order.yaml (v1.0.0 approved)",
