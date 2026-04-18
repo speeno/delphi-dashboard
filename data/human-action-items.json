@@ -165,6 +165,32 @@
           "blocks": ["고객사별 차이 승인 #4"]
         },
         {
+          "id": "HA-DEC-09",
+          "title": "C2 출고 접수 1차 포팅 범위 동결 (outbound_order.yaml D-OUT-1~4)",
+          "owner": "메인개발자 + 현업 + 웹 포팅",
+          "due": "2026-04-25",
+          "status": "완료",
+          "tracker": "migration/contracts/outbound_order.yaml",
+          "outputs": [
+            "outbound_order.yaml v1.0.0 approved, scope_phase=phase1 (2026-04-25)",
+            "DEC-009 (D-OUT-1) — 권한키 F21/F22/F26 1차 미적용. 후속 C10 권한 관리에서 RBAC 통합.",
+            "DEC-010 (D-OUT-2) — 바코드(Tong08) 1차 미노출. 후속 C8 바코드 시나리오로 이관.",
+            "DEC-011 (D-OUT-3) — 인쇄 트리거 1차 미노출. 후속 C7 인쇄 시나리오로 이관.",
+            "DEC-012 (D-OUT-4) — 주문 전체 물리 삭제 1차 미지원. 소프트 취소(Yesno='2')만. 참조 무결성 검토 후 후속 결정.",
+            "단위테스트 14건 PASS — test/test_c2_outbound_phase1.py",
+            "평가 보고서 — docs/c2-outbound-evaluation-report.md (5축 사전 평가)"
+          ],
+          "follow_up": [
+            "OQ-OUT-1 후속 — Yesno='1' 처리완료 흐름 운영 검증 후 재도입 여부 결정",
+            "OQ-OUT-2 후속 — Sg_Csum 트리거 존재 여부 (Sobo67 사이클)",
+            "OQ-OUT-3 후속 — 합성키 동시성 (UNIQUE 제약 + retry 패턴)",
+            "OQ-OUT-4 후속 — Gjisa 합성키 승격 여부",
+            "HA-OUT-PRINT — 베타 운영자에게 인쇄 미지원 사전 안내 (DEC-011)",
+            "HA-OUT-PERF — DBA 인덱스 정합성 점검 (S1_Ssub composite, G4_Book.Gname LIKE)"
+          ],
+          "blocks": ["API 계약 승인 #3"]
+        },
+        {
           "id": "HA-DEC-04",
           "title": "5축 평가 임계값 / DoD 정식 채택",
           "owner": "기획자(P) + 메인개발자",

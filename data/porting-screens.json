@@ -160,8 +160,10 @@
       "id": "C2",
       "name": "출고 접수(주문 입력)",
       "gateId": 3,
-      "purpose": "핵심 매출 흐름 (등록·수정·취소)",
-      "summary": "S1_Ssub·Sg_Csum INSERT/UPDATE, Tong08 바코드 결합. C11(수정/취소) 흡수",
+      "purpose": "핵심 매출 흐름 (등록·수정·취소·조회)",
+      "summary": "S1_Ssub INSERT/UPDATE/DELETE 명시적 트랜잭션 + 거래처/제품 자동완성 + 소프트 취소. C11(수정/취소) 흡수. 권한키/바코드/인쇄/물리삭제는 1차 제외 (DEC-009~012)",
+      "phase1_status": "complete",
+      "phase1_acceptance_goal": "기존 사용자가 출고 주문을 신규 등록 / 수정 / 취소 / 조회 (CRUD) 할 수 있다",
       "delphi": {
         "primary_form": "TSobo27 (출고접수관리)",
         "primary_unit": "Subu27.pas",
@@ -171,15 +173,63 @@
       "permission_keys": ["F21", "F22", "F26"],
       "db_impact": "INSERT/UPDATE/DELETE (트랜잭션 경계 중요)",
       "web": {
-        "routes": ["/outbound/orders", "/outbound/orders/[id]"],
-        "endpoints": ["GET/POST/PUT/DELETE /api/outbound/orders"],
-        "backend": ["도서물류관리프로그램/backend/app/routers/outbound.py (신규)"],
-        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/outbound/* (신규)"]
+        "routes": [
+          "/outbound/orders",
+          "/outbound/orders/new",
+          "/outbound/orders/[orderKey]"
+        ],
+        "endpoints": [
+          "GET /api/v1/outbound/orders",
+          "GET /api/v1/outbound/orders/{key}",
+          "POST /api/v1/outbound/orders",
+          "PUT /api/v1/outbound/orders/{key}",
+          "PATCH /api/v1/outbound/orders/{key}/cancel",
+          "GET /api/v1/masters/customers",
+          "GET /api/v1/masters/products"
+        ],
+        "backend": [
+          "도서물류관리프로그램/backend/app/models/outbound.py",
+          "도서물류관리프로그램/backend/app/services/outbound_service.py",
+          "도서물류관리프로그램/backend/app/services/masters_service.py",
+          "도서물류관리프로그램/backend/app/routers/outbound.py",
+          "도서물류관리프로그램/backend/app/routers/masters.py",
+          "도서물류관리프로그램/backend/app/services/audit_service.py (log_outbound_action 추가)",
+          "도서물류관리프로그램/backend/app/core/db.py (execute_in_transaction 추가)"
+        ],
+        "frontend": [
+          "도서물류관리프로그램/frontend/src/lib/outbound-api.ts",
+          "도서물류관리프로그램/frontend/src/lib/column-labels.ts",
+          "도서물류관리프로그램/frontend/src/components/outbound/order-line-grid.tsx",
+          "도서물류관리프로그램/frontend/src/components/outbound/customer-search.tsx",
+          "도서물류관리프로그램/frontend/src/components/outbound/cancel-dialog.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/outbound/layout.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/outbound/orders/page.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/outbound/orders/new/page.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/outbound/orders/[orderKey]/page.tsx",
+          "도서물류관리프로그램/frontend/src/components/app-shell/sidebar.tsx (outbound 메뉴 추가)"
+        ]
       },
-      "contract": "migration/contracts/outbound_order.yaml (신규)",
-      "testpack": "migration/test-cases/outbound_order.json (신규)",
+      "contract": "migration/contracts/outbound_order.yaml (v1.0.0 approved)",
+      "testpack": "migration/test-cases/outbound_order.json (v1.0.0-phase1 approved)",
+      "evaluation_report": "docs/c2-outbound-evaluation-report.md (v0.1, 단위 14건 PASS)",
+      "phase1_test_results": "test/test_c2_outbound_phase1.py — 14 passed (2026-04-25)",
+      "deferrals": [
+        "DEC-009 권한키 (F21/F22/F26) → 후속 C10 권한 관리",
+        "DEC-010 바코드 (Tong08) → 후속 C8 바코드",
+        "DEC-011 인쇄 트리거 → 후속 C7 인쇄",
+        "DEC-012 물리 삭제 → 참조 무결성 검토 후"
+      ],
       "subscenarios_absorbed": ["C11 출고 수정/취소"],
-      "tasks": { "T1": {"status":"not_started"}, "T2": {"status":"not_started"}, "T3": {"status":"not_started"}, "T4": {"status":"not_started"}, "T5": {"status":"not_started"}, "T6": {"status":"not_started"}, "T7": {"status":"not_started"}, "T8": {"status":"not_started"} }
+      "tasks": {
+        "T1": {"status": "completed", "note": "analysis/screen_cards/Sobo27.md (자동 + 수동 §10)"},
+        "T2": {"status": "completed", "note": "analysis/c2_outbound_flow.md (Subu27.pas 인용 + POC sobo67 diff)"},
+        "T3": {"status": "completed", "note": "outbound_order.yaml v1.0.0 approved"},
+        "T4": {"status": "completed", "note": "outbound_order.json v1.0.0-phase1 approved (12 cases)"},
+        "T5": {"status": "completed", "note": "backend models/services/routers/audit/db 모두 추가"},
+        "T6": {"status": "completed", "note": "frontend outbound 페이지 + 컴포넌트 + column-labels"},
+        "T7": {"status": "completed", "note": "test/test_c2_outbound_phase1.py 14건 PASS + 평가 보고서"},
+        "T8": {"status": "completed", "note": "dashboard JSON 동기화 완료"}
+      }
     },
     {
       "order": 6,
