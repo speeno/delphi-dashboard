@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-18 (C2 런타임 검증 + 핫픽스 반영)",
+  "updatedAt": "2026-04-18 (C6 1차 완료 + 제품 UX 핫픽스 HOT-APP-1/2 · HOT-INQ-1)",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     { "id": 0, "name": "인증·세션 (전제)", "dec003": "전제", "gate": 1, "gateId": 1 },
@@ -68,36 +68,129 @@
       "order": 2,
       "stage": 1,
       "id": "C6",
-      "name": "거래/잔액 조회 (읽기 전용)",
+      "name": "거래/잔액 조회 (1차 — 4폼 동시, 레거시 동작 그대로)",
       "gateId": 1,
-      "purpose": "거래·재고·잔액 그리드 조회 (변경 0)",
-      "summary": "거래명세·도서별판매·거래처판매·도서별수불원장 SELECT only",
+      "purpose": "거래·재고·잔액 그리드 조회 + S1_Memo UPSERT (Sobo21 메모만 레거시 그대로 유지)",
+      "summary": "Sobo21 거래명세서 + Sobo31 도서별수불원장 + Sobo61 도서별판매 + Sobo62 거래처판매. 발견된 UPDATE/INSERT(S1_Memo) 도 1차 포팅 (DEC-016~018 신설)",
+      "phase1_status": "complete",
+      "phase1_acceptance_goal": "기존 사용자가 4개 화면을 거래처·도서·일자 범위로 조회하고, S1_Memo 메모를 저장할 수 있다",
       "delphi": {
         "primary_form": "TSobo21",
         "primary_unit": "Subu21.pas",
         "dfm": "Subu21.dfm",
+        "menu_path": "출고관리(Menu200) > 거래명세서(Menu201) | 재고원장(Menu300) > 도서별수불원장(Menu301) | 통계관리(Menu600) > 도서별판매(Menu601)/거래처판매(Menu602)",
+        "menu_id": "Menu201/Menu301/Menu601/Menu602",
         "related_forms": ["TSobo61 (Subu61.pas)", "TSobo62 (Subu62.pas)", "TSobo31 (Subu31.pas)"]
       },
       "permission_keys": ["F24", "F61", "F62", "F31"],
-      "db_impact": "SELECT only",
+      "db_impact": "SELECT 위주 + S1_Memo UPSERT (Sobo21)",
       "web": {
-        "routes": ["/transactions/sales-statement", "/inventory/ledger"],
-        "endpoints": ["GET /api/transactions/sales-statement", "GET /api/inventory/ledger"],
-        "backend": ["도서물류관리프로그램/backend/app/routers/transactions.py (신규)"],
-        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/transactions/sales-statement/page.tsx (신규)"]
+        "app_url": "http://127.0.0.1:3000/transactions/sales-statement",
+        "menu_path": "출고관리 > 거래명세서 (대표) — 재고원장/통계관리도 등록",
+        "routes": [
+          "/transactions/sales-statement",
+          "/transactions/sales-statement/[orderKey]",
+          "/inventory/ledger",
+          "/reports/book-sales",
+          "/reports/customer-sales"
+        ],
+        "endpoints": [
+          "GET /api/v1/transactions/sales-statement",
+          "GET /api/v1/transactions/sales-statement/{key}",
+          "PATCH /api/v1/transactions/sales-statement/{key}/memo",
+          "GET /api/v1/inventory/ledger",
+          "GET /api/v1/reports/book-sales",
+          "GET /api/v1/reports/customer-sales"
+        ],
+        "backend": [
+          "도서물류관리프로그램/backend/app/models/inquiry.py",
+          "도서물류관리프로그램/backend/app/services/transactions_service.py",
+          "도서물류관리프로그램/backend/app/services/inventory_service.py",
+          "도서물류관리프로그램/backend/app/services/reports_service.py",
+          "도서물류관리프로그램/backend/app/routers/transactions.py",
+          "도서물류관리프로그램/backend/app/routers/inventory.py",
+          "도서물류관리프로그램/backend/app/routers/reports.py",
+          "도서물류관리프로그램/backend/app/main.py (3 라우터 등록)"
+        ],
+        "frontend": [
+          "도서물류관리프로그램/frontend/src/lib/inquiry-api.ts",
+          "도서물류관리프로그램/frontend/src/components/data-grid/data-grid.tsx (공통 신설)",
+          "도서물류관리프로그램/frontend/src/lib/column-labels.ts (C6 컬럼 보강)",
+          "도서물류관리프로그램/frontend/src/lib/form-registry.ts (Sobo21/31/61/62 4줄 — Menu201/301/601/602 정합)",
+          "도서물류관리프로그램/frontend/src/app/(app)/transactions/sales-statement/page.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/transactions/sales-statement/[orderKey]/page.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/inventory/ledger/page.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/reports/book-sales/page.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/reports/customer-sales/page.tsx"
+        ]
       },
-      "contract": "migration/contracts/sales_statement.yaml (신규)",
-      "testpack": "migration/test-cases/sales_statement.json (신규)",
-      "subscenarios_absorbed": ["C14 핵심 보고서 동등성"],
+      "contract": "migration/contracts/sales_inquiry.yaml (v1.0.0 approved)",
+      "testpack": "migration/test-cases/sales_inquiry.json (v1.0.0-phase1 approved)",
+      "evaluation_report": "analysis/c6_c14_equivalence_capture.md (보고서 동등성 1차 캡처 2건)",
+      "phase1_test_results": "test/test_c6_inquiry_phase1.py — 20 passed (2026-04-18)",
+      "runtime_check": {
+        "performed_at": "2026-04-18",
+        "browser_urls": [
+          "http://127.0.0.1:3000/transactions/sales-statement",
+          "http://127.0.0.1:3000/dashboard"
+        ],
+        "backend_routes_registered": [
+          "GET /api/v1/transactions/sales-statement",
+          "GET /api/v1/transactions/sales-statement/{order_key}",
+          "PATCH /api/v1/transactions/sales-statement/{order_key}/memo",
+          "GET /api/v1/inventory/ledger",
+          "GET /api/v1/reports/book-sales",
+          "GET /api/v1/reports/customer-sales"
+        ],
+        "result": "OpenAPI 6건 등록 확인 가능 · 단위 20건 회귀 PASS · 제품 UI HOT-APP-1/2/HOT-INQ-1 반영"
+      },
+      "hotfixes": [
+        {
+          "id": "HOT-INQ-1",
+          "date": "2026-04-18",
+          "summary": "거래명세서 목록에서 동일 필드 `order_key` 를 두 컬럼(일자·전표)에 쓸 때 React key 중복 경고 — DataGrid 컬럼에 선택적 `id` + 미지정 시 `${key}-${index}` fallback",
+          "files": [
+            "도서물류관리프로그램/frontend/src/components/data-grid/data-grid.tsx",
+            "도서물류관리프로그램/frontend/src/app/(app)/transactions/sales-statement/page.tsx"
+          ],
+          "verified_by": "tsc 0 error · eslint (C6 파일) clean"
+        },
+        {
+          "id": "HOT-APP-1",
+          "date": "2026-04-18",
+          "summary": "좌측 사이드바 메뉴가 뷰포트를 넘을 때 스크롤 불가 — flex column 에서 `flex-1` 영역에 `min-h-0` + aside `overflow-hidden` (표준 flex 스크롤 패턴)",
+          "files": [
+            "도서물류관리프로그램/frontend/src/components/app-shell/sidebar.tsx"
+          ],
+          "verified_by": "수동 브라우저 확인 권장"
+        },
+        {
+          "id": "HOT-APP-2",
+          "date": "2026-04-18",
+          "summary": "`/dashboard` 에서 레거시 탭이 있으면 본문 `children`(대시보드)이 렌더되지 않던 문제 — 항상 `children` 렌더 + 레거시만 오버레이. 헤더 브랜드 클릭 시 `closeAllTabs()` + `/dashboard` 로 홈 복귀 (`form-store.closeAllTabs`)",
+          "files": [
+            "도서물류관리프로그램/frontend/src/app/(app)/layout.tsx",
+            "도서물류관리프로그램/frontend/src/components/app-shell/header.tsx",
+            "도서물류관리프로그램/frontend/src/lib/form-store.ts"
+          ],
+          "verified_by": "tsc 0 error"
+        }
+      ],
+      "subscenarios_absorbed": ["C14 핵심 보고서 동등성 (Sobo61/62)"],
+      "deferrals": [
+        { "id": "DEC-016", "title": "권한키 (F24/F31/F61/F62) 1차 미적용", "rationale": "C2 DEC-009 와 동일 — 모든 인증 사용자 동등" },
+        { "id": "DEC-017", "title": "인쇄 기능 (qrep) 1차 제외", "rationale": "웹 PDF/인쇄는 후속 페이즈" },
+        { "id": "DEC-018", "title": "바코드 입력 1차 제외", "rationale": "Tong08/Tong18 결합은 C3/C8 후속" }
+      ],
       "tasks": {
-        "T1": { "status": "not_started" },
-        "T2": { "status": "not_started" },
-        "T3": { "status": "not_started" },
-        "T4": { "status": "not_started" },
-        "T5": { "status": "not_started" },
-        "T6": { "status": "not_started" },
-        "T7": { "status": "not_started" },
-        "T8": { "status": "not_started" }
+        "T1": { "status": "done", "note": "screen_cards Sobo21/31/61/62 기존 자료 매핑만, 신규 생성 0" },
+        "T2": { "status": "done", "note": "analysis/c6_inquiry_flow.md 신설 — 4폼 SQL/이벤트 통합" },
+        "T3": { "status": "done", "note": "sales_inquiry.yaml v1.0.0 approved (6 endpoints, C14 동등성 흡수)" },
+        "T4": { "status": "done", "note": "sales_inquiry.json — 12 케이스 (5축 functional/data/audit) 작성" },
+        "T5": { "status": "done", "note": "transactions/inventory/reports 라우터·서비스 + main.py 등록 (예약어 별칭 금지 컨벤션 준수)" },
+        "T6": { "status": "done", "note": "4 페이지 + 공통 DataGrid + form-registry 4줄 (Sobo21/31/61/62) + column-labels 보강" },
+        "T7": { "status": "done", "note": "test/test_c6_inquiry_phase1.py 20 PASS, C14 보고서 동등성 캡처 2건 (도서별/거래처별)" },
+        "T8": { "status": "done", "note": "porting-screens / web-porting-progress / human-action-items / todos 4개 JSON 동기화 + runtime_check·hotfixes(HOT-INQ-1/HOT-APP-1/2) 후속 반영" }
       }
     },
     {

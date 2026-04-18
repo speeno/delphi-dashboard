@@ -1,7 +1,7 @@
 {
   "title": "사람 처리 필요 항목 (Human Action Items)",
   "description": "자동 도구·정적 분석으로는 닫을 수 없고, 사람의 결정·인터뷰·운영 실행이 필요한 작업들. 각 항목은 추적용 문서(트래커/템플릿)에 직접 연결되며, 결과가 들어오면 분석 도구·갭 리포트가 자동 갱신됩니다.",
-  "updatedAt": "2026-04-18 (C2 런타임 검증 + 핫픽스 반영)",
+  "updatedAt": "2026-04-18 (C6 완료 + HA-DEC-10 제품 UX 핫픽스 출력 보강)",
   "legend": {
     "대기": "착수 전",
     "진행중": "회의·실시 진행 중",
@@ -193,6 +193,33 @@
             "HA-OUT-PERF — DBA 인덱스 정합성 점검 (S1_Ssub composite, G4_Book.Gname LIKE)"
           ],
           "blocks": ["API 계약 승인 #3"]
+        },
+        {
+          "id": "HA-DEC-10",
+          "title": "C6 거래/잔액 조회 1차 포팅 범위 동결 (sales_inquiry.yaml D-INQ-1~3 + 4폼 동시)",
+          "owner": "메인개발자 + 현업 + 웹 포팅",
+          "due": "2026-04-25",
+          "status": "완료",
+          "tracker": "migration/contracts/sales_inquiry.yaml",
+          "outputs": [
+            "sales_inquiry.yaml v1.0.0 approved, scope_phase=phase1 (4폼 동시 포팅 — Sobo21/Sobo31/Sobo61/Sobo62)",
+            "DEC-016 (D-INQ-1) — 권한키 F24/F31/F61/F62 1차 미적용 (C2 DEC-009와 동일 정책). 후속 C10 권한 통합.",
+            "DEC-017 (D-INQ-2) — 인쇄 트리거 (qrep) 1차 미노출. 후속 C7 인쇄 시나리오로 이관.",
+            "DEC-018 (D-INQ-3) — 바코드 입력 1차 미노출. 후속 C3/C8 바코드 시나리오로 이관.",
+            "결정: 발견된 UPDATE/INSERT(S1_Memo) 도 1차 포팅 (사용자 선택 — 레거시 동작 그대로, 동등성 우선)",
+            "단위테스트 20건 PASS — test/test_c6_inquiry_phase1.py (목록/상세/메모 UPSERT INSERT/UPDATE 분기/원장/도서별판매/거래처별판매/감사 5축/422·404·500·DEC-016~018)",
+            "동등성 캡처 — analysis/c6_c14_equivalence_capture.md (Sobo61 도서별판매 + Sobo62 거래처별판매 mock fixture 비교, C14 흡수)",
+            "백엔드 — app/services/{transactions,inventory,reports}_service.py + app/routers/{transactions,inventory,reports}.py 신설, app/models/inquiry.py (응답 alias 제거 — C2 컨벤션 일치)",
+            "프런트엔드 — 4 페이지 + 공통 components/data-grid (TanStack 미설치 환경 호환), inquiry-api.ts, form-registry Sobo21/31/61/62 4줄 (Menu201/301/601/602 자동 노출)",
+            "[2026-04-18 제품 UX] HOT-APP-1 사이드바 세로 스크롤 · HOT-APP-2 대시보드 본문 항상 렌더+레거시 오버레이+헤더 홈(`closeAllTabs`) · HOT-INQ-1 거래명세 목록 React key 중복 제거 — 허브 `porting-screens.json` C6.hotfixes 동기화"
+          ],
+          "follow_up": [
+            "OQ-OUT-2 후속 — Sg_Csum 트리거/갱신 시점 (Sobo61/62 보고서 정확도 영향)",
+            "C14 통합 회귀 — 실 DB 스냅샷 기반 보고서 동등성 (현재는 mock fixture 캡처)",
+            "Subu31.pas L426~L457 X/Z 분기 — 1차 단순화(_accumulate_row 비품/폐기 묶음) 후속 정밀화",
+            "HA-INQ-PRINT — 베타 운영자에게 인쇄 미지원 사전 안내 (DEC-017)"
+          ],
+          "blocks": ["API 계약 승인 #3 (C6 부분)"]
         },
         {
           "id": "HA-DEC-04",

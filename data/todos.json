@@ -19,7 +19,7 @@
         { "id": "M-S0-13", "task": "산출물·런북·README 형식·링크·오탈자 정리 (체크리스트·인벤토리·갭·런북·트래커·계약·테스트·5축 초안·DEC-004·게이트 점검·화면카드 계획 상호링크)", "done": true },
         { "id": "M-S0-14", "task": "중급·초급 인수인계 일정·범위·접근권한·V1 이후 유지보수 역할 합의", "done": false },
         { "id": "M-S1-PORT-C1", "task": "C1 로그인·세션 시작 — T1~T8 진행 (단계 0, 게이트 #1, porting-screens.json 참조)", "done": true },
-        { "id": "M-S1-PORT-C6", "task": "C6 거래/잔액 조회(읽기 전용) — T1~T8 진행 (단계 1, 게이트 #1)", "done": false },
+        { "id": "M-S1-PORT-C6", "task": "C6 거래/잔액 조회 4폼 동시 (Sobo21/31/61/62 + S1_Memo UPSERT) — T1~T8 완료, 단위 20 PASS, C14 동등성 캡처 2건, DEC-016~018 신설 (단계 1, 게이트 #1)", "done": true },
         { "id": "M-S1-PORT-C9", "task": "C9 상품·고객 마스터 등록 — T1~T8 진행 (단계 2, 게이트 #2)", "done": false },
         { "id": "M-S1-PORT-C3", "task": "C3 입고 접수 — T1~T8 진행 (단계 2, 게이트 #2)", "done": false },
         { "id": "M-S1-PORT-C2", "task": "C2 출고 접수(주문 입력, +C11 수정/취소) — T1~T8 진행 (단계 3, 게이트 #3)", "done": false },

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-18 (C2 출고접수 1차 포팅 + 핫픽스 반영)",
+  "updatedAt": "2026-04-18 (C6 1차 + 제품 UX: 사이드바 스크롤 · 대시보드/레거시 오버레이 · DataGrid key · 헤더 홈)",
   "phase": "Phase 1",
   "productNote": "실행 UI는 저장소 `도서물류관리프로그램/` (제품 웹). 본 섹션은 개발 진행용 허브 대시보드 전용.",
   "docLinks": [
@@ -36,7 +36,9 @@
         "하네스 L4: `schema_extractor`·`query_capture`·접속 프로브·제품 API PoC까지 1차 반영(대시보드 harness.json 동기)",
         "C1 인증(`/api/v1/auth/*`) + C2 출고접수(`/api/v1/outbound/*`, `/api/v1/masters/*`) 라우트 등록 — uvicorn `--reload` 운영, OpenAPI 7건 라우트 검증 (2026-04-18)",
         "C2 트랜잭션 경계: `app/core/db.py::execute_in_transaction` (aiomysql + mysql3_compat 양쪽 지원, BEGIN→N×SQL→COMMIT/ROLLBACK)",
-        "C2 SQL 호환 핫픽스 — `COUNT(*) AS lines` 가 일부 MySQL에서 LOAD DATA 예약어와 충돌 → `line_count` 일반화 (응답 필드 `lines` 유지)"
+        "C2 SQL 호환 핫픽스 — `COUNT(*) AS lines` 가 일부 MySQL에서 LOAD DATA 예약어와 충돌 → `line_count` 일반화 (응답 필드 `lines` 유지)",
+        "C6 거래/잔액 조회 — `/api/v1/transactions/sales-statement` (목록/상세/메모 PATCH), `/api/v1/inventory/ledger`, `/api/v1/reports/{book-sales,customer-sales}` 6 엔드포인트 등록. `app/services/{transactions,inventory,reports}_service.py` 신설. `S1_Memo` UPSERT 는 `execute_in_transaction` 단일 트랜잭션 (SELECT 1 → UPDATE/INSERT) — DEC-016~018 신설(권한·인쇄·바코드 후속). 응답은 C2 동일 snake_case 컨벤션 유지 (alias 제거)",
+        "C6 SQL 컨벤션 일반화 — `COUNT(*) AS row_count` 채택 (예약어 별칭 금지) + `Sg_Csum` 보강은 `_safe_int`/`_safe_str` 헬퍼 1차 단순화로 통합 (POC `seak80-sample/sobo67_aggregate.py` 패턴 준용)"
       ]
     },
     {
@@ -47,7 +49,12 @@
         "Next rewrites로 API 동일 출처 프록시(개발 CORS 완화)",
         "제품 대시보드는 업무 KPI·빠른 접근 중심 — 포팅 진행 본문은 이 허브 대시보드에만 표시",
         "C2 출고접수 화면 — `/outbound/orders` (목록·신규·상세·수정·소프트취소) 가동, 거래처/제품 자동완성 + 라인 그리드",
-        "사이드바 정식 메뉴 등록 — `FormMeta.route + phase` 일반화로 델파이 `MainMenu1.Menu207 (출고관리 > 출고접수관리)` 와 1:1, 1차 포팅 화면은 녹색 체크 표시. 향후 정식 포팅 화면도 1줄 추가만으로 흡수 (SOLID OCP)"
+        "사이드바 정식 메뉴 등록 — `FormMeta.route + phase` 일반화로 델파이 `MainMenu1.Menu207 (출고관리 > 출고접수관리)` 와 1:1, 1차 포팅 화면은 녹색 체크 표시. 향후 정식 포팅 화면도 1줄 추가만으로 흡수 (SOLID OCP)",
+        "C6 거래/잔액 조회 4화면 동시 — `/transactions/sales-statement` (목록+상세+메모 편집), `/inventory/ledger`, `/reports/book-sales`, `/reports/customer-sales` 가동. 공통 `DataGrid` 컴포넌트 신설 (TanStack 미설치 환경 호환, OCP — 새 화면 컬럼 정의만 추가)",
+        "사이드바 자동 노출 — `form-registry.ts` 에 Sobo21/31/61/62 4줄만 추가하면 사이드바·대시보드가 자동 인식 (Menu201/301/601/602 와 1:1)",
+        "UX 핫픽스 HOT-APP-1 — 긴 메뉴 목록 시 좌측 사이드바 세로 스크롤 (`aside` min-h-0·overflow-hidden + ScrollArea `min-h-0 flex-1`)",
+        "UX 핫픽스 HOT-APP-2 — `/dashboard` 본문 항상 마운트 + 레거시 미리보기 탭은 전면 오버레이만 차지. 헤더 「도서물류관리」 클릭 시 `closeAllTabs()` 후 `/dashboard` (홈 복귀)",
+        "UX 핫픽스 HOT-INQ-1 — 거래명세서 목록 그리드 동일 `key` 컬럼 두 개 시 React key 중복 제거 (`DataGridColumn.id` / index fallback)"
       ]
     },
     {
