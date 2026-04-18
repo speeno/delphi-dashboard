@@ -132,13 +132,30 @@
           "title": "비밀번호 해시·라이선스 키 정책 결정 (login.yaml D-LOGIN-1/2)",
           "owner": "메인개발자 + 현업",
           "due": "2026-07-31",
-          "status": "대기",
+          "status": "완료",
           "tracker": "migration/contracts/login.yaml",
           "outputs": [
-            "login.yaml status: draft → approved",
+            "login.yaml v1.0.0 approved (2026-04-22)",
+            "DEC-005 (D-LOGIN-1 평문 → bcrypt/argon2id lazy migration) 등록",
+            "DEC-006 (D-LOGIN-2 라이선스 키 서버 측 정책, 베타 비활성) 등록",
             "OQ-DBL-002 (평문 비밀번호) 입장 기록"
           ],
           "blocks": ["API 계약 승인 #3"]
+        },
+        {
+          "id": "HA-DEC-06",
+          "title": "사용자→테넌트(서버) 자동 매핑 옵션 확정 (login.yaml D-LOGIN-4)",
+          "owner": "메인개발자 + 기획자 + 델파이 담당자",
+          "due": "2026-08-14",
+          "status": "진행중",
+          "tracker": "migration/contracts/login.yaml",
+          "outputs": [
+            "옵션 A/B/C 중 1개 채택 (제안: 옵션 A — Id_Logn.tenant_id, DEC-008 가등록)",
+            "OQ-LOGIN-1 클로저 — legacy-analysis/open-questions.md",
+            "DB 마이그레이션 작업(ALTER TABLE Id_Logn ADD tenant_id) 일정 확정",
+            "TC-LOGIN-010/012 expect_one_of → 단일 expect 로 정리"
+          ],
+          "blocks": ["고객사별 차이 승인 #4"]
         },
         {
           "id": "HA-DEC-04",
