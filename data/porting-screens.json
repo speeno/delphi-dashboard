@@ -56,12 +56,12 @@
       "tasks": {
         "T1": { "status": "done", "note": "screen_card_builder.py 신규(~430 LOC) + analysis/screen_cards/Subu00.md + INDEX.md 1차 생성" },
         "T2": { "status": "done", "note": "Chul.pas L441/L1956 인용 완료" },
-        "T3": { "status": "done", "note": "login.yaml v1.0.0 approved. SQL-LOGIN-2-VISIBILITY + D-LOGIN-4(테넌트 자동 매핑) 신설" },
-        "T4": { "status": "done", "note": "login.json v0.2.0-review (12 cases). TC-LOGIN-010/011/012 신규(테넌트/가시성/격리). 캡처 후 v1.0 승격" },
+        "T3": { "status": "done", "note": "login.yaml v1.1.0 approved (scope_phase=phase1). 1차 합격선 '기존 ID/PW 로그인'. D-LOGIN-1~4 모두 in_scope_phase1=false (DEC-005~008 1차 후속 이관)" },
+        "T4": { "status": "done", "note": "login.json v1.1.0-phase1 approved. 1차 in_scope 8건 / out_of_scope 4건(TC-LOGIN-002/010/011/012 보존, 후속 재개). fixtures tenant_id·G7_Ggeo 제거" },
         "T5": { "status": "done", "note": "EUC-KR + JWT 적용" },
         "T6": { "status": "done", "note": "AppShell + 로그인 폼" },
-        "T7": { "status": "done", "note": "정적 4축 사전 평가 docs/c1-login-evaluation-report.md 동결. cross_reference 정적 1차 완료. 캡처 1회는 DBA 일정 차단(외부 의존, 도착 즉시 §7 슬롯 갱신) — GAP-001/OQ-DBL-003 부분 완화" },
-        "T8": { "status": "done", "note": "DEC-005~008 등록(D-LOGIN-1~4). login.yaml approved v1.0.0. DoD 6개 체크 완료 (db-business-logic-inventory.md Id_Logn 표 포함)" }
+        "T7": { "status": "done", "note": "정적 4축 사전 평가 docs/c1-login-evaluation-report.md 1차 범위 동결. 1차 in_scope 8건만 채점 대상. 캡처 1회는 DBA 일정 차단(외부 의존) — GAP-001/OQ-DBL-003 부분 완화" },
+        "T8": { "status": "done", "note": "DEC-005~008 모두 1차 포팅 범위 외로 동결(사용자 결정). login.yaml approved v1.1.0. 1차 합격선 단순화: '기존 사용자가 기존 ID/PW 로 로그인'. 멀티테넌시·해시·라이선스·슈퍼유저 분기는 후속 이관" }
       }
     },
     {

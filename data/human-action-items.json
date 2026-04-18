@@ -129,31 +129,38 @@
         },
         {
           "id": "HA-DEC-03",
-          "title": "비밀번호 해시·라이선스 키 정책 결정 (login.yaml D-LOGIN-1/2)",
+          "title": "비밀번호 해시·라이선스 키 정책 결정 (login.yaml D-LOGIN-1/2) — 1차 포팅 범위 외 동결",
           "owner": "메인개발자 + 현업",
           "due": "2026-07-31",
           "status": "완료",
           "tracker": "migration/contracts/login.yaml",
           "outputs": [
-            "login.yaml v1.0.0 approved (2026-04-22)",
-            "DEC-005 (D-LOGIN-1 평문 → bcrypt/argon2id lazy migration) 등록",
-            "DEC-006 (D-LOGIN-2 라이선스 키 서버 측 정책, 베타 비활성) 등록",
-            "OQ-DBL-002 (평문 비밀번호) 입장 기록"
+            "login.yaml v1.1.0 approved, scope_phase=phase1 (2026-04-22)",
+            "DEC-005 (D-LOGIN-1) — 1차 포팅은 평문 그대로 사용. 해시 마이그레이션은 후속 사이클로 이관.",
+            "DEC-006 (D-LOGIN-2) — 설치형 아니므로 라이선스 검증 자체를 1차 비활성. 서버측 정책은 후속 이관.",
+            "OQ-DBL-002 (평문 비밀번호) 입장 기록 — 1차 의도적 보존"
+          ],
+          "follow_up": [
+            "후속 사이클: 별도 DEC-XXX 로 해시 정책 + lazy migration 일정 동결 (D-LOGIN-1)",
+            "후속 사이클: 서버측 License_Tenant + JWT claim 정책 동결 (D-LOGIN-2)"
           ],
           "blocks": ["API 계약 승인 #3"]
         },
         {
           "id": "HA-DEC-06",
-          "title": "사용자→테넌트(서버) 자동 매핑 옵션 확정 (login.yaml D-LOGIN-4)",
+          "title": "사용자→테넌트(서버) 자동 매핑 옵션 확정 (login.yaml D-LOGIN-4) — 1차 포팅 범위 외 동결",
           "owner": "메인개발자 + 기획자 + 델파이 담당자",
           "due": "2026-08-14",
-          "status": "진행중",
+          "status": "완료",
           "tracker": "migration/contracts/login.yaml",
           "outputs": [
-            "옵션 A/B/C 중 1개 채택 (제안: 옵션 A — Id_Logn.tenant_id, DEC-008 가등록)",
-            "OQ-LOGIN-1 클로저 — legacy-analysis/open-questions.md",
-            "DB 마이그레이션 작업(ALTER TABLE Id_Logn ADD tenant_id) 일정 확정",
-            "TC-LOGIN-010/012 expect_one_of → 단일 expect 로 정리"
+            "DEC-008 — 1차 포팅은 단일 테넌트 운영(레거시 동일 모델 유지)으로 동결. 멀티테넌시 도입은 후속 사이클로 이관.",
+            "1차 합격선 단순화: '기존 사용자가 기존 ID/PW 로 그대로 로그인'",
+            "OQ-LOGIN-1 — 후속 이관 표기 (closure 아님)",
+            "TC-LOGIN-010/012 phase1_in_scope=false 보존 (후속 재개)"
+          ],
+          "follow_up": [
+            "후속 사이클: 옵션 A/B/C 합의 → 별도 DEC-XXX → DB 마이그레이션 + 모든 시나리오 RLS 패치"
           ],
           "blocks": ["고객사별 차이 승인 #4"]
         },
