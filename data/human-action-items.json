@@ -1,7 +1,7 @@
 {
   "title": "사람 처리 필요 항목 (Human Action Items)",
   "description": "자동 도구·정적 분석으로는 닫을 수 없고, 사람의 결정·인터뷰·운영 실행이 필요한 작업들. 각 항목은 추적용 문서(트래커/템플릿)에 직접 연결되며, 결과가 들어오면 분석 도구·갭 리포트가 자동 갱신됩니다.",
-  "updatedAt": "2026-04-18 (C9 단일 원천 + Wave D 웹관리 1차 완료 — HA-DEC-11/12 신규)",
+  "updatedAt": "2026-04-19 23:30 KST (C9 DEC-028 retrofit 묶음 완료 — HA-RET-01 outputs 갱신: C2·C6·C9 [완료], C1 잔여)",
   "legend": {
     "대기": "착수 전",
     "진행중": "회의·실시 진행 중",
@@ -309,6 +309,22 @@
             "1차 가드 미적용 (D-ADM-1), JSON 파일 영속 (D-ADM-2)"
           ],
           "blocks": []
+        },
+        {
+          "id": "HA-DEC-13",
+          "title": "C3 입고 접수 1차 포팅 범위 동결 (inbound_receipt.yaml + DEC-027)",
+          "owner": "메인개발자",
+          "due": "2026-04-19",
+          "status": "완료",
+          "tracker": "legacy-analysis/decisions.md DEC-027 + open-questions.md OQ-IN-1",
+          "outputs": [
+            "INSERT/UPDATE/CANCEL ON, 라인 desired-state diff (D-IN 미정의)",
+            "FTP 자동 수신 보류 → 사용자 직접 EUC-KR/UTF-8 CSV·TSV 업로드(/inbound/import) 로 우회 (DEC-027)",
+            "물리 삭제 미지원(소프트 취소만, DEC-012 동일)",
+            "RBAC 미적용 (DEC-009 동일), 인쇄 후속(DEC-010 동일)",
+            "변형 폴더 Subu22/_1/_2 차이는 contract.customer_variants 만 적재(코드 분기 금지)"
+          ],
+          "blocks": []
         }
       ]
     },
@@ -344,6 +360,29 @@
           "blocks": [
             "베타"
           ]
+        }
+      ]
+    },
+    {
+      "id": "retrofit",
+      "title": "5. dfm→html 입력 retrofit (DEC-028 의무화 후속)",
+      "description": "DEC-028 (.cursor/rules/dfm-layout-input.mdc) 채택 이전에 done 처리된 시나리오들(C1·C2·C6·C9 phase1) 은 dfm 산출물을 공식 입력으로 사용하지 않고 작업되었음. 향후 신규 화면은 의무이며, 기존 done 시나리오는 회귀 발견 시 즉시 retrofit (위젯 ID·TabOrder·DBGrid 컬럼 누락 점검 → data-legacy-id 부착 + analysis/layout_mappings/<Sobo*>.md 보강).",
+      "items": [
+        {
+          "id": "HA-RET-01",
+          "title": "C1·C2·C6·C9 phase1 화면에 dfm 산출물 retrofit 검수",
+          "owner": "메인개발자",
+          "due": "회귀 발견 시 즉시 처리 (예약 일정 없음)",
+          "status": "진행 중 (C2·C6·C9 완료, C1 잔여)",
+          "tracker": ".cursor/rules/dfm-layout-input.mdc + analysis/layout_mappings/",
+          "outputs": [
+            "C1 로그인(Subu01) — dfm 인벤토리 + 매핑 노트 [대기]",
+            "C2 출고접수(Subu27/_1) — analysis/layout_mappings/Sobo27.md 신규 + outbound/orders/* 3 페이지 data-legacy-id 14건 부착 + outbound_order.yaml v1.1.0 customer_variants 섹션 + porting-screens.json C2 layout_inputs/layout_mappings/dfm_widget_id_coverage 등록 [완료 2026-04-19, HOT-OUT-4]",
+            "C6 거래/잔액 4 화면(Sobo21/31/61/62) — analysis/layout_mappings/Sobo{21,31,61,62}.md 4건 신규(Sobo27.md 11 섹션 풀 깊이, 4폼 모두 variant 폴더 0건 단언) + sales_inquiry.yaml v1.1.0(customer_variants/out_of_scope) + DataGrid 공통 컴포넌트 OCP 확장(legacyId/column.legacyId) + 5 페이지(transactions/sales-statement {목록,상세} + inventory/ledger + reports/{book-sales,customer-sales})에 data-legacy-id 60건 부착 + porting-screens.json C6 layout_inputs/layout_mappings/dfm_widget_id_coverage 등록 [완료 2026-04-19, HOT-INQ-2]",
+            "C9 마스터 6 화면(Sobo11/14/17/38/39/45) — analysis/layout_mappings/Sobo{11,14,17,38,39,45}.md 6건 신규(Sobo27.md/Sobo21.md 11 섹션 풀 깊이, customer_variants 6폼 사실: Subu14_1/Subu17_1/Subu38_1/Subu38_2/Subu45_1 변형 + Subu11/Subu39 변형 0건) + 기존 Sobo38.md → Sobo38_inbound.md git mv (C3 inbound 분리, 참조 4 곳 동기화) + master_data.yaml v1.1.0(customer_variants 6 + out_of_scope OOS-MAS-1~5: admin DFM 부재 / 통계 / CREATE·DELETE / 자동완성 별 트랙 / Subu39_* accelerator 미생성) + 8 페이지(/master 허브 + customer/{,[gcode]} + book/{,[gcode]} + publisher + book-code + discount + logistics-cost)에 data-legacy-id 60+ 부착(DataGrid 공통 컴포넌트는 C6 retrofit 의 OCP 확장 그대로 재사용 — 컴포넌트 변경 0) + porting-screens.json C9 layout_inputs/layout_mappings/dfm_widget_id_coverage 등록 [완료 2026-04-19, HOT-MAS-4]",
+            "각 시나리오 porting-screens.json 에 layout_inputs / layout_mappings 필드 후행 등록 [C2·C6·C9 적용]"
+          ],
+          "blocks": []
         }
       ]
     }

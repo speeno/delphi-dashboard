@@ -8,9 +8,13 @@ function dashboardBaseUrl() {
 
 const DATA_PATH = dashboardBaseUrl() + 'data/';
 
-async function loadJSON(file) {
-  const url = DATA_PATH + file;
-  const res = await fetch(url);
+let CACHE_VERSION = '';
+
+async function loadJSON(file, { skipVersion = false } = {}) {
+  const sep = file.includes('?') ? '&' : '?';
+  const versionQuery = skipVersion || !CACHE_VERSION ? '' : `${sep}v=${encodeURIComponent(CACHE_VERSION)}`;
+  const url = DATA_PATH + file + versionQuery;
+  const res = await fetch(url, { cache: 'no-cache' });
   if (!res.ok) {
     throw new Error(`${res.status} ${res.statusText}: ${url}`);
   }
@@ -18,6 +22,8 @@ async function loadJSON(file) {
 }
 
 async function loadAll() {
+  const projectMeta = await loadJSON('project.json', { skipVersion: true });
+  CACHE_VERSION = projectMeta?.updatedAt || projectMeta?.lastUpdated || '';
   const [
     project,
     sprints,
@@ -36,7 +42,7 @@ async function loadAll() {
     humanActionItems,
     portingScreens,
   ] = await Promise.all([
-    loadJSON('project.json'),
+    Promise.resolve(projectMeta),
     loadJSON('sprints.json'),
     loadJSON('todos.json'),
     loadJSON('todo-flow.json'),
