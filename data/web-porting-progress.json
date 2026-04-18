@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-18 — C9 운영 DB 정합(G1_Ggeo 주소 + G4_Book 문자 디코드) · DEC-026/025/024 1차 · buk.io 톤 1단계",
+  "updatedAt": "2026-04-18 — C9 Phase1 완료·실DB 검증 반영(porting-screens: `/api/v1/masters/*`·런타임 블록) · DEC-024~026 · buk.io 톤 1단계",
   "phase": "Phase 1",
   "productNote": "실행 UI는 저장소 `도서물류관리프로그램/` (제품 웹). 본 섹션은 개발 진행용 허브 대시보드 전용.",
   "docLinks": [
@@ -64,6 +64,7 @@
         "UX 핫픽스 HOT-APP-2 — `/dashboard` 본문 항상 마운트 + 레거시 미리보기 탭은 전면 오버레이만 차지. 헤더 「도서물류관리」 클릭 시 `closeAllTabs()` 후 `/dashboard` (홈 복귀)",
         "UX 핫픽스 HOT-INQ-1 — 거래명세서 목록 그리드 동일 `key` 컬럼 두 개 시 React key 중복 제거 (`DataGridColumn.id` / index fallback)",
         "C9 마스터 페이지 — `/master` 인덱스 + 6 폼 (`customer` list/detail, `book` list/detail, `publisher`/`book-code`/`discount`/`logistics-cost` list). `lib/master-api.ts` 신설. PATCH 폼은 거래처/도서 detail 만 1차 활성",
+        "C9 포팅 상태(대시보드 동기) — 트래커 `phase1_status: completed`, T1~T8 완료. 백엔드 베이스 경로 `/api/v1/masters/*`(복수)·자동완성 `customers`/`products`. 실DB HOT-MAS-3 후 거래처/도서 목록·페이징 운영 검증. Phase2 범위는 deferrals(D-MAS·D-ADM) 참고",
         "DEC-024 공통 페이저 — `DataGridPager` + `PageMeta`(기본 100, 옵션 50/100/200/500). 마스터 6·출고 목록·거래명세·도서별/거래처별 판매 리포트에 적용. `/inventory/ledger` 는 시계열 전량 표시로 페이징 비대상",
         "DEC-025 동적 페이저 — `components/data-grid/{recommend-page-size,use-dynamic-page-size}.ts` 신설(ResizeObserver+window.resize debounce 150ms+localStorage 수동 우선). `DataGridPager` 에 「자동(N)」 옵션 추가. 8 개 list 페이지(master 6 + outbound + sales-statement + reports 2) 일괄 적용",
         "DEC-026 DataGrid rowKey 안전 폴백 — row 렌더러를 `renderBodyRows` 로 추출, 호출자 `rowKey` 가 빈 문자열/NULL/중복을 반환해도 index 합성으로 React duplicate key warning 차단 (LSP — 컴포넌트는 호출자 입력이 깨져도 안전 동작). 6 마스터 + outbound + sales-statement + reports 2 등 DataGrid 사용 모든 화면 자동 보호 (호출 측 page.tsx 변경 0)",

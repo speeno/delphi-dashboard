@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-18 (C9 운영 DB 핫픽스 G1 주소/G4 문자 디코드 + 단일 원천·Wave D — DEC-019~023 동결)",
+  "updatedAt": "2026-04-18 — C9 Phase1 완료 · API `/api/v1/masters/*` 정합 · 실DB HOT-MAS-3 · Wave D · DEC-019~023",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {
@@ -355,7 +355,7 @@
       "name": "기초관리 마스터 등록 (1차 — 6폼 단일 원천 + Wave D 웹관리)",
       "gateId": 2,
       "purpose": "기초 마스터 데이터 단일 원천 확정 후 조회·수정 활성 + 웹 전용 관리(사용자/서버/권한/환경설정 개정) 도입",
-      "summary": "Sobo11(거래처)/Sobo14(도서)/Sobo17(출판사)/Sobo38(도서코드)/Sobo39(할인율)/Sobo45(물류비) READ + 거래처/도서 PATCH + Wave D admin 플레인",
+      "summary": "Sobo11·14·17·38·39·45 READ + 거래처/도서 PATCH + Wave D /admin. Phase1 수용 완료. 실DB 검증: G1_Ggeo 주소(Gadd1/2)·G4_Book 비정규 문자열 HOT-MAS-3 반영. Phase2·INSERT/RBAC 등은 deferrals.",
       "phase1_status": "completed",
       "phase1_acceptance_goal": "C9 단일 원천 6폼 사이드바 노출 + READ 전체 + PATCH 2폼(거래처/도서) + Wave D /admin 4페이지 + DEC-019~023 동결",
       "delphi": {
@@ -404,16 +404,18 @@
           "/admin/settings"
         ],
         "endpoints": [
-          "GET /api/v1/master/customer",
-          "GET /api/v1/master/customer/{gcode}",
-          "PATCH /api/v1/master/customer/{gcode}",
-          "GET /api/v1/master/book",
-          "GET /api/v1/master/book/{gcode}",
-          "PATCH /api/v1/master/book/{gcode}",
-          "GET /api/v1/master/publisher",
-          "GET /api/v1/master/book-code",
-          "GET /api/v1/master/discount",
-          "GET /api/v1/master/logistics-cost",
+          "GET /api/v1/masters/customers",
+          "GET /api/v1/masters/products",
+          "GET /api/v1/masters/customer",
+          "GET /api/v1/masters/customer/{gcode}",
+          "PATCH /api/v1/masters/customer/{gcode}",
+          "GET /api/v1/masters/book",
+          "GET /api/v1/masters/book/{gcode}",
+          "PATCH /api/v1/masters/book/{gcode}",
+          "GET /api/v1/masters/publisher",
+          "GET /api/v1/masters/book-code",
+          "GET /api/v1/masters/discount",
+          "GET /api/v1/masters/logistics-cost",
           "GET|POST /api/v1/admin/users",
           "POST /api/v1/admin/user-servers",
           "GET|POST /api/v1/admin/roles",
@@ -441,8 +443,8 @@
         "app_url": "http://127.0.0.1:3000/master"
       },
       "contract": "migration/contracts/master_data.yaml + migration/contracts/admin_web_platform.yaml",
-      "testpack": "test/test_c2_outbound_phase1.py + test/test_c6_inquiry_phase1.py (회귀 가드 34건 PASS)",
-      "evaluation_report": "회귀 가드 34/34 PASS, tsc 0 error, eslint 0 warning, yaml/json 무결성 OK, form-registry 35폼/15라우트 중복 0",
+      "testpack": "test/test_c2_outbound_phase1.py + test/test_c6_inquiry_phase1.py (C2/C6 회귀) + test/test_pagination_contracts.py·test/test_masters_q_search.py (C9 list·q·PK 가드)",
+      "evaluation_report": "C2/C6 회귀 34/34 PASS · C9 관련 페이징·마스터 검색 계약 pytest 통과 · tsc 0 · yaml/json OK · form-registry 35폼/15라우트 중복 0 · 실DB HOT-MAS-3 운영 재현 해소",
       "phase1_test_results": {
         "pytest_count": 34,
         "pytest_passed": 34,
@@ -450,8 +452,16 @@
         "eslint_warnings": 0
       },
       "runtime_check": {
-        "master_index": "GET /api/v1/master/customer 200",
-        "admin_settings": "POST /api/v1/admin/settings → revision +1, history append, audit.admin 1줄"
+        "performed_at": "2026-04-18",
+        "browser_url": "http://127.0.0.1:3000/master",
+        "backend_routes_registered": [
+          "GET /api/v1/masters/customer",
+          "GET /api/v1/masters/book",
+          "PATCH /api/v1/masters/customer/{gcode}",
+          "PATCH /api/v1/masters/book/{gcode}",
+          "GET|POST /api/v1/admin/settings"
+        ],
+        "result": "실DB 기준 /master/customer·/master/book 목록·페이징 HTTP 200(HOT-MAS-3). Wave D 설정 POST 시 revision·history·audit.admin 정상."
       },
       "hotfixes": [
         {
@@ -564,7 +574,7 @@
         },
         "T8": {
           "status": "completed",
-          "note": "DEC-019~023 동결, dashboard 동기화 완료"
+          "note": "DEC-019~023 동결 · 대시보드 C9 API masters 경로·런타임 블록·실DB 진행 문구 반영"
         }
       }
     },
