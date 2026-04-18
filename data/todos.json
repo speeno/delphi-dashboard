@@ -88,7 +88,7 @@
           "id": "M-S1-PORT-C9",
           "task": "C9 기초관리 마스터 + Wave D 웹관리 1차 완료 — 단일 원천 6폼(Sobo11/14/17/38/39/45) READ + 거래처/도서 PATCH + admin 4페이지 + DEC-019~023 동결 (단계 2, 게이트 #2)",
           "done": true,
-          "note": "회귀 가드 34/34 PASS · tsc 0 · eslint 0 · yaml/json OK · form-registry 35폼 중복 0"
+          "note": "회귀 가드 pytest 69 PASS (DEC-024 포함) · tsc 0 · yaml/json OK · form-registry 35폼 중복 0"
         },
         {
           "id": "M-S1-PORT-C3",
@@ -135,6 +135,12 @@
           "id": "M-S1-DOC-DEC-019-023",
           "task": "DEC-019~023 결정 5건 신규 등록 — legacy-analysis/decisions.md 본문 + master_data.yaml + admin_web_platform.yaml 1차 동결",
           "done": true
+        },
+        {
+          "id": "M-S1-DEC-024-PAGING",
+          "task": "DEC-024 list paging 표준 — app/core/pagination.py, list API page 메타 통일·BC, reports 가상 페이징, 프론트 DataGridPager 전면 적용, 계약(master_data/sales_inquiry/outbound_order)·테스트(test_pagination_*) 동기",
+          "done": true,
+          "note": "회귀 pytest 69 PASS · ledger 화면은 페이징 제외 · dashboard timeline DEC-024 반영됨"
         }
       ]
     },
