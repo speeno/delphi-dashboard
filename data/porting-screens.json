@@ -1269,55 +1269,59 @@
         ],
         "dfm_widget_id_coverage": "billing 22 / cash 20 / cash-status 11 / period 10 — 매핑 노트 ↔ DOM 1:1"
       },
-      "contract": "migration/contracts/settlement_billing.yaml v1.0.0",
-      "testpack": "migration/test-cases/settlement_billing.json + test/test_c5_settlement_phase1.py (32 cases all pass)",
+      "contract": "migration/contracts/settlement_billing.yaml v1.1.0 (Phase 2)",
+      "testpack": "migration/test-cases/settlement_billing.json + test/test_c5_settlement_phase1.py (32 cases) + test/test_c5_settlement_phase2.py (31 cases) — 총 63 PASS",
       "subscenarios_absorbed": [
         "C12 마감 후 편집 차단 (DEC-031: T2_Ssub.Yesno='1' 단일 정본)",
-        "C14 보고서 동등성(일부) — Sobo47 월합계"
+        "C14 보고서 동등성(일부) — Sobo47 월합계",
+        "C5 Phase 2: Sobo46 청구서 인쇄 미리보기 + Sobo49 세금계산서 발행 + 재집계 + audit 회전 UI"
       ],
       "decisions": [
         "DEC-031 마감 정책 = legacy_yesno (T2_Ssub.Yesno='1' 단일 정본)",
-        "DEC-032 평문 Gpass 폐기 → /audit/gpass-rotate (bcrypt + audit_token, scope='gpass_change')"
+        "DEC-032 평문 Gpass 폐기 → /audit/gpass-rotate (bcrypt + audit_token, scope='gpass_change')",
+        "DEC-034 Phase 2 인쇄 = HTML 미리보기 + window.print() (PDF/실인쇄는 C7 이연)",
+        "DEC-035 세금 외부 발행 = NOT_INTEGRATED stub (200 + audit), 외부 채널은 후속 시나리오",
+        "DEC-036 Chek3 토글 = 백엔드 _update_chek3 단일 헬퍼 (단건/일괄 동일 흐름)"
       ],
       "phase2_open_questions": [
-        "OQ-ST-1 Sobo46 청구서 인쇄 (HTML/PDF 하이브리드, C7 통합 검토)",
-        "OQ-ST-2 Sobo49 세금계산서 (홈택스 연계 정책 동결 필요)",
-        "OQ-ST-3 재집계 배치 (마감 후 실수 정정 정책)",
-        "OQ-ST-4 audit gpass 회전 UI (Phase 2 — 운영자 modal)",
-        "OQ-ST-5 입금 일괄 임포트 (CSV — C3 import 패턴 재사용 가능)"
+        "OQ-ST-1 (resolved by DEC-035, 2026-04-19) Sobo49 세금 외부 채널 stub",
+        "OQ-ST-2 (resolved by DEC-034, 2026-04-19) Sobo46/49 인쇄 = HTML 미리보기",
+        "OQ-ST-3 (resolved Phase 2) 재집계 = POST /billing/recalc + 마감 가드 (DEC-031 재사용)",
+        "OQ-ST-4 (resolved Phase 2) audit gpass 회전 UI = /admin/audit-rotate 페이지 (T6b)",
+        "OQ-ST-5 입금 일괄 임포트 (CSV — 후속 시나리오, C3 import 패턴 재사용 가능)"
       ],
       "tasks": {
         "T1": {
           "status": "done",
-          "note": "매핑 노트 6 + screen_card 통합 (Sobo45.md 자동 생성본 보존)"
+          "note": "Phase 1: 매핑 노트 6 + screen_card 통합. Phase 2: Sobo46_billing.md / Sobo49_tax.md 추가 (DEC-028)."
         },
         "T2": {
           "status": "done",
-          "note": "handlers/c5_phase1.md + i18n/c5.ko.json"
+          "note": "Phase 1: handlers/c5_phase1.md. Phase 2: handlers/c5_phase2.md (SQL-ST-13~23) + i18n/c5.ko.json 메시지 확장."
         },
         "T3": {
           "status": "done",
-          "note": "settlement_billing.yaml v1.0.0 + test-cases JSON 26 케이스"
+          "note": "Phase 2: settlement_billing.yaml v1.1.0 — 8 신규 endpoints + customer_variants Sobo46/49 + DEC-034/035/036."
         },
         "T4": {
           "status": "done",
-          "note": "settlement.py 라우터 10 endpoints + settlement_service / cash_service / models/settlement.py"
+          "note": "Phase 1: settlement.py 라우터 10 endpoints. Phase 2: settlement_print_service / tax_invoice_service / recalc_billing / audit_settlement listing — 총 19 endpoints."
         },
         "T5": {
           "status": "done",
-          "note": "2026_05_01_c5_phase1.sql — application_settings 정책 + audit_settlement + audit_password_attempts 보장"
+          "note": "Phase 1 마이그레이션 + Phase 2 테스트 31 cases (test/test_c5_settlement_phase2.py)."
         },
         "T6": {
           "status": "done",
-          "note": "settlement/{billing,period,cash,cash-status} 4 페이지 + form-registry settlement 그룹 + sidebar 아이콘"
+          "note": "Phase 2: settlement/billing/[key]/print + tax-invoice + tax-invoice/[key]/print + admin/audit-rotate. AuditPasswordModal 공용화 (components/shared)."
         },
         "T7": {
           "status": "done",
-          "note": "test_c5_settlement_phase1.py 32 PASS · C4 회귀 무영향 · tsc/eslint 0 · data-legacy-id grep 모두 통과"
+          "note": "test_c5_settlement_phase1.py 32 + test_c5_settlement_phase2.py 31 = 63 PASS · C4 회귀 무영향 · tsc/eslint 0 · data-legacy-id grep 통과 · debug probe 매트릭스 +2 그룹 (tax_invoice, audit_settlement)."
         },
         "T8": {
           "status": "done",
-          "note": "DEC-031/032 + core-scenarios §C5 Phase 1 진행 현황 + dashboard 갱신"
+          "note": "DEC-034/035/036 추가 + OQ-ST-1/2/3/4 종결 + dashboard 갱신."
         }
       }
     },
