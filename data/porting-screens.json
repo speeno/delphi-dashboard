@@ -1332,7 +1332,7 @@
       "name": "라벨/송장 인쇄",
       "gateId": 5,
       "purpose": "거래명세·라벨·송장·세무 출력",
-      "summary": "DEC-004: HTML 인쇄 + 라벨 PDF 하이브리드. QuickReport/Printer.Canvas → HTML/PDF 매핑",
+      "summary": "Phase 1 진행 중 (T1~T7 완료, T8 in_progress, T9/T10 pending) — 5 양식 (Sobo46/49/27/23/21) + 1 라벨 (Seep13 우편엽서). DEC-037 WeasyPrint 단일 엔진. 신규 SQL 0건 (라벨 SQL-PR-6 1건만 신규). DEC-004: HTML 인쇄 + 라벨 PDF 하이브리드.",
       "delphi": {
         "primary_form": "(인쇄 진입점 묶음)",
         "primary_unit": "Tong04.pas (Print_*)",
@@ -1348,46 +1348,92 @@
       "db_impact": "SELECT 위주 + 일부 마킹 UPDATE",
       "web": {
         "routes": [
-          "/print/preview/[type]/[id]"
+          "/settlement/billing/[billingKey]/print",
+          "/settlement/tax-invoice/[billingKey]/print",
+          "/outbound/orders/[orderKey]/print",
+          "/returns/receipts/[returnKey]/print",
+          "/transactions/sales-statement/[orderKey]/print",
+          "/print/label/[shipmentKey]"
         ],
         "endpoints": [
-          "GET /api/print/<type>/<id> (PDF/HTML)"
+          "GET /api/v1/settlement/billing/{billing_key}/print.pdf",
+          "GET /api/v1/settlement/tax-invoice/{billing_key}/print.pdf",
+          "GET /api/v1/print/outbound-statement/{order_key}.pdf",
+          "GET /api/v1/print/return-receipt/{return_key}.pdf",
+          "GET /api/v1/print/sales-statement/{order_key}.pdf",
+          "GET /api/v1/print/label/{shipment_key}.pdf?form=1"
         ],
         "backend": [
-          "도서물류관리프로그램/backend/app/routers/print.py (신규, WeasyPrint/Playwright)"
+          "도서물류관리프로그램/backend/app/services/print_service.py (신규, WeasyPrint render_pdf)",
+          "도서물류관리프로그램/backend/app/services/label_service.py (신규, SQL-PR-6 + render_label_html)",
+          "도서물류관리프로그램/backend/app/routers/print.py (신규, 4 PDF endpoints)",
+          "도서물류관리프로그램/backend/app/routers/settlement.py (PDF 2 endpoints 추가)",
+          "도서물류관리프로그램/backend/app/services/{outbound,returns,transactions,settlement_print,tax_invoice}_service.py (render_*_html 추가)"
         ],
         "frontend": [
-          "도서물류관리프로그램/frontend/src/app/(app)/print/* (신규, window.print 또는 PDF iframe)"
+          "도서물류관리프로그램/frontend/src/lib/print-api.ts (신규, PDF URL 빌더)",
+          "도서물류관리프로그램/frontend/src/app/(app)/print/label/[shipmentKey]/page.tsx (신규)",
+          "도서물류관리프로그램/frontend/src/app/(app)/{outbound,returns,transactions}/.../[key]/print/page.tsx (3 신규)",
+          "도서물류관리프로그램/frontend/src/app/(app)/settlement/{billing,tax-invoice}/.../print/page.tsx (PDF 다운로드 버튼 추가)"
         ]
       },
-      "contract": "migration/contracts/print_invoice.yaml + print_label.yaml (신규)",
-      "testpack": "migration/test-cases/print_*.json (신규, PDF diff 포함)",
-      "subscenarios_absorbed": [],
+      "contract": "migration/contracts/print_invoice.yaml v1.0.0 + print_label.yaml v1.0.0 (신규) + settlement_billing.yaml v1.2.0 (PDF 2건 추가)",
+      "testpack": "test/test_c7_print_phase1.py (22 cases, PDF byte signature + 마감 워터마크 + 503 fallback + DEC-028 grep)",
+      "subscenarios_absorbed": [
+        "Sobo46 청구서 인쇄 (P1-A)",
+        "Sobo49 세금계산서 인쇄 (P1-B)",
+        "Sobo27 출고 거래명세서 (P1-C)",
+        "Sobo23 반품 영수증 (P1-D)",
+        "Sobo21 거래명세서 (P1-E)",
+        "Seep13 우편엽서 라벨 form=1 (P1-F)"
+      ],
       "gate_dependency": "인쇄 결과 승인 #5",
+      "decisions": [
+        "DEC-037 WeasyPrint(Python) 단일 PDF 엔진 + NanumGothic 번들 + 503 graceful fallback",
+        "DEC-038 라벨 = 우편엽서 1종 (form=1 고정, 다른 양식은 Phase 2 이후)",
+        "DEC-039 .frf (FastReport VCL 4.x) = 참조용 정본, 자동 변환 0 (T9 카탈로그 + T10 OSS 파서 R&D 분리)",
+        "DEC-004 보강: 라벨 = 서버 PDF 분기 = WeasyPrint 단일 엔진 (OQ-002 부분 해소)"
+      ],
       "tasks": {
         "T1": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "Seep13_label.md + print_specs/c7_phase1.md 신규, 5 매핑 노트 PDF 절 보강"
         },
         "T2": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "handlers/c7_phase1.md (SQL-PR-1~6) + i18n/c7.ko.json"
         },
         "T3": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "print_invoice.yaml v1.0.0 + print_label.yaml v1.0.0 + settlement_billing.yaml v1.2.0"
         },
         "T4": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "test_c7_print_phase1.py 22 PASS (22/22)"
         },
         "T5": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "T5a (print_service.render_pdf + WeasyPrint) + T5b (4 PDF routers + label_service) + T5c (5 render_*_html)"
         },
         "T6": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "T6a (5 미리보기 페이지 PDF 다운로드 버튼 + lib/print-api.ts) + T6b (4 신규 미리보기 페이지)"
         },
         "T7": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "5 축 매트릭스 (test/type/lint/data/doc) + DEC-028 grep + debug probe 5 신규 그룹 + analysis/regression/c7_phase1.md"
         },
         "T8": {
-          "status": "not_started"
+          "status": "in_progress",
+          "note": "DEC-037/038/039 동결 + DEC-004 보강 + OQ-002 부분 해소 + 계획서 §7-C7/§8 + dashboard 갱신 (본 항목)"
+        },
+        "T9": {
+          "status": "not_started",
+          "note": ".frf 정본 98건 인벤토리 카탈로그 (analysis/print_specs/frf_catalog.md) + 5 양식 ↔ .frf 매핑표"
+        },
+        "T10": {
+          "status": "not_started",
+          "note": "(별도 R&D, 비차단) FastReport OSS 분석 → .frf 파서 자체 구현 가능성 리서치 보고서"
         }
       }
     },
