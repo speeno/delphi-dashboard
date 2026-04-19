@@ -1187,18 +1187,23 @@
       "id": "C5",
       "name": "정산(일·월 마감)",
       "gateId": 3,
+      "phase1_status": "completed",
+      "phase2_status": "deferred",
       "purpose": "일·월 집계·청구·세금계산서·입금 정산",
-      "summary": "집계 테이블 UPDATE, C12(마감 후 차단) 흡수, Subu40 패스워드 모달 보호",
+      "summary": "Phase 1 완료 (Sobo45/45_1/47/41/42/42_1, T1~T8) — 청구·집계·확정·취소·입금 CRUD·입금현황·gpass 회전. Phase 2 = Sobo46/49 인쇄 + 재집계 배치 (이연).",
       "delphi": {
         "primary_form": "TSobo45 (청구서관리)",
         "primary_unit": "Subu45.pas",
         "dfm": "Subu45.dfm",
         "related_forms": [
+          "TSobo45_1 청구서관리(택배)",
           "TSobo47 청구금액(년월)",
-          "TSobo46 청구서출력",
-          "TSobo49 세금계산서",
-          "TSobo41/42 입금관리",
-          "Subu40 패스워드 모달"
+          "TSobo46 청구서출력 (Phase 2)",
+          "TSobo49 세금계산서 (Phase 2)",
+          "TSobo41 입금내역",
+          "TSobo42 입금현황",
+          "TSobo42_1 입금현황(년월)",
+          "Subu40 패스워드 모달 (재사용)"
         ]
       },
       "permission_keys": [
@@ -1208,54 +1213,111 @@
         "F46",
         "F47"
       ],
-      "db_impact": "UPDATE 위주 (집계·마감)",
+      "db_impact": "T2_Ssub UPSERT (집계/마감) + T5_Ssub UPSERT (입금) + audit_settlement INSERT",
       "web": {
         "routes": [
           "/settlement/billing",
-          "/settlement/tax-invoice",
-          "/settlement/payments"
+          "/settlement/period",
+          "/settlement/cash",
+          "/settlement/cash-status"
         ],
         "endpoints": [
-          "POST /api/settlement/billing/close-month",
-          "GET /api/settlement/*"
+          "GET /api/v1/settlement/billing",
+          "GET /api/v1/settlement/billing/{key}",
+          "POST /api/v1/settlement/billing/{aggregate,confirm,cancel}",
+          "GET /api/v1/settlement/billing/period",
+          "GET /api/v1/settlement/cash",
+          "POST /api/v1/settlement/cash",
+          "PATCH /api/v1/settlement/cash/{key}/cancel",
+          "GET /api/v1/settlement/cash-status",
+          "POST /api/v1/audit/gpass-rotate (DEC-032)"
         ],
         "backend": [
-          "도서물류관리프로그램/backend/app/routers/settlement.py (신규, 배치 작업)"
+          "도서물류관리프로그램/backend/app/routers/settlement.py",
+          "도서물류관리프로그램/backend/app/services/{settlement,cash}_service.py",
+          "도서물류관리프로그램/backend/app/models/settlement.py",
+          "도서물류관리프로그램/backend/app/services/audit_service.py (settlement_logger + log_settlement_action)",
+          "도서물류관리프로그램/backend/app/services/audit_password_service.py (persist_settlement_audit)",
+          "도서물류관리프로그램/backend/migrations/2026_05_01_c5_phase1.sql"
         ],
         "frontend": [
-          "도서물류관리프로그램/frontend/src/app/(app)/settlement/* (신규)"
-        ]
+          "도서물류관리프로그램/frontend/src/app/(app)/settlement/billing/page.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/settlement/period/page.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/settlement/cash/page.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/settlement/cash-status/page.tsx",
+          "도서물류관리프로그램/frontend/src/lib/settlement-api.ts",
+          "도서물류관리프로그램/frontend/src/lib/form-registry.ts (settlement 그룹 + 4 폼 _billing/_cash)",
+          "도서물류관리프로그램/frontend/src/components/app-shell/sidebar.tsx (Receipt/Shield 아이콘)"
+        ],
+        "layout_inputs": [
+          "tools/delphi_porting_accelerator/examples/generated/legacy_source_root/Subu45/{Sobo45.html,Sobo45.form.json,Sobo45.tree.json,Sobo45.meta.json,Sobo45.pas_analysis.json}",
+          "tools/.../Subu45_1/Sobo45_1.*",
+          "tools/.../Subu47/Sobo47.*",
+          "tools/.../Subu41/Sobo41.*",
+          "tools/.../Subu42/Sobo42.*",
+          "tools/.../Subu42_1/Sobo42_1.*"
+        ],
+        "layout_mappings": [
+          "analysis/layout_mappings/Sobo45_billing.md",
+          "analysis/layout_mappings/Sobo45_1_billing.md",
+          "analysis/layout_mappings/Sobo47_billing.md",
+          "analysis/layout_mappings/Sobo41_cash.md",
+          "analysis/layout_mappings/Sobo42_cash.md",
+          "analysis/layout_mappings/Sobo42_1_cash.md",
+          "analysis/screen_cards/c5_settlement.md",
+          "analysis/handlers/c5_phase1.md"
+        ],
+        "dfm_widget_id_coverage": "billing 22 / cash 20 / cash-status 11 / period 10 — 매핑 노트 ↔ DOM 1:1"
       },
-      "contract": "migration/contracts/settlement_billing.yaml (신규)",
-      "testpack": "migration/test-cases/settlement_billing.json (신규)",
+      "contract": "migration/contracts/settlement_billing.yaml v1.0.0",
+      "testpack": "migration/test-cases/settlement_billing.json + test/test_c5_settlement_phase1.py (32 cases all pass)",
       "subscenarios_absorbed": [
-        "C12 마감 후 편집 차단",
-        "C14 보고서 동등성(일부)"
+        "C12 마감 후 편집 차단 (DEC-031: T2_Ssub.Yesno='1' 단일 정본)",
+        "C14 보고서 동등성(일부) — Sobo47 월합계"
+      ],
+      "decisions": [
+        "DEC-031 마감 정책 = legacy_yesno (T2_Ssub.Yesno='1' 단일 정본)",
+        "DEC-032 평문 Gpass 폐기 → /audit/gpass-rotate (bcrypt + audit_token, scope='gpass_change')"
+      ],
+      "phase2_open_questions": [
+        "OQ-ST-1 Sobo46 청구서 인쇄 (HTML/PDF 하이브리드, C7 통합 검토)",
+        "OQ-ST-2 Sobo49 세금계산서 (홈택스 연계 정책 동결 필요)",
+        "OQ-ST-3 재집계 배치 (마감 후 실수 정정 정책)",
+        "OQ-ST-4 audit gpass 회전 UI (Phase 2 — 운영자 modal)",
+        "OQ-ST-5 입금 일괄 임포트 (CSV — C3 import 패턴 재사용 가능)"
       ],
       "tasks": {
         "T1": {
-          "status": "not_started"
+          "status": "done",
+          "note": "매핑 노트 6 + screen_card 통합 (Sobo45.md 자동 생성본 보존)"
         },
         "T2": {
-          "status": "not_started"
+          "status": "done",
+          "note": "handlers/c5_phase1.md + i18n/c5.ko.json"
         },
         "T3": {
-          "status": "not_started"
+          "status": "done",
+          "note": "settlement_billing.yaml v1.0.0 + test-cases JSON 26 케이스"
         },
         "T4": {
-          "status": "not_started"
+          "status": "done",
+          "note": "settlement.py 라우터 10 endpoints + settlement_service / cash_service / models/settlement.py"
         },
         "T5": {
-          "status": "not_started"
+          "status": "done",
+          "note": "2026_05_01_c5_phase1.sql — application_settings 정책 + audit_settlement + audit_password_attempts 보장"
         },
         "T6": {
-          "status": "not_started"
+          "status": "done",
+          "note": "settlement/{billing,period,cash,cash-status} 4 페이지 + form-registry settlement 그룹 + sidebar 아이콘"
         },
         "T7": {
-          "status": "not_started"
+          "status": "done",
+          "note": "test_c5_settlement_phase1.py 32 PASS · C4 회귀 무영향 · tsc/eslint 0 · data-legacy-id grep 모두 통과"
         },
         "T8": {
-          "status": "not_started"
+          "status": "done",
+          "note": "DEC-031/032 + core-scenarios §C5 Phase 1 진행 현황 + dashboard 갱신"
         }
       }
     },
