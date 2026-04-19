@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-19 — C9 DEC-028 retrofit 묶음 완료 (HOT-MAS-4): layout_mappings Sobo11/14/17/38/39/45.md 6건 신규 + Sobo38.md→Sobo38_inbound.md 분리(rename, 참조 4 곳 동기화), master_data.yaml v1.1.0(customer_variants 6 + out_of_scope 5), 8 페이지(/master 허브 + 6 list + 2 detail)에 data-legacy-id 60+ 부착(DataGrid C6 OCP 재사용, 컴포넌트 변경 0), 회귀 가드 pytest 22+30 subtest·tsc 0·eslint master/** 0. HA-RET-01 잔여 = C1.",
+  "updatedAt": "2026-04-19 — C3 phase2 UI 보강 묶음 완료 (HOT-INB-3): inbound_receipt.yaml v1.1.0 (행위/엔드포인트 변경 0, UI 갭 해소), Sobo54·Sobo57 일별·기간 입고내역서 Next 라우트 신설(reports/daily, reports/period) + form-registry phase2 등록, 입고 신규 페이지 출판사·입고처 자동완성 결합(C2 CustomerSearchInput 재사용), 입고 상세에 라인 편집 그리드(InboundLineGrid, G4_Book 자동완성+inboundApi.update PUT) 도입(status=cancelled read-only 유지). 매핑 노트 Sobo54.md/Sobo57.md §5 체크리스트 [x] 갱신, 회귀 가드 pytest 15·tsc 0·eslint inbound 0. 잔여 = OQ-IN-1 FTP 자동수신 별행. (직전: C9 DEC-028 retrofit 묶음, HA-RET-01 잔여=C1.)",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {
@@ -710,7 +710,9 @@
           "/inbound/receipts",
           "/inbound/receipts/new",
           "/inbound/receipts/[receiptKey]",
-          "/inbound/import"
+          "/inbound/import",
+          "/inbound/reports/daily",
+          "/inbound/reports/period"
         ],
         "endpoints": [
           "GET /api/v1/inbound/receipts",
@@ -734,13 +736,16 @@
           "도서물류관리프로그램/frontend/src/lib/api-client.ts (postForm + FormData 분기)",
           "도서물류관리프로그램/frontend/src/app/(app)/inbound/layout.tsx",
           "도서물류관리프로그램/frontend/src/app/(app)/inbound/receipts/page.tsx",
-          "도서물류관리프로그램/frontend/src/app/(app)/inbound/receipts/new/page.tsx",
-          "도서물류관리프로그램/frontend/src/app/(app)/inbound/receipts/[receiptKey]/page.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/inbound/receipts/new/page.tsx (phase2 — 출판사·입고처 자동완성 연동)",
+          "도서물류관리프로그램/frontend/src/app/(app)/inbound/receipts/[receiptKey]/page.tsx (phase2 — 라인 편집 토글 + InboundLineGrid)",
           "도서물류관리프로그램/frontend/src/app/(app)/inbound/import/page.tsx",
-          "도서물류관리프로그램/frontend/src/lib/form-registry.ts (Sobo22 + Sobo22_import 등록 — Menu208 정합)"
+          "도서물류관리프로그램/frontend/src/app/(app)/inbound/reports/daily/page.tsx (phase2 — Sobo54)",
+          "도서물류관리프로그램/frontend/src/app/(app)/inbound/reports/period/page.tsx (phase2 — Sobo57)",
+          "도서물류관리프로그램/frontend/src/components/inbound/inbound-line-grid.tsx (phase2 — Sobo22 라인 편집 그리드)",
+          "도서물류관리프로그램/frontend/src/lib/form-registry.ts (Sobo22 + Sobo22_import + Sobo54 + Sobo57 등록 — Menu208 + 내역서 메뉴 정합)"
         ]
       },
-      "contract": "migration/contracts/inbound_receipt.yaml v1.0.0 (DEC-027 정합)",
+      "contract": "migration/contracts/inbound_receipt.yaml v1.1.0 (DEC-027 + DEC-028, phase2 UI 보강 — 행위 변경 0)",
       "testpack": "test/test_c3_inbound_phase1.py (15 passed: 5 컨트랙트 + 7 라우터 + 3 서비스 단위)",
       "phase1_test_results": "test/test_c3_inbound_phase1.py — 15 passed (2026-04-19)",
       "layout_inputs": [
@@ -770,7 +775,16 @@
           "GET /api/v1/inbound/reports/daily",
           "GET /api/v1/inbound/reports/period"
         ],
-        "result": "FastAPI app.routes 51건 등록 OK · pytest 15 passed · tsc 0 error · eslint 0 신규 warn"
+        "result": "FastAPI app.routes 51건 등록 OK · pytest 15 passed · tsc 0 error · eslint 0 신규 warn",
+        "phase2_check": {
+          "performed_at": "2026-04-19",
+          "frontend_routes_added": [
+            "/inbound/reports/daily",
+            "/inbound/reports/period"
+          ],
+          "dfm_widget_id_coverage": "Sobo22.DBGrid101 (라인 그리드 8 컬럼 헤더) + Sobo54.DBGrid101/201 (21 컬럼 헤더 + 그리드 wrapper) + Sobo57.DBGrid101/201 (22 컬럼 헤더 + 그리드 wrapper) data-legacy-id 1:1 부착",
+          "result": "test/test_c3_inbound_phase1.py 15 passed (회귀 0) · npx tsc --noEmit 0 error · npx eslint inbound 0 warning"
+        }
       },
       "hotfixes": [
         {
@@ -795,12 +809,30 @@
             "도서물류관리프로그램/frontend/src/app/(app)/inbound/* (data-legacy-id 부착)"
           ],
           "verified_by": "tsc --noEmit 0 error · eslint inbound 0 warning"
+        },
+        {
+          "id": "HOT-INB-3",
+          "date": "2026-04-19",
+          "summary": "C3 phase2 UI 보강 (계약 v1.1.0). (1) Sobo54·Sobo57 일별·기간 입고내역서 Next 라우트 신설(/inbound/reports/{daily,period}) — 백엔드 reports/daily·period 엔드포인트는 phase1 부터 존재했으나 UI 가 비어 있어 회귀 갭으로 잡혀 있던 항목. form-registry phase2 등록(menuGroup=report). (2) 입고 신규 페이지에 출판사·입고처 자동완성 결합 — C2 CustomerSearchInput(G7_Ggeo `/api/v1/masters/customers`) 그대로 재사용 (SOLID OCP). (3) 입고 상세 라인 편집 토글 + 신규 InboundLineGrid 컴포넌트(Sobo22.DBGrid101 매핑 + G4_Book `/api/v1/masters/products` 자동완성) + inboundApi.update PUT 연결, status=cancelled 는 read-only 유지(DEC-027). 매핑 노트 Sobo54.md/Sobo57.md §5 회귀 가드 체크리스트 모두 충족.",
+          "files": [
+            "migration/contracts/inbound_receipt.yaml (1.0.0 → 1.1.0 changelog)",
+            "도서물류관리프로그램/frontend/src/app/(app)/inbound/reports/daily/page.tsx (신규)",
+            "도서물류관리프로그램/frontend/src/app/(app)/inbound/reports/period/page.tsx (신규)",
+            "도서물류관리프로그램/frontend/src/components/inbound/inbound-line-grid.tsx (신규)",
+            "도서물류관리프로그램/frontend/src/app/(app)/inbound/receipts/new/page.tsx (자동완성 결합)",
+            "도서물류관리프로그램/frontend/src/app/(app)/inbound/receipts/[receiptKey]/page.tsx (편집 모드)",
+            "도서물류관리프로그램/frontend/src/lib/form-registry.ts (Sobo54/57 phase2 등록)",
+            "analysis/layout_mappings/Sobo54.md (§5 체크리스트 [x] 갱신)",
+            "analysis/layout_mappings/Sobo57.md (§5 체크리스트 [x] 갱신)"
+          ],
+          "verified_by": "test/test_c3_inbound_phase1.py 15 passed (회귀 0) · npx tsc --noEmit 0 error · npx eslint inbound + components/inbound + form-registry 0 warning"
         }
       ],
       "deferrals": [
-        "OQ-IN-1 — Sobo38 FTP 자동수신 (Indy idFTP) 은 1차 보류. 사용자 직접 업로드(/inbound/import) 로 대체 (DEC-027).",
-        "출판사·입고처 마스터 자동완성 위젯 (현재는 코드 직접 입력) — phase2.",
-        "라인 수정 그리드 UI — phase2 (백엔드 PUT 은 이미 구현·테스트 완료, UI 만 누락)."
+        "OQ-IN-1 — Sobo38 FTP 자동수신 (Indy idFTP) 은 phase2 에서도 보류. 사용자 직접 업로드(/inbound/import) 로 대체 (DEC-027). 별행 스파이크 후 인프라 합의 필요.",
+        "출판사·입고처 마스터 자동완성 위젯 — phase2 완료 (CustomerSearchInput 재사용).",
+        "라인 수정 그리드 UI — phase2 완료 (InboundLineGrid + inboundApi.update 연결, status=cancelled read-only 유지).",
+        "Sobo54·Sobo57 일별·기간 입고내역서 UI — phase2 완료 (백엔드 reports/daily·period 그대로 활용)."
       ],
       "tasks": {
         "T1": {
@@ -1030,16 +1062,23 @@
       "name": "반품 처리",
       "gateId": 3,
       "purpose": "반품 + 재고 영향 + 정산 영향",
-      "summary": "UPDATE/DELETE 동반, 정품/반품/폐기 재고 분기, 패스워드 모달 보호",
+      "summary": "Phase 2 완료 — 3분기(반품/재생/해체/변경) + 패스워드 게이트(bcrypt+5회 잠금) + Sobo34_4/Sobo58 신화면 + 라인 diff/부분/롤백 + Sv_Ghng FOR UPDATE",
+      "phase": "phase2",
+      "phase1_status": "completed",
+      "phase2_status": "completed",
       "delphi": {
         "primary_form": "TSobo23 (반품명세서)",
         "primary_unit": "Subu23.pas",
         "dfm": "Subu23.dfm",
         "related_forms": [
           "TSobo23_1 반품과 변형",
+          "TSobo24 반품재고(재생)",
+          "TSobo25 반품재고(해체)",
+          "TSobo34_4 기간별재고원장(상세)-폐기",
           "TSobo35 반품재고(폐기)",
           "TSobo51 반품재고(변경)",
           "TSobo55 일별 반품내역서",
+          "TSobo58 기간별반품내역서",
           "Subu40 패스워드 모달"
         ]
       },
@@ -1050,50 +1089,96 @@
         "F37",
         "F53"
       ],
-      "db_impact": "UPDATE/DELETE 동반",
+      "db_impact": "UPDATE/DELETE 동반 + Sv_Ghng SELECT FOR UPDATE",
       "web": {
         "routes": [
-          "/returns",
-          "/returns/[id]"
+          "/returns/receipts",
+          "/returns/receipts/[returnKey]",
+          "/returns/inventory",
+          "/returns/reports",
+          "/returns/ledger",
+          "/returns/period-report"
         ],
         "endpoints": [
-          "GET/POST/PUT/DELETE /api/returns"
+          "GET/POST /api/v1/returns",
+          "PUT /api/v1/returns/{key}",
+          "POST /api/v1/returns/dispose/{regen,disassemble}",
+          "POST /api/v1/returns/dispose/{regen,disassemble}/partial",
+          "POST /api/v1/returns/{key}/rollback",
+          "POST /api/v1/returns/change",
+          "POST /api/v1/returns/import/{preview,execute}",
+          "GET /api/v1/returns/ledger",
+          "GET /api/v1/returns/period-report",
+          "POST /api/v1/audit/{password-verify,password-rotate}",
+          "GET /api/v1/audit/returns"
         ],
         "backend": [
-          "도서물류관리프로그램/backend/app/routers/returns.py (신규)"
+          "도서물류관리프로그램/backend/app/routers/returns.py",
+          "도서물류관리프로그램/backend/app/services/returns_service.py",
+          "도서물류관리프로그램/backend/app/services/audit_password_service.py (Phase2)",
+          "도서물류관리프로그램/backend/app/services/audit_service.py",
+          "도서물류관리프로그램/backend/app/core/db.py (execute_transactional_block, Phase2)",
+          "도서물류관리프로그램/backend/app/core/d_select.py (Phase2)",
+          "도서물류관리프로그램/backend/migrations/2026_04_19_c4_phase2.sql"
         ],
         "frontend": [
-          "도서물류관리프로그램/frontend/src/app/(app)/returns/* (신규)"
+          "도서물류관리프로그램/frontend/src/app/(app)/returns/receipts/*",
+          "도서물류관리프로그램/frontend/src/app/(app)/returns/inventory/*",
+          "도서물류관리프로그램/frontend/src/app/(app)/returns/reports/*",
+          "도서물류관리프로그램/frontend/src/app/(app)/returns/ledger/* (Phase2)",
+          "도서물류관리프로그램/frontend/src/app/(app)/returns/period-report/* (Phase2)",
+          "도서물류관리프로그램/frontend/src/lib/returns-api.ts (v1.1.0)",
+          "도서물류관리프로그램/frontend/src/lib/api-client.ts (getWithHeaders)"
         ]
       },
-      "contract": "migration/contracts/return_receipt.yaml (신규)",
-      "testpack": "migration/test-cases/return_receipt.json (신규)",
+      "contract": "migration/contracts/return_receipt.yaml (v1.1.0)",
+      "testpack": "test/test_c4_returns_phase1.py + test/test_c4_returns_phase2.py (총 60+ cases)",
       "subscenarios_absorbed": [],
+      "layout_inputs": [
+        "tools/delphi_porting_accelerator/examples/generated/legacy_source_root/Subu23/Sobo23.html",
+        "tools/delphi_porting_accelerator/examples/generated/legacy_source_root/Subu23_1/Sobo23_1.html",
+        "tools/delphi_porting_accelerator/examples/generated/legacy_source_root/Subu24/Sobo24.html",
+        "tools/delphi_porting_accelerator/examples/generated/legacy_source_root/Subu25/Sobo25.html",
+        "tools/delphi_porting_accelerator/examples/generated/legacy_source_root/Subu34_4/Sobo34_4.html",
+        "tools/delphi_porting_accelerator/examples/generated/legacy_source_root/Subu40/Sobo40.html",
+        "tools/delphi_porting_accelerator/examples/generated/legacy_source_root/Subu51/Sobo51.html",
+        "tools/delphi_porting_accelerator/examples/generated/legacy_source_root/Subu55/Sobo55.html",
+        "tools/delphi_porting_accelerator/examples/generated/legacy_source_root/Subu58/Sobo58.html"
+      ],
+      "layout_mappings": [
+        "analysis/layout_mappings/Sobo23.md",
+        "analysis/layout_mappings/Sobo24.md",
+        "analysis/layout_mappings/Sobo25.md",
+        "analysis/layout_mappings/Sobo34_4.md (Phase2)",
+        "analysis/layout_mappings/Sobo40.md",
+        "analysis/layout_mappings/Sobo51.md",
+        "analysis/layout_mappings/Sobo55.md",
+        "analysis/layout_mappings/Sobo58.md (Phase2)"
+      ],
+      "dfm_widget_id_coverage": {
+        "ledger_page": 36,
+        "period_report_page": 33,
+        "receipts_detail_page": 20
+      },
+      "open_questions_resolved_phase2": [
+        "OQ-RT-1 (chul_08 형식): csv/txt 한정 + 501 RT_IMPORT_FORMAT 인터페이스 노출",
+        "OQ-RT-2 (Bdate vs Gdate): 분리 유지",
+        "OQ-RT-3 (Sv_Ghng Field1/2/3): SV_GHNG_FIELD_MAP 9종 매핑",
+        "OQ-RT-4 (bcrypt): cost=12 + 5회/10분/15분 잠금",
+        "OQ-RT-5 (FOR UPDATE): execute_transactional_block + mysql3 폴백",
+        "OQ-RT-7 (D_Select): 인터페이스만 노출, 실권한 C10",
+        "OQ-RT-8 (Sobo34_4/58): 신화면 구현 완료",
+        "OQ-RT-9 (audit DB): audit_returns + audit_password_attempts 영속화"
+      ],
       "tasks": {
-        "T1": {
-          "status": "not_started"
-        },
-        "T2": {
-          "status": "not_started"
-        },
-        "T3": {
-          "status": "not_started"
-        },
-        "T4": {
-          "status": "not_started"
-        },
-        "T5": {
-          "status": "not_started"
-        },
-        "T6": {
-          "status": "not_started"
-        },
-        "T7": {
-          "status": "not_started"
-        },
-        "T8": {
-          "status": "not_started"
-        }
+        "T1": { "status": "completed" },
+        "T2": { "status": "completed" },
+        "T3": { "status": "completed" },
+        "T4": { "status": "completed" },
+        "T5": { "status": "completed" },
+        "T6": { "status": "completed" },
+        "T7": { "status": "completed" },
+        "T8": { "status": "completed" }
       }
     },
     {
