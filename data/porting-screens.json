@@ -1171,14 +1171,14 @@
         "OQ-RT-9 (audit DB): audit_returns + audit_password_attempts 영속화"
       ],
       "tasks": {
-        "T1": { "status": "completed" },
-        "T2": { "status": "completed" },
-        "T3": { "status": "completed" },
-        "T4": { "status": "completed" },
-        "T5": { "status": "completed" },
-        "T6": { "status": "completed" },
-        "T7": { "status": "completed" },
-        "T8": { "status": "completed" }
+        "T1": { "status": "done" },
+        "T2": { "status": "done" },
+        "T3": { "status": "done" },
+        "T4": { "status": "done" },
+        "T5": { "status": "done" },
+        "T6": { "status": "done" },
+        "T7": { "status": "done" },
+        "T8": { "status": "done" }
       }
     },
     {
