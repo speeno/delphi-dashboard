@@ -41,6 +41,7 @@ async function loadAll() {
     webPortingProgress,
     humanActionItems,
     portingScreens,
+    tracks,
   ] = await Promise.all([
     Promise.resolve(projectMeta),
     loadJSON('sprints.json'),
@@ -58,6 +59,7 @@ async function loadAll() {
     loadJSON('web-porting-progress.json'),
     loadJSON('human-action-items.json'),
     loadJSON('porting-screens.json'),
+    loadJSON('tracks.json').catch(() => null),
   ]);
   return {
     project,
@@ -76,6 +78,7 @@ async function loadAll() {
     webPortingProgress,
     humanActionItems,
     portingScreens,
+    tracks,
   };
 }
 
@@ -791,13 +794,18 @@ function renderPortingScreens(data) {
         ? `<a class="porting-app-link" href="${escapeHtml(appUrl)}" target="_blank" rel="noopener noreferrer" title="웹 화면 열기 (${escapeHtml(appUrl)})">화면 열기 ↗</a>`
         : '';
 
+      const extBadge = sc.extensionLine ? `<span class="badge badge-progress" style="margin-left:6px;font-size:10px">확장</span>` : '';
+      const constraintsHtml = (sc.constraints || []).length
+        ? `<div style="font-size:11px;color:var(--danger);margin-top:4px">⚠ ${(sc.constraints || []).map((c) => escapeHtml(c)).join(' · ')}</div>`
+        : '';
       return `
-        <div class="card porting-screen-card" data-scenario-id="${escapeHtml(sc.id)}" style="padding:12px">
+        <div class="card porting-screen-card" data-scenario-id="${escapeHtml(sc.id)}" data-extension="${sc.extensionLine ? '1' : '0'}" style="padding:12px${sc.extensionLine ? ';border-left:3px solid var(--accent)' : ''}">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px">
             <div style="min-width:0;flex:1">
-              <div style="font-size:11px;color:var(--text-muted)"><code style="font-size:11px">${escapeHtml(sc.id)}</code></div>
+              <div style="font-size:11px;color:var(--text-muted)"><code style="font-size:11px">${escapeHtml(sc.id)}</code>${extBadge}</div>
               <div style="font-size:14px;font-weight:600;margin-top:2px">${escapeHtml(sc.name)}</div>
               <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${escapeHtml(meta)}</div>
+              ${constraintsHtml}
             </div>
             <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px">
               <div style="font-size:18px;font-weight:700">${prog.pct}%</div>
@@ -1256,6 +1264,76 @@ function renderEval(data) {
     </div>`;
 }
 
+function renderTracks(data) {
+  const tr = data.tracks;
+  if (!tr || !Array.isArray(tr.tracks) || tr.tracks.length === 0) return '';
+  const statusBadgeMap = {
+    in_progress: ['진행중', 'badge-progress'],
+    done: ['완료', 'badge-done'],
+    pending: ['대기', 'badge-wait'],
+    blocked: ['차단', 'badge-danger'],
+    phase3_hold: ['Phase 3 보류', 'badge-wait'],
+  };
+  const cards = tr.tracks.map((t) => {
+    const [stLabel, stCls] = statusBadgeMap[t.status] || [t.status || '대기', 'badge-wait'];
+    const milestones = (t.milestones || []).map((m) => {
+      const [mLabel, mCls] = statusBadgeMap[m.status] || [m.status || '대기', 'badge-wait'];
+      const meta = [
+        m.date ? `📅 ${m.date}` : '',
+        m.depends_on && m.depends_on.length ? `의존 ${m.depends_on.join('/')}` : '',
+        m.blocker ? `차단: ${m.blocker}` : '',
+        m.note ? m.note : '',
+      ].filter(Boolean).join(' · ');
+      const artifact = m.artifact ? `<div style="font-size:11px;color:var(--text-muted)"><code style="font-size:11px">${escapeHtml(m.artifact)}</code></div>` : '';
+      return `
+        <li style="margin:4px 0">
+          <span class="badge ${mCls}" style="margin-right:6px">${escapeHtml(mLabel)}</span>
+          <strong style="font-size:12px">${escapeHtml(m.id)}</strong> ${escapeHtml(m.name)}
+          ${meta ? `<div style="font-size:11px;color:var(--text-muted);margin-top:2px">${escapeHtml(meta)}</div>` : ''}
+          ${artifact}
+        </li>`;
+    }).join('');
+    const decisions = (t.decisions || []).map((d) => `<code style="font-size:11px;margin-right:4px">${escapeHtml(d)}</code>`).join('');
+    const linked = (t.linked_scenarios || []).map((s) => `<code style="font-size:11px;margin-right:4px">${escapeHtml(s)}</code>`).join('');
+    const rationale = (t.rationale || []).map((r) => `<li>${escapeHtml(r)}</li>`).join('');
+    const extBadge = t.extensionLine ? `<span class="badge badge-progress" style="margin-left:6px">확장 라인</span>` : '';
+    return `
+      <div class="card" style="padding:14px;margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px">
+          <div style="min-width:0;flex:1">
+            <div style="font-size:11px;color:var(--text-muted)"><code style="font-size:11px">${escapeHtml(t.id)}</code> · ${escapeHtml(t.category || 'Track')}</div>
+            <div style="font-size:15px;font-weight:600;margin-top:2px">${escapeHtml(t.name)}${extBadge}</div>
+          </div>
+          <span class="badge ${stCls}">${escapeHtml(stLabel)}</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.5;margin:6px 0 10px">${escapeHtml(t.summary || t.purpose || '')}</div>
+        <details>
+          <summary style="font-size:12px;cursor:pointer;color:var(--text-muted)">마일스톤 / 결정 / 연결 시나리오</summary>
+          <div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px">
+            <div>
+              <div style="font-weight:600;margin-bottom:4px">마일스톤</div>
+              <ul style="margin:0;padding-left:18px">${milestones || '<li style="color:var(--text-muted)">정의 없음</li>'}</ul>
+            </div>
+            <div>
+              <div style="font-weight:600;margin-bottom:4px">근거 / 정책</div>
+              <ul style="margin:0;padding-left:18px;color:var(--text-muted)">${rationale || '<li>없음</li>'}</ul>
+              <div style="font-weight:600;margin:8px 0 4px">결정 (DEC)</div>
+              <div>${decisions || '<span style="color:var(--text-muted);font-size:11px">없음</span>'}</div>
+              <div style="font-weight:600;margin:8px 0 4px">연결 시나리오</div>
+              <div>${linked || '<span style="color:var(--text-muted);font-size:11px">없음</span>'}</div>
+            </div>
+          </div>
+        </details>
+      </div>`;
+  }).join('');
+  return `
+    <div class="section" id="tracks-section">
+      <div class="section-title">${escapeHtml(tr.title || 'R&D / DX Tracks')}</div>
+      <p style="font-size:11px;color:var(--text-muted);margin:0 0 10px">시나리오 (C1~C15) 와 평행하게 운영되는 R&D/DX 트랙. T1~T8 고정 단계 없이 자유 마일스톤. ${tr.updatedAt ? `갱신: ${escapeHtml(tr.updatedAt)}` : ''}</p>
+      ${cards}
+    </div>`;
+}
+
 function renderRisks(data) {
   const { risks } = data;
   const rows = risks.map(r => `
@@ -1372,6 +1450,7 @@ async function init() {
       renderDeliverables(data),
       renderApprovals(data),
       renderEval(data),
+      renderTracks(data),
       renderRisks(data),
       renderLog(data),
     ].join('');

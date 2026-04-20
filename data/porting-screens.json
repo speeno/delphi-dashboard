@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-20 — C7 Phase 1+2-α + Track B4 PoC + C8 Phase 1 대시보드 동기화: C7 variant/form (?variant v0..v9 / ?form 1..5), 계약 print_* v1.1.0, pytest 37 PASS, probe 3 그룹, §7-C7-α/§7-C7-β 반영. C8 POST /scan/match + ScanInput 3 화면, pytest 22 PASS, DEC-004/040. B4 PoC 보고서(c7_b4_poc_1day_report.md) 산출·Phase 3 보류. (직전: 2026-04-19 C3 phase2 HOT-INB-3.)",
+  "updatedAt": "2026-04-20 — C10 Phase 1 풀 스코프 마감 대시보드 동기화: T1~T8 모두 completed. RBAC 가드 강제 (require_permission/require_role) + Id_Logn F11~F89 매트릭스 단일 통합 페이지 + d_select 4 분기 실분기 (OQ-RT-7 마감) + C13 글로벌 401/403 인터셉터 (DEC-041) + C15 If-Match/ETag (DEC-042) + DEC-043 IdP/SSO 인터페이스 분리. test_c10_admin_phase1.py 24 PASS + axis_test_full 333 PASS. probe 4 그룹 신규 (admin/auth/concurrency). 신규 SQL 0건. (직전: 2026-04-20 C8 Phase 1.)",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {
@@ -45,6 +45,22 @@
       "dec003": "고객사 분기",
       "gate": 4,
       "gateId": 4
+    },
+    {
+      "id": 6,
+      "name": "확장 라인 (모바일/통계/운영)",
+      "dec003": "확장",
+      "gate": 5,
+      "gateId": 5,
+      "$comment": "C10 이후 확장 라인 — C11(모바일 UAT)/C13_stats(통계 확장)/C14(운영 모니터링). 외부 시스템 연동 제외 (사용자 명시)."
+    },
+    {
+      "id": 7,
+      "name": "Cut-over (전환)",
+      "dec003": "전환",
+      "gate": 5,
+      "gateId": 5,
+      "$comment": "C15_cutover — 레거시 → 모던 전환. 자체 스크립트 only (외부 SaaS 제외)."
     }
   ],
   "dashboardOrder": [
@@ -53,7 +69,9 @@
     2,
     3,
     4,
-    5
+    5,
+    6,
+    7
   ],
   "lines": {
     "betaMinimumLine": {
@@ -87,6 +105,16 @@
         "C8",
         "C9",
         "C10"
+      ]
+    },
+    "extensionLine": {
+      "label": "확장 (C10 이후)",
+      "$comment": "C10 이후 확장 라인 — 외부 시스템 연동 제외 (사용자 명시)",
+      "members": [
+        "C11",
+        "C13_stats",
+        "C14",
+        "C15_cutover"
       ]
     }
   },
@@ -1551,69 +1579,276 @@
       "id": "C10",
       "name": "권한 관리(f11~f89)",
       "gateId": 4,
-      "purpose": "사용자·권한 매트릭스 관리",
-      "summary": "Id_Logn UPDATE. C13(세션 만료·권한 부족), C15(병행 충돌) 연계 E2E",
+      "purpose": "사용자·권한 매트릭스 관리 (Id_Logn F11~F89 매트릭스 + RBAC 가드 + d_select 실분기 + 세션·권한·동시편집 표준)",
+      "summary": "Phase 1 완료 (2026-04-20) — 풀 스코프 (RBAC 가드 강제 + Id_Logn 매트릭스 UI + d_select 실분기 + C13/C15 + Subu40 흡수 + DEC-043 IdP/SSO 인터페이스). DEC-041/042/043 동결. OQ-RT-7 마감 (D_Select 실분기 도입). Wave D D-ADM-1 closed / D-ADM-3 partial. 신규 SQL 0건.",
       "delphi": {
-        "primary_form": "TSubu10 (환경설정 - 메인 메뉴 진입점)",
-        "primary_unit": "Subu10.pas",
-        "dfm": "Subu10.dfm",
+        "primary_form": "TSubu10 (환경설정 - 메인 메뉴 진입점, 사용자 CRUD/Fxx 매트릭스/비번 리셋 통합)",
+        "primary_unit": "Subu10.pas (개념 진입점) + Chul.pas (L441/L1724/L2451/L2452 — 5 SQL 100% 재사용) + Subu45.pas (L364 비번 리셋)",
+        "dfm": "Subu10.dfm (자동 생성본 보존, 모던은 단일 통합 페이지)",
         "related_forms": [
-          "사용자 관리 폼은 메인 메뉴에 없을 수 있음 → 체크리스트 §3.4 확인",
-          "Subu40 패스워드 모달"
+          "Subu40 패스워드 모달 (audit-password-modal.tsx 100% 재사용 — DEC-029)",
+          "Subu45 비번 리셋 (admin.user.write 가드 + audit token gate)"
         ]
       },
       "permission_keys": [
-        "F18 + 슈퍼유저 0000"
+        "F11~F89 30 정본 (legacy-analysis/permission-keys-catalog.md)",
+        "admin.user.read (F18r 신규) + admin.user.write (F18) + 슈퍼유저 Hcode='0000'"
       ],
-      "db_impact": "UPDATE (Id_Logn 권한 컬럼)",
+      "db_impact": "Phase 1 = in-memory 시드 (UPDATE 0). Phase 2 = 실 MySQL 연결 시점에 Id_Logn UPDATE 도입. 신규 INSERT/CREATE TABLE 0.",
       "web": {
         "routes": [
-          "/admin/users",
-          "/admin/permissions"
+          "/admin/id-logn (사용자 CRUD + F11~F89 매트릭스 + 비번 리셋 단일 통합)",
+          "/admin (홈 카드 추가)"
         ],
         "endpoints": [
-          "GET/POST/PUT/DELETE /api/admin/users",
-          "PUT /api/admin/permissions"
+          "GET /api/v1/admin/id-logn (list)",
+          "POST /api/v1/admin/id-logn (create)",
+          "PUT /api/v1/admin/id-logn/{hcode} (update + If-Match)",
+          "PUT /api/v1/admin/id-logn/{hcode}/permissions (matrix + If-Match)",
+          "POST /api/v1/admin/id-logn/{hcode}/password-reset"
         ],
         "backend": [
-          "도서물류관리프로그램/backend/app/routers/admin.py (신규)"
+          "도서물류관리프로그램/backend/app/core/deps.py (T5 신규 — require_permission/require_role + get_user_context)",
+          "도서물류관리프로그램/backend/app/core/d_select.py (T5 갱신 — 4 분기 실분기 도입, OQ-RT-7 마감)",
+          "도서물류관리프로그램/backend/app/core/concurrency.py (T5 신규 — If-Match/ETag 헬퍼, DEC-042)",
+          "도서물류관리프로그램/backend/app/core/auth_provider.py (T5 신규 — IdP/SSO 인터페이스, DEC-043)",
+          "도서물류관리프로그램/backend/app/services/id_logn_service.py (T5 신규 — Chul.pas 5 SQL 100% 재사용, in-memory 시드)",
+          "도서물류관리프로그램/backend/app/routers/admin.py (T5 4 신규 엔드포인트 + require_permission + If-Match)"
         ],
         "frontend": [
-          "도서물류관리프로그램/frontend/src/app/(app)/admin/* (신규)"
+          "도서물류관리프로그램/frontend/src/app/(app)/admin/id-logn/page.tsx (T6 신규 — 단일 통합 페이지)",
+          "도서물류관리프로그램/frontend/src/components/auth/permission-guard.tsx (T6 신규 — JWT claim 기반 페이지/버튼 가드)",
+          "도서물류관리프로그램/frontend/src/components/shared/concurrency-conflict-modal.tsx (T6 신규 — 409 STALE_VERSION 처리)",
+          "도서물류관리프로그램/frontend/src/lib/api-client.ts (T6 갱신 — 글로벌 401/403 인터셉터 + 자동 refresh)",
+          "도서물류관리프로그램/frontend/src/middleware.ts (T6 갱신 — /admin/* access_token 가드)",
+          "도서물류관리프로그램/frontend/src/lib/admin-api.ts (T6 갱신 — Id_Logn CRUD/매트릭스/비번 리셋 5 메서드 + IdLognUser 인터페이스)"
         ]
       },
-      "contract": "migration/contracts/admin_permissions.yaml (신규)",
-      "testpack": "migration/test-cases/admin_permissions.json (신규)",
+      "contract": "migration/contracts/admin_permissions.yaml v1.0.0 + admin_web_platform.yaml v1.1.0 (D-ADM-1 closed_by_C10 / D-ADM-3 partial_C10)",
+      "testpack": "test/test_c10_admin_phase1.py (24 케이스, 100% pass — S 9 정적 + R 11 런타임 가드 + d_select 3 + G 2 회귀)",
       "subscenarios_absorbed": [
-        "C13 세션 만료·권한 부족",
-        "C15 병행 충돌 방지"
+        "C13 세션 만료·권한 부족 (DEC-041)",
+        "C15 병행 충돌 방지 (DEC-042 If-Match/ETag)",
+        "Subu40 패스워드 모달 (audit-password-modal.tsx 100% 재사용)",
+        "DEC-043 IdP/SSO 인터페이스 분리 (실 외부 연동은 후속 사이클)"
       ],
-      "gate_dependency": "고객사별 차이 승인 #4",
+      "gate_dependency": "고객사별 차이 승인 #4 (외부 IdP 연동 합의는 본 페이즈 외)",
       "tasks": {
         "T1": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "screen_card Subu10 + Id_Logn/Subu40 layout_mappings (DEC-028 룰 7 — 모던 통합 화면도 출처 위젯 ID 부착)"
         },
         "T2": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "handlers/c10_phase1.md (Chul.pas 80 Seek_Uses 인덱싱 + 5 SQL 재사용 + 가드 매트릭스) + i18n c10.ko.json + permission-keys-catalog.md (30 정본 + 50 예약, admin.user.read 신규)"
         },
         "T3": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "admin_permissions.yaml v1.0.0 (ADMINP-1~5 + DEC-041/042/043) + admin_web_platform.yaml v1.1.0 (D-ADM-1 closed / D-ADM-3 partial)"
         },
         "T4": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "test_c10_admin_phase1.py 24 PASS (S 9 정적 + R 11 런타임 + d_select 3 + G 2). 테스트 격리 setUp re-override 패턴 도입 (다른 테스트가 dependency_overrides 덮는 회귀 차단)"
         },
         "T5": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "core/deps + d_select 4 분기 실분기 + id_logn_service (5 SQL 재사용) + concurrency (If-Match/ETag) + auth_provider (3 stub) + admin 라우터 4 신규 엔드포인트. axis_test_full 333 PASS (회귀 0)."
         },
         "T6": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "/admin/id-logn 단일 통합 페이지 + permission-guard + concurrency-conflict-modal + api-client 글로벌 401/403 인터셉터 + middleware admin 가드 + form-registry/admin home card. tsc/eslint 0 error."
         },
         "T7": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "5축 회귀 매트릭스 c10_phase1.md + probe admin/auth/concurrency 4 그룹 (admin.id_logn_list, admin.permission_matrix_stale_must_409, auth.expired_must_401, concurrency.precondition_required_must_428) — 4 server × 4 = 16 행. PUT 메서드 + extra headers 지원 추가."
         },
         "T8": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "DEC-041/042/043 신규 동결 + OQ-RT-7 마감 + 계획서 §7-C10 갱신 + dashboard porting-screens C10 completed."
         }
+      }
+    },
+    {
+      "order": 11,
+      "stage": 6,
+      "id": "C11",
+      "name": "모바일/태블릿 UAT",
+      "gateId": 5,
+      "purpose": "iPad/Galaxy Tab 등 모바일 디바이스에서 핵심 4 시나리오 (C2/C3/C4/C8) 동등 워크플로우 보장",
+      "summary": "확장 라인 v0.1 골격 (2026-04-20). 5 디바이스 × 4 시나리오 = 20 테스트 매트릭스. USB-OTG 어댑터 + USB-HID 웨지 호환 + 반응형 (DEC-019/004/040 의존). 외부 모바일 앱 미생성 (단일 빌드 산출물 반응형 CSS).",
+      "delphi": {
+        "primary_form": "(없음 — 모던 신규)",
+        "primary_unit": "(N/A)",
+        "dfm": "(N/A)",
+        "related_forms": []
+      },
+      "permission_keys": [
+        "C10 권한 매트릭스 100% 재사용 (모바일 별도 권한 없음)"
+      ],
+      "db_impact": "DB 변경 0 (UI 반응형/디바이스 호환만)",
+      "web": {
+        "routes": ["(C2/C3/C4/C8 페이지 모바일 호환)"],
+        "endpoints": ["(기존 엔드포인트 재사용)"],
+        "backend": [],
+        "frontend": [
+          "도서물류관리프로그램/frontend/src/app/(app)/* (반응형 CSS 보강)",
+          "도서물류관리프로그램/frontend/src/lib/scanner.ts (모바일 가상 키보드 충돌 검증)"
+        ]
+      },
+      "contract": "migration/contracts/mobile_uat.yaml v0.1 (skeleton)",
+      "testpack": "test/test_c11_mobile_responsive.py (PENDING — Playwright 디바이스 emulation)",
+      "subscenarios_absorbed": [],
+      "extensionLine": true,
+      "tasks": {
+        "T1": { "status": "completed", "note": "screen_card C11_Mobile_UAT.md v0.1 골격" },
+        "T2": { "status": "not_started" },
+        "T3": { "status": "completed", "note": "mobile_uat.yaml v0.1 골격 (디바이스/시나리오 매트릭스 + AC 4건)" },
+        "T4": { "status": "not_started" },
+        "T5": { "status": "not_started" },
+        "T6": { "status": "not_started" },
+        "T7": { "status": "not_started" },
+        "T8": { "status": "not_started" }
+      }
+    },
+    {
+      "order": 13,
+      "stage": 6,
+      "id": "C13_stats",
+      "name": "통계/리포트 확장",
+      "gateId": 5,
+      "purpose": "기간별 매출 / 거래처 분석 / 도서 회전율 / 분기 손익 4 신규 화면 (외부 BI 직결 제외)",
+      "summary": "확장 라인 v0.1 골격 (2026-04-20). 4 신규 endpoints (STAT-1~4) + 4 permission_keys 신규 (F50~F53). 외부 BI/ETL/DW 직결 ❌. 신규 SQL 0 정책 검토 우선 (DEC-040 룰 확장). PDF Export = WeasyPrint 재사용 (DEC-037).",
+      "delphi": {
+        "primary_form": "Sobo50/51/52/53/54/55 (Phase 1 미포팅)",
+        "primary_unit": "(분석 PENDING)",
+        "dfm": "(분석 PENDING)",
+        "related_forms": ["Sobo50.dfm", "Sobo51.dfm", "Sobo52.dfm", "Sobo53.dfm"]
+      },
+      "permission_keys": [
+        "F50 admin.stats.sales (신규)",
+        "F51 admin.stats.customer (신규)",
+        "F52 admin.stats.book (신규)",
+        "F53 admin.stats.quarterly (신규)"
+      ],
+      "db_impact": "SELECT only (집계 GROUP BY) — 신규 INSERT/UPDATE/DELETE 0",
+      "web": {
+        "routes": [
+          "/stats/sales-period",
+          "/stats/customer-analysis",
+          "/stats/book-turnover",
+          "/stats/quarterly-summary"
+        ],
+        "endpoints": [
+          "GET /api/v1/stats/sales-period",
+          "GET /api/v1/stats/customer-analysis",
+          "GET /api/v1/stats/book-turnover",
+          "GET /api/v1/stats/quarterly-summary"
+        ],
+        "backend": ["도서물류관리프로그램/backend/app/routers/stats.py (PENDING)"],
+        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/stats/* (PENDING)"]
+      },
+      "contract": "migration/contracts/stats_reports.yaml v0.1 (skeleton)",
+      "testpack": "test/test_c13_stats_phase1.py (PENDING)",
+      "subscenarios_absorbed": [],
+      "extensionLine": true,
+      "constraints": ["외부 BI 도구 (Tableau/PowerBI) 직결 제외"],
+      "tasks": {
+        "T1": { "status": "completed", "note": "screen_card C13_Stats_Reports.md v0.1 골격" },
+        "T2": { "status": "not_started" },
+        "T3": { "status": "completed", "note": "stats_reports.yaml v0.1 골격 (4 endpoints + 4 permission_keys 신규)" },
+        "T4": { "status": "not_started" },
+        "T5": { "status": "not_started" },
+        "T6": { "status": "not_started" },
+        "T7": { "status": "not_started" },
+        "T8": { "status": "not_started" }
+      }
+    },
+    {
+      "order": 14,
+      "stage": 6,
+      "id": "C14",
+      "name": "운영 모니터링",
+      "gateId": 5,
+      "purpose": "헬스체크 확장 + Prometheus /metrics + 운영 알림 배너 + audit 통합 뷰 (Self-hosted only)",
+      "summary": "확장 라인 v0.1 골격 (2026-04-20). 외부 SaaS APM/알림/로그집계 ❌. Prometheus client (Apache-2.0) 단일 표준. audit 통합 뷰 = audit_settlement + audit_returns + audit_password_attempts. admin.audit.read 신규 permission_code (DEC-041 정합).",
+      "delphi": {
+        "primary_form": "(없음 — 모던 신규)",
+        "primary_unit": "(N/A)",
+        "dfm": "(N/A)",
+        "related_forms": []
+      },
+      "permission_keys": [
+        "admin.audit.read (신규 — F90 예약)"
+      ],
+      "db_impact": "SELECT only (audit 통합 뷰). Prometheus 메트릭은 in-memory 카운터.",
+      "web": {
+        "routes": ["/admin/ops (운영 알림 배너)", "/admin/audit (통합 감사 뷰)"],
+        "endpoints": [
+          "GET /api/v1/health (확장)",
+          "GET /metrics (Prometheus exposition)",
+          "GET /api/v1/admin/audit"
+        ],
+        "backend": [
+          "도서물류관리프로그램/backend/app/routers/health.py (확장 PENDING)",
+          "도서물류관리프로그램/backend/app/routers/metrics.py (신규 PENDING)",
+          "도서물류관리프로그램/backend/app/routers/admin_audit.py (신규 PENDING)"
+        ],
+        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/admin/{ops,audit}/* (PENDING)"]
+      },
+      "contract": "migration/contracts/ops_monitoring.yaml v0.1 (skeleton)",
+      "testpack": "test/test_c14_ops_phase1.py (PENDING)",
+      "subscenarios_absorbed": [],
+      "extensionLine": true,
+      "constraints": ["외부 SaaS APM (Datadog/NewRelic/Sentry 호스티드) 제외", "외부 알림 채널 (Slack/Teams/PagerDuty) 제외", "외부 로그 집계 (ELK 호스티드/Splunk) 제외"],
+      "tasks": {
+        "T1": { "status": "completed", "note": "screen_card C14_Ops_Monitoring.md v0.1 골격" },
+        "T2": { "status": "not_started" },
+        "T3": { "status": "completed", "note": "ops_monitoring.yaml v0.1 골격 (/health 확장 + /metrics + /admin/audit)" },
+        "T4": { "status": "not_started" },
+        "T5": { "status": "not_started" },
+        "T6": { "status": "not_started" },
+        "T7": { "status": "not_started" },
+        "T8": { "status": "not_started" }
+      }
+    },
+    {
+      "order": 15,
+      "stage": 7,
+      "id": "C15_cutover",
+      "name": "데이터 마이그레이션/Cut-over",
+      "gateId": 5,
+      "purpose": "레거시 → 모던 전환 (4 server 단계적, 자체 스크립트 only)",
+      "summary": "확장 라인 v0.1 골격 (2026-04-20). 외부 마이그레이션 SaaS ❌. 절차 6단계 (lock → mysqldump → import → validator → UAT → DNS 스위치) ≈ 5h/server. 롤백 RTO ≤ 15분. 138 파일럿 → 153 → 154/155 (mysql3 폴백) 단계 진행 권장.",
+      "delphi": {
+        "primary_form": "(전환 자체 — 모던 진입)",
+        "primary_unit": "(N/A)",
+        "dfm": "(N/A)",
+        "related_forms": []
+      },
+      "permission_keys": [
+        "admin (전체) + DBA 수기 절차"
+      ],
+      "db_impact": "전체 테이블 dump+import (Id_Logn / S1_Ssub / S2_Stra / R1_Rsub / R2_Rtra / Sv_Ghng / G1~G4 마스터)",
+      "web": {
+        "routes": [],
+        "endpoints": [],
+        "backend": ["tools/migration/cutover_validator.py (신규 PENDING)"],
+        "frontend": []
+      },
+      "contract": "migration/contracts/cutover.yaml v0.1 (skeleton)",
+      "testpack": "(자동화 PENDING — cutover_validator.py + dry-run 1회)",
+      "subscenarios_absorbed": [],
+      "extensionLine": true,
+      "constraints": ["외부 마이그레이션 SaaS (AWS DMS / Azure Migrate) 제외", "외부 데이터 변환 서비스 제외"],
+      "tasks": {
+        "T1": { "status": "completed", "note": "screen_card C15_Cutover.md v0.1 골격" },
+        "T2": { "status": "not_started" },
+        "T3": { "status": "completed", "note": "cutover.yaml v0.1 골격 (인벤토리 + 절차 6단계 + 롤백)" },
+        "T4": { "status": "not_started" },
+        "T5": { "status": "not_started" },
+        "T6": { "status": "not_started" },
+        "T7": { "status": "not_started" },
+        "T8": { "status": "not_started" }
       }
     }
   ],
@@ -1640,5 +1875,11 @@
     "C8",
     "C9",
     "C10"
+  ],
+  "extensionLine": [
+    "C11",
+    "C13_stats",
+    "C14",
+    "C15_cutover"
   ]
 }

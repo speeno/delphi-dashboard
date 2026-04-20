@@ -1,0 +1,50 @@
+{
+  "$comment": "C10 이후 R&D/DX 트랙 — 시나리오 (C1~C15) 와 평행하게 운영되는 비즈니스 외 작업 라인. 본 페이즈는 2종 (T-B4: .frf 자동 변환 PoC, T-DEV: 개발 인프라/DX) 등록. 트랙은 시나리오와 달리 T1~T8 고정 단계가 없고, 자유 마일스톤으로 추적.",
+  "title": "R&D / DX Tracks",
+  "updatedAt": "2026-04-20 — Tracks 2종 (T-B4 PoC 보류 / T-DEV 운영) v0.1 신설",
+  "tracks": [
+    {
+      "id": "T-B4",
+      "name": ".frf → HTML 자동 변환 (B4 PoC)",
+      "category": "R&D",
+      "status": "phase3_hold",
+      "purpose": "레거시 FastReport `.frf` 양식 → 모던 HTML 자동 변환 → WeasyPrint PDF 파이프라인 (운영 .NET 의존성 0)",
+      "summary": "PoC 1일 완료 (2026-04-20). 3 가설 평가 (H1 부분, H2 ✅, H3 ⚠️). 자체 파서 B1 (6~13 인주) 대비 30~40% 절감 결론 유효 (5.5~9.5 인주). Phase 3 진입 보류 (운영 SME 협의 + ROI 비교 + R&D 가용성 3 조건 미충족).",
+      "rationale": [
+        "DEC-039 (운영 .frf 자동 변환 0) 정책 유지 — 본 트랙은 후속 옵션 검토용",
+        "C7 Phase 1/Phase 2-α 운영 코드 변경 0줄"
+      ],
+      "milestones": [
+        { "id": "M1", "name": "1일 PoC 보고서", "status": "done", "date": "2026-04-20", "artifact": "analysis/research/c7_b4_poc_1day_report.md" },
+        { "id": "M2", "name": "운영 SME 협의 (98 양식 변경 빈도)", "status": "blocked", "blocker": "외부 의존" },
+        { "id": "M3", "name": "자체 파서 B1 vs B4 비교 회의록", "status": "pending" },
+        { "id": "M4", "name": "Phase 3 진입 결정", "status": "pending", "depends_on": ["M2", "M3"] }
+      ],
+      "decisions": ["DEC-037", "DEC-038", "DEC-039"],
+      "extensionLine": true,
+      "linked_scenarios": ["C7"]
+    },
+    {
+      "id": "T-DEV",
+      "name": "개발 인프라 / DX (Developer Experience)",
+      "category": "DX",
+      "status": "in_progress",
+      "purpose": "테스트/CI/모니터링/툴체인 개선 — 시나리오 비종속 인프라 작업",
+      "summary": "C10 시점 등록 (2026-04-20). 4 server 매트릭스 probe 자동화 (DEC-033) + dfm-id grep + permission-keys-catalog 정적 검사 + tsc/eslint zero-error 게이트 등 누적된 DX 개선의 단일 트랙화.",
+      "rationale": [
+        "사용자 룰: '문제가 있으면 일반화된 케이스로 해결' → 본 트랙이 회귀 면적 최소화 + 재귀 오류 차단 메커니즘",
+        "DEC-019 (Wave D 단일 원천) — 본 트랙이 단일 원천 정책의 인프라 보완"
+      ],
+      "milestones": [
+        { "id": "M1", "name": "probe_backend_all_servers.py 4 서버 매트릭스 (DEC-033)", "status": "done", "date": "2026-04-19" },
+        { "id": "M2", "name": "tsc/eslint zero-error 게이트 (Frontend)", "status": "done", "date": "2026-04-20", "note": "C10 T7 axis_lint/axis_type 통과 확인" },
+        { "id": "M3", "name": "permission-keys-catalog 정적 가드 (test_G_05)", "status": "done", "date": "2026-04-20" },
+        { "id": "M4", "name": "C10 후속 — d_select 점진 도입 회귀 게이트", "status": "pending" },
+        { "id": "M5", "name": "C14 Prometheus /metrics 도입 시 DX 통합", "status": "pending", "depends_on": ["C14"] }
+      ],
+      "decisions": ["DEC-019", "DEC-033", "DEC-040", "DEC-041"],
+      "extensionLine": true,
+      "linked_scenarios": ["C10", "C14"]
+    }
+  ]
+}
