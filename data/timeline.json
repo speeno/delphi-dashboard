@@ -106,6 +106,13 @@
   },
   {
     "date": "2026-04-21",
+    "type": "asset",
+    "title": "Track B4 — `.frf`→HTML 배치 변환 산출물 완료",
+    "description": "debug/frf_batch_convert_all.py 실행 결과 debug/output/frf_converted_all 에 원본 경로 보존 *.template.html·*.ir.json 각 1744건. 품질 집계 debug/frf_quality_report.py --batch-root. 운영 FastAPI/WeasyPrint 파이프라인 미연결(DEC-039). dashboard/data/tracks.json T-B4 마일스톤 M1b 동기.",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-21",
     "type": "decision",
     "title": "진행·DB 메타 대시보드는 허브 dashboard/에만 유지",
     "description": "제품 Next 대시보드는 업무 KPI 중심, 웹 포팅 진행·DB 스키마 요약은 GitHub Pages용 dashboard/data(JSON)·일정 달력과 동기.",

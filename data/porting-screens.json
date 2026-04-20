@@ -1489,7 +1489,7 @@
         },
         "B4_PoC": {
           "status": "completed",
-          "note": "Track B4 PoC 1일 비차단 — analysis/research/c7_b4_poc_1day_report.md 산출. 가설 H1 (.frf→.frx 변환기) ⚠️ 부분, H2 (HTMLExport Layers) ✅ 100%, H3 (Jinja2 placeholder) ⚠️ marker patch 필요. B4 작업 분해 5.5~9.5 인주 (T10 §1.8 추정 +1 인주 보정). Phase 3 진입 보류 (운영 SME 협의 + ROI 비교 + R&D 가용성 3 조건 미충족). 운영 코드 변경 0줄, DEC-039 정책 유지."
+          "note": "Track B4 — (1) PoC 1일 비차단: analysis/research/c7_b4_poc_1day_report.md. 가설 H1 ⚠️ 부분, H2 ✅, H3 ⚠️ marker patch. (2) 2026-04-21 배치 변환 완료: debug/frf_batch_convert_all.py → debug/output/frf_converted_all 에 *.template.html·*.ir.json 각 1744건, debug/frf_quality_report.py 로 품질 집계 가능. Phase 3 제품 연동·운영 자동 변환은 여전히 보류 (DEC-039). 운영 코드 변경 0줄."
         }
       }
     },
