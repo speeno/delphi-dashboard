@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-20 — C10 Phase 1 풀 스코프 마감 대시보드 동기화: T1~T8 모두 completed. RBAC 가드 강제 (require_permission/require_role) + Id_Logn F11~F89 매트릭스 단일 통합 페이지 + d_select 4 분기 실분기 (OQ-RT-7 마감) + C13 글로벌 401/403 인터셉터 (DEC-041) + C15 If-Match/ETag (DEC-042) + DEC-043 IdP/SSO 인터페이스 분리. test_c10_admin_phase1.py 24 PASS + axis_test_full 333 PASS. probe 4 그룹 신규 (admin/auth/concurrency). 신규 SQL 0건. (직전: 2026-04-20 C8 Phase 1.)",
+  "updatedAt": "2026-04-20 — 확장 라인 v0.2 Phase 1 마감 대시보드 동기화: C11/C13/C14/C15 T1~T8 (Phase 1 범위) 모두 completed. C11 mobile_uat.yaml v1.0 + ScanInput 모바일 보강 (min-h-[44px] + sm:) + 37 PASS. C13 stats_reports.yaml v1.0 + stats_service (신규 SQL 0건, reports/settlement_service 재사용) + 12 PASS. C14 ops_monitoring.yaml v1.0 + /health/full + Prometheus /metrics + audit ring buffer + alerts ETag + 13 PASS. C15 cutover.yaml v1.0 + cutover_validator.py (VC-1~5 + InMemoryDataSource) + RTO ≤ 30min 롤백 + OQ-IN-1/DBL-001~003 차단 게이트 + 13 PASS. DEC-044 (외부 시스템 연동 제외) 동결. 게이트 #6/#7 정의. (직전: 2026-04-20 C10 Phase 1.)",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {
@@ -1675,7 +1675,7 @@
       "name": "모바일/태블릿 UAT",
       "gateId": 5,
       "purpose": "iPad/Galaxy Tab 등 모바일 디바이스에서 핵심 4 시나리오 (C2/C3/C4/C8) 동등 워크플로우 보장",
-      "summary": "확장 라인 v0.1 골격 (2026-04-20). 5 디바이스 × 4 시나리오 = 20 테스트 매트릭스. USB-OTG 어댑터 + USB-HID 웨지 호환 + 반응형 (DEC-019/004/040 의존). 외부 모바일 앱 미생성 (단일 빌드 산출물 반응형 CSS).",
+      "summary": "확장 라인 v0.2 Phase 1 마감 (2026-04-20). 5 디바이스 × 4 시나리오 = 20 정합 매트릭스 + 데스크톱 회귀 가드 17건 = 37 PASS. ScanInput min-h-[44px] (Apple HIG) + sm: prefix 데스크톱 잠금 (BPI-3). USB-OTG 어댑터 + USB-HID 웨지 호환 (DEC-004 임계값 변경 0). 외부 모바일 앱 미생성 (DEC-019). 외부 시스템 연동 ❌ (DEC-044).",
       "delphi": {
         "primary_form": "(없음 — 모던 신규)",
         "primary_unit": "(N/A)",
@@ -1695,19 +1695,19 @@
           "도서물류관리프로그램/frontend/src/lib/scanner.ts (모바일 가상 키보드 충돌 검증)"
         ]
       },
-      "contract": "migration/contracts/mobile_uat.yaml v0.1 (skeleton)",
-      "testpack": "test/test_c11_mobile_responsive.py (PENDING — Playwright 디바이스 emulation)",
+      "contract": "migration/contracts/mobile_uat.yaml v1.0.0 (frozen)",
+      "testpack": "test/test_c11_mobile_responsive.py (37 PASS — 정적 10 + 매트릭스 20 + 의존성 2 + 데스크톱 회귀 5)",
       "subscenarios_absorbed": [],
       "extensionLine": true,
       "tasks": {
         "T1": { "status": "completed", "note": "screen_card C11_Mobile_UAT.md v0.1 골격" },
-        "T2": { "status": "not_started" },
-        "T3": { "status": "completed", "note": "mobile_uat.yaml v0.1 골격 (디바이스/시나리오 매트릭스 + AC 4건)" },
-        "T4": { "status": "not_started" },
-        "T5": { "status": "not_started" },
-        "T6": { "status": "not_started" },
-        "T7": { "status": "not_started" },
-        "T8": { "status": "not_started" }
+        "T2": { "status": "completed", "note": "extension_dependencies.md C11 → C2/C8/C10 선행 자산표 + 진입 게이트" },
+        "T3": { "status": "completed", "note": "mobile_uat.yaml v1.0 동결 — BPI-1~4 + SC-1~3 + DEC-MOB-1/2 + AC-MOB-1~5" },
+        "T4": { "status": "completed", "note": "test_c11_mobile_responsive.py 37 PASS" },
+        "T5": { "status": "completed", "note": "신규 백엔드 변경 0건 — 모바일 UAT 는 UI/CSS 위주 (DEC-044 정합)" },
+        "T6": { "status": "completed", "note": "ScanInput.tsx 모바일 보강 — min-h-[44px] + sm: prefix + auto* attrs" },
+        "T7": { "status": "completed", "note": "axis_test_full 369 PASS / tsc 0 / eslint 0 / 데스크톱 회귀 baseline 가드" },
+        "T8": { "status": "completed", "note": "DEC-044 등록 + open-questions OQ-MOB-1 등록" }
       }
     },
     {
@@ -1717,7 +1717,7 @@
       "name": "통계/리포트 확장",
       "gateId": 5,
       "purpose": "기간별 매출 / 거래처 분석 / 도서 회전율 / 분기 손익 4 신규 화면 (외부 BI 직결 제외)",
-      "summary": "확장 라인 v0.1 골격 (2026-04-20). 4 신규 endpoints (STAT-1~4) + 4 permission_keys 신규 (F50~F53). 외부 BI/ETL/DW 직결 ❌. 신규 SQL 0 정책 검토 우선 (DEC-040 룰 확장). PDF Export = WeasyPrint 재사용 (DEC-037).",
+      "summary": "확장 라인 v0.2 Phase 1 마감 (2026-04-20). 4 신규 endpoints (STAT-1~4) + 4 permission_keys (F50/F51e/F52e/F53e). 신규 SQL 0건 — stats_service 가 reports_service / settlement_service 만 호출 (DEC-040/044 정합). 외부 BI/ETL/DW 직결 ❌. 12 PASS 테스트.",
       "delphi": {
         "primary_form": "Sobo50/51/52/53/54/55 (Phase 1 미포팅)",
         "primary_unit": "(분석 PENDING)",
@@ -1726,11 +1726,11 @@
       },
       "permission_keys": [
         "F50 admin.stats.sales (신규)",
-        "F51 admin.stats.customer (신규)",
-        "F52 admin.stats.book (신규)",
-        "F53 admin.stats.quarterly (신규)"
+        "F51e admin.stats.customer (신규 — extension 접미)",
+        "F52e admin.stats.book (신규)",
+        "F53e admin.stats.quarterly (신규)"
       ],
-      "db_impact": "SELECT only (집계 GROUP BY) — 신규 INSERT/UPDATE/DELETE 0",
+      "db_impact": "SELECT only (기존 service 함수 재사용) — 신규 SQL 0건 (DEC-040/044)",
       "web": {
         "routes": [
           "/stats/sales-period",
@@ -1744,23 +1744,26 @@
           "GET /api/v1/stats/book-turnover",
           "GET /api/v1/stats/quarterly-summary"
         ],
-        "backend": ["도서물류관리프로그램/backend/app/routers/stats.py (PENDING)"],
-        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/stats/* (PENDING)"]
+        "backend": [
+          "도서물류관리프로그램/backend/app/routers/stats.py (4 endpoint + require_permission 4종)",
+          "도서물류관리프로그램/backend/app/services/stats_service.py (신규 SQL 0건 — reports_service/settlement_service 재사용)"
+        ],
+        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/stats/* (Phase 2 — recharts 풀 구현)"]
       },
-      "contract": "migration/contracts/stats_reports.yaml v0.1 (skeleton)",
-      "testpack": "test/test_c13_stats_phase1.py (PENDING)",
+      "contract": "migration/contracts/stats_reports.yaml v1.0.0 (frozen)",
+      "testpack": "test/test_c13_stats_phase1.py (12 PASS — 정적 7 + 런타임 5)",
       "subscenarios_absorbed": [],
       "extensionLine": true,
-      "constraints": ["외부 BI 도구 (Tableau/PowerBI) 직결 제외"],
+      "constraints": ["외부 BI 도구 (Tableau/PowerBI) 직결 제외", "신규 SQL 0건 정책"],
       "tasks": {
-        "T1": { "status": "completed", "note": "screen_card C13_Stats_Reports.md v0.1 골격" },
-        "T2": { "status": "not_started" },
-        "T3": { "status": "completed", "note": "stats_reports.yaml v0.1 골격 (4 endpoints + 4 permission_keys 신규)" },
-        "T4": { "status": "not_started" },
-        "T5": { "status": "not_started" },
-        "T6": { "status": "not_started" },
-        "T7": { "status": "not_started" },
-        "T8": { "status": "not_started" }
+        "T1": { "status": "completed", "note": "screen_card C13_Stats_Reports.md v0.1 골격 + stats_inventory.md (Sobo50~55 인벤토리)" },
+        "T2": { "status": "completed", "note": "stats_inventory.md §2 — 4 endpoint × 기존 service 재사용 매핑 (신규 SQL 0건 검증)" },
+        "T3": { "status": "completed", "note": "stats_reports.yaml v1.0 동결 — DEC-STAT-1/2 + AC-STAT-1~5 + PBP-1~3" },
+        "T4": { "status": "completed", "note": "test_c13_stats_phase1.py 12 PASS" },
+        "T5": { "status": "completed", "note": "stats_service.py + stats router (4 endpoint, require_permission 4종)" },
+        "T6": { "status": "not_started", "note": "Phase 2 — recharts 4 화면 풀 구현" },
+        "T7": { "status": "completed", "note": "신규 SQL 0건 grep 가드 PASS + DEC-041 표준 응답 정합" },
+        "T8": { "status": "completed", "note": "DEC-044 등록 + permission-keys-catalog §4 등록 (F50/F51e/F52e/F53e)" }
       }
     },
     {
@@ -1770,7 +1773,7 @@
       "name": "운영 모니터링",
       "gateId": 5,
       "purpose": "헬스체크 확장 + Prometheus /metrics + 운영 알림 배너 + audit 통합 뷰 (Self-hosted only)",
-      "summary": "확장 라인 v0.1 골격 (2026-04-20). 외부 SaaS APM/알림/로그집계 ❌. Prometheus client (Apache-2.0) 단일 표준. audit 통합 뷰 = audit_settlement + audit_returns + audit_password_attempts. admin.audit.read 신규 permission_code (DEC-041 정합).",
+      "summary": "확장 라인 v0.2 Phase 1 마감 (2026-04-20). /health/full + Prometheus /metrics + audit ring buffer + in-app 알림 큐 (ETag 적용). 외부 SaaS APM/알림/로그집계 ❌ (DEC-044). 신규 SQL 0건 — in-memory ring buffer + audit_logger handler subscribe. 13 PASS 테스트.",
       "delphi": {
         "primary_form": "(없음 — 모던 신규)",
         "primary_unit": "(N/A)",
@@ -1778,37 +1781,39 @@
         "related_forms": []
       },
       "permission_keys": [
-        "admin.audit.read (신규 — F90 예약)"
+        "F90 admin.audit.read (신규)",
+        "F91 admin.metrics.read (신규)",
+        "F92 admin.health.read (신규)"
       ],
-      "db_impact": "SELECT only (audit 통합 뷰). Prometheus 메트릭은 in-memory 카운터.",
+      "db_impact": "신규 SQL 0건 — audit 통합 뷰는 in-memory ring buffer (audit_logger handler subscribe). Prometheus 메트릭은 in-memory 카운터.",
       "web": {
         "routes": ["/admin/ops (운영 알림 배너)", "/admin/audit (통합 감사 뷰)"],
         "endpoints": [
-          "GET /api/v1/health (확장)",
+          "GET /api/v1/health/full (DM-1~3 매핑)",
           "GET /metrics (Prometheus exposition)",
-          "GET /api/v1/admin/audit"
+          "GET /api/v1/admin/audit (in-memory ring + d_select)",
+          "GET|POST|DELETE /api/v1/admin/alerts (ETag — DEC-042)"
         ],
         "backend": [
-          "도서물류관리프로그램/backend/app/routers/health.py (확장 PENDING)",
-          "도서물류관리프로그램/backend/app/routers/metrics.py (신규 PENDING)",
-          "도서물류관리프로그램/backend/app/routers/admin_audit.py (신규 PENDING)"
+          "도서물류관리프로그램/backend/app/services/ops_service.py (Prometheus + ring + alert queue)",
+          "도서물류관리프로그램/backend/app/routers/ops.py (4 endpoint × 3 권한 가드)"
         ],
-        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/admin/{ops,audit}/* (PENDING)"]
+        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/admin/{ops,audit}/* (Phase 2)"]
       },
-      "contract": "migration/contracts/ops_monitoring.yaml v0.1 (skeleton)",
-      "testpack": "test/test_c14_ops_phase1.py (PENDING)",
+      "contract": "migration/contracts/ops_monitoring.yaml v1.0.0 (frozen)",
+      "testpack": "test/test_c14_ops_phase1.py (13 PASS — 정적 7 + 런타임 6)",
       "subscenarios_absorbed": [],
       "extensionLine": true,
-      "constraints": ["외부 SaaS APM (Datadog/NewRelic/Sentry 호스티드) 제외", "외부 알림 채널 (Slack/Teams/PagerDuty) 제외", "외부 로그 집계 (ELK 호스티드/Splunk) 제외"],
+      "constraints": ["외부 SaaS APM (Datadog/NewRelic/Sentry 호스티드) 제외", "외부 알림 채널 (Slack/Teams/PagerDuty) 제외", "외부 로그 집계 (ELK 호스티드/Splunk) 제외", "라벨 카디널리티 정책 (≤ 50 unique value/metric)"],
       "tasks": {
         "T1": { "status": "completed", "note": "screen_card C14_Ops_Monitoring.md v0.1 골격" },
-        "T2": { "status": "not_started" },
-        "T3": { "status": "completed", "note": "ops_monitoring.yaml v0.1 골격 (/health 확장 + /metrics + /admin/audit)" },
-        "T4": { "status": "not_started" },
-        "T5": { "status": "not_started" },
-        "T6": { "status": "not_started" },
-        "T7": { "status": "not_started" },
-        "T8": { "status": "not_started" }
+        "T2": { "status": "completed", "note": "extension_dependencies.md C14 → C10 권한/audit_service 의존 등록" },
+        "T3": { "status": "completed", "note": "ops_monitoring.yaml v1.0 동결 — DEC-OPS-1/2/3 + AC-OPS-1~5 + DM-1~3 + 라벨 정책" },
+        "T4": { "status": "completed", "note": "test_c14_ops_phase1.py 13 PASS" },
+        "T5": { "status": "completed", "note": "ops_service.py + ops router (4 endpoint, 3 권한 가드, ETag DEC-042)" },
+        "T6": { "status": "not_started", "note": "Phase 2 — admin/{ops,audit} UI 풀 구현" },
+        "T7": { "status": "completed", "note": "신규 SQL 0건 + 라벨 카디널리티 forbidden_label_keys 가드 PASS" },
+        "T8": { "status": "completed", "note": "DEC-044 등록 + permission-keys-catalog §4 등록 (F90/F91/F92)" }
       }
     },
     {
@@ -1818,7 +1823,7 @@
       "name": "데이터 마이그레이션/Cut-over",
       "gateId": 5,
       "purpose": "레거시 → 모던 전환 (4 server 단계적, 자체 스크립트 only)",
-      "summary": "확장 라인 v0.1 골격 (2026-04-20). 외부 마이그레이션 SaaS ❌. 절차 6단계 (lock → mysqldump → import → validator → UAT → DNS 스위치) ≈ 5h/server. 롤백 RTO ≤ 15분. 138 파일럿 → 153 → 154/155 (mysql3 폴백) 단계 진행 권장.",
+      "summary": "확장 라인 v0.2 Phase 1 마감 (2026-04-20). cutover_validator.py 5종 (VC-1 row count / VC-2 checksum / VC-3 encoding / VC-4 mysql3_compat / VC-5 schema diff) + InMemoryDataSource dry-run + RTO ≤ 30min 롤백 + OQ-IN-1/DBL-001~003 cut-over 차단 게이트. 외부 마이그레이션 SaaS ❌ (DEC-044). 13 PASS 테스트 + CLI 동작 확인.",
       "delphi": {
         "primary_form": "(전환 자체 — 모던 진입)",
         "primary_unit": "(N/A)",
@@ -1832,23 +1837,23 @@
       "web": {
         "routes": [],
         "endpoints": [],
-        "backend": ["tools/migration/cutover_validator.py (신규 PENDING)"],
+        "backend": ["scripts/cutover_validator.py (VC-1~5 + InMemoryDataSource + CLI)"],
         "frontend": []
       },
-      "contract": "migration/contracts/cutover.yaml v0.1 (skeleton)",
-      "testpack": "(자동화 PENDING — cutover_validator.py + dry-run 1회)",
+      "contract": "migration/contracts/cutover.yaml v1.0.0 (frozen)",
+      "testpack": "test/test_c15_cutover_phase1.py (13 PASS — 정적 6 + 런타임 7) + CLI dry-run",
       "subscenarios_absorbed": [],
       "extensionLine": true,
-      "constraints": ["외부 마이그레이션 SaaS (AWS DMS / Azure Migrate) 제외", "외부 데이터 변환 서비스 제외"],
+      "constraints": ["외부 마이그레이션 SaaS (AWS DMS / Azure Migrate) 제외", "외부 데이터 변환 서비스 제외", "OQ-IN-1/DBL-001~003 cut-over 차단 게이트 — 미해소 시 진입 불가"],
       "tasks": {
         "T1": { "status": "completed", "note": "screen_card C15_Cutover.md v0.1 골격" },
-        "T2": { "status": "not_started" },
-        "T3": { "status": "completed", "note": "cutover.yaml v0.1 골격 (인벤토리 + 절차 6단계 + 롤백)" },
-        "T4": { "status": "not_started" },
-        "T5": { "status": "not_started" },
-        "T6": { "status": "not_started" },
-        "T7": { "status": "not_started" },
-        "T8": { "status": "not_started" }
+        "T2": { "status": "completed", "note": "extension_dependencies.md C15 → C5/C8/C10 선행 의존 + open-questions OQ 차단 게이트 명시" },
+        "T3": { "status": "completed", "note": "cutover.yaml v1.0 동결 — VC-1~5 + 7 핵심 시나리오 + 롤백 RTO ≤ 30min + OQ 차단" },
+        "T4": { "status": "completed", "note": "test_c15_cutover_phase1.py 13 PASS + CLI dry-run 15 PASS" },
+        "T5": { "status": "completed", "note": "scripts/cutover_validator.py — DataSource 추상 + InMemoryDataSource + 5종 체크" },
+        "T6": { "status": "not_started", "note": "Phase 2 — 실 DB 어댑터 (mysql/sqlserver) + 운영 cut-over 자동화" },
+        "T7": { "status": "completed", "note": "신규 SQL 0건 + 외부 SaaS 0 imports + RTO 30min 가드 PASS" },
+        "T8": { "status": "completed", "note": "DEC-044 등록 + open-questions §확장 라인 cut-over 차단 게이트 등록" }
       }
     }
   ],
