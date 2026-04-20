@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-19 — C3 phase2 UI 보강 묶음 완료 (HOT-INB-3): inbound_receipt.yaml v1.1.0 (행위/엔드포인트 변경 0, UI 갭 해소), Sobo54·Sobo57 일별·기간 입고내역서 Next 라우트 신설(reports/daily, reports/period) + form-registry phase2 등록, 입고 신규 페이지 출판사·입고처 자동완성 결합(C2 CustomerSearchInput 재사용), 입고 상세에 라인 편집 그리드(InboundLineGrid, G4_Book 자동완성+inboundApi.update PUT) 도입(status=cancelled read-only 유지). 매핑 노트 Sobo54.md/Sobo57.md §5 체크리스트 [x] 갱신, 회귀 가드 pytest 15·tsc 0·eslint inbound 0. 잔여 = OQ-IN-1 FTP 자동수신 별행. (직전: C9 DEC-028 retrofit 묶음, HA-RET-01 잔여=C1.)",
+  "updatedAt": "2026-04-20 — C7 Phase 1+2-α + Track B4 PoC + C8 Phase 1 대시보드 동기화: C7 variant/form (?variant v0..v9 / ?form 1..5), 계약 print_* v1.1.0, pytest 37 PASS, probe 3 그룹, §7-C7-α/§7-C7-β 반영. C8 POST /scan/match + ScanInput 3 화면, pytest 22 PASS, DEC-004/040. B4 PoC 보고서(c7_b4_poc_1day_report.md) 산출·Phase 3 보류. (직전: 2026-04-19 C3 phase2 HOT-INB-3.)",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {

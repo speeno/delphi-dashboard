@@ -112,13 +112,15 @@
         },
         {
           "id": "M-S1-PORT-C7",
-          "task": "C7 라벨/송장 인쇄 — T1~T8 진행 (단계 4, 게이트 #5 인쇄 결과 승인)",
-          "done": false
+          "task": "C7 라벨/송장 인쇄 — Phase 1·T9·T10·Phase 2-α·Track B4 PoC 포함 마감 (단계 4, 게이트 #5 인쇄 결과 승인)",
+          "done": true,
+          "note": "Phase 1+T8/T9 완료 후 Phase 2-α variant/form·계약 v1.1.0·pytest 37·probe 3·§7-C7-α. B4 PoC 보고서·§7-C7-β (운영 코드 0)."
         },
         {
           "id": "M-S1-PORT-C8",
           "task": "C8 바코드 스캔 → 출고/입고/반품 매칭 — T1~T8 진행 (단계 4)",
-          "done": false
+          "done": true,
+          "note": "POST /scan/match·ScanInput·DEC-004/040·pytest 22·§7-C8·OQ-002-R(Web Serial) 잔류."
         },
         {
           "id": "M-S1-PORT-C10",

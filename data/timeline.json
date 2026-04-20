@@ -91,6 +91,13 @@
     "sprint": 1
   },
   {
+    "date": "2026-04-20",
+    "type": "milestone",
+    "title": "C7 인쇄 Phase 2-α + C8 스캔 Phase 1 + Track B4 PoC (비차단) 마감",
+    "description": "C7: 거래처 양식 variant(?variant)·라벨 form(?form)·계약 print_* v1.1.0·회귀 37 PASS·probe 3 그룹·계획서 §7-C7-α. Track B4: c7_b4_poc_1day_report.md 산출·DEC-039 유지·Phase 3 자동 변환 진입 보류·§7-C7-β. C8: POST /scan/match·USB-HID·DEC-040·회귀 22 PASS·§7-C8.",
+    "sprint": 1
+  },
+  {
     "date": "2026-04-21",
     "type": "milestone",
     "title": "L4 실행 도구 1차 구축·연동 결과",
