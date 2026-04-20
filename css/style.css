@@ -948,7 +948,9 @@ footer {
 .porting-tchip[data-status="not_started"] { background: var(--surface-alt); color: var(--text-muted); border-color: var(--border); }
 .porting-tchip[data-status="in_progress"] { background: var(--primary); color: #fff; border-color: var(--primary); }
 .porting-tchip[data-status="review"]      { background: var(--warning); color: #1e293b; border-color: var(--warning); }
-.porting-tchip[data-status="done"]        { background: var(--success); color: #fff; border-color: var(--success); }
+.porting-tchip[data-status="done"],
+.porting-tchip[data-status="completed"],
+.porting-tchip[data-status="complete"]     { background: var(--success); color: #fff; border-color: var(--success); }
 .porting-tchip[data-status="blocked"]     { background: var(--danger); color: #fff; border-color: var(--danger); }
 
 /* 1차 포팅 화면 바로가기 버튼 — porting-screen-card 헤더 우측. */

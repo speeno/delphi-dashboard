@@ -580,7 +580,14 @@ function renderHumanActionItems(data) {
     </div>`;
 }
 
+/** 트래커 JSON 에서 완료 표기가 `done` | `completed` | `complete` 로 혼재 — 모두 동일 집계 (DEC-002 정적 대시보드) */
+function taskStatusIsDone(status) {
+  const s = String(status || '').toLowerCase();
+  return s === 'done' || s === 'completed' || s === 'complete';
+}
+
 function tStatusLabel(status) {
+  if (taskStatusIsDone(status)) return '완료';
   return {
     not_started: '미착수',
     in_progress: '진행중',
@@ -594,7 +601,7 @@ function scenarioProgress(sc) {
   const tasks = sc.tasks || {};
   const keys = Object.keys(tasks);
   if (!keys.length) return { done: 0, total: 0, pct: 0 };
-  const done = keys.filter((k) => tasks[k]?.status === 'done').length;
+  const done = keys.filter((k) => taskStatusIsDone(tasks[k]?.status)).length;
   return { done, total: keys.length, pct: Math.round((done / keys.length) * 100) };
 }
 
@@ -858,7 +865,7 @@ function renderPortingScreens(data) {
       <div class="card" style="padding:10px;margin-bottom:8px">
         <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">라인 필터</div>
         <div class="tabs" id="porting-line-tabs">${filterTabsHTML}</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:8px">상태 색: <span class="porting-tchip" data-status="not_started">미착수</span> <span class="porting-tchip" data-status="in_progress">진행중</span> <span class="porting-tchip" data-status="review">리뷰</span> <span class="porting-tchip" data-status="done">완료</span> <span class="porting-tchip" data-status="blocked">차단</span></div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px">상태 색: <span class="porting-tchip" data-status="not_started">미착수</span> <span class="porting-tchip" data-status="in_progress">진행중</span> <span class="porting-tchip" data-status="review">리뷰</span> <span class="porting-tchip" data-status="done">완료</span> <span class="porting-tchip" data-status="blocked">차단</span> · 집계 시 <code style="font-size:10px">completed</code>/<code style="font-size:10px">complete</code> 는 완료와 동일</div>
       </div>
       ${stageGroupsHTML}
       <p style="font-size:11px;color:var(--text-muted);margin-top:14px;line-height:1.55">운영 규칙은 <code style="font-size:11px">${escapeHtml(ps.planDoc || 'docs/core-scenarios-porting-plan.md')}</code> §5 참조. 상태 갱신은 트래커 JSON 편집(DEC-002 정적 사이트 원칙).</p>
