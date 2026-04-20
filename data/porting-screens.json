@@ -1332,7 +1332,7 @@
       "name": "라벨/송장 인쇄",
       "gateId": 5,
       "purpose": "거래명세·라벨·송장·세무 출력",
-      "summary": "Phase 1 진행 중 (T1~T7 완료, T8 in_progress, T9/T10 pending) — 5 양식 (Sobo46/49/27/23/21) + 1 라벨 (Seep13 우편엽서). DEC-037 WeasyPrint 단일 엔진. 신규 SQL 0건 (라벨 SQL-PR-6 1건만 신규). DEC-004: HTML 인쇄 + 라벨 PDF 하이브리드.",
+      "summary": "Phase 1 마감 + Phase 2-α 마감 (2026-04-20). Phase 1 = 5 양식 (Sobo46/49/27/23/21) + 1 라벨 (Seep13 우편엽서) + DEC-037 WeasyPrint. Phase 2-α = 거래처별 양식 변형 (Sobo27 v0..v9, Sobo23 v1/v2/v3/v5) + 라벨 form 1..5 흡수 (DEC-019/028 단일 빌더 + variant/form 인자). 신규 SQL 0 + base byte-identical 회귀 0 + 422 PR_VARIANT_UNSUPPORTED/PR_FORM_UNSUPPORTED 가드.",
       "delphi": {
         "primary_form": "(인쇄 진입점 묶음)",
         "primary_unit": "Tong04.pas (Print_*)",
@@ -1358,10 +1358,10 @@
         "endpoints": [
           "GET /api/v1/settlement/billing/{billing_key}/print.pdf",
           "GET /api/v1/settlement/tax-invoice/{billing_key}/print.pdf",
-          "GET /api/v1/print/outbound-statement/{order_key}.pdf",
-          "GET /api/v1/print/return-receipt/{return_key}.pdf",
+          "GET /api/v1/print/outbound-statement/{order_key}.pdf?variant=base|v0..v9",
+          "GET /api/v1/print/return-receipt/{return_key}.pdf?variant=base|v1|v2|v3|v5",
           "GET /api/v1/print/sales-statement/{order_key}.pdf",
-          "GET /api/v1/print/label/{shipment_key}.pdf?form=1"
+          "GET /api/v1/print/label/{shipment_key}.pdf?form=1..5"
         ],
         "backend": [
           "도서물류관리프로그램/backend/app/services/print_service.py (신규, WeasyPrint render_pdf)",
@@ -1377,22 +1377,26 @@
           "도서물류관리프로그램/frontend/src/app/(app)/settlement/{billing,tax-invoice}/.../print/page.tsx (PDF 다운로드 버튼 추가)"
         ]
       },
-      "contract": "migration/contracts/print_invoice.yaml v1.0.0 + print_label.yaml v1.0.0 (신규) + settlement_billing.yaml v1.2.0 (PDF 2건 추가)",
-      "testpack": "test/test_c7_print_phase1.py (22 cases, PDF byte signature + 마감 워터마크 + 503 fallback + DEC-028 grep)",
+      "contract": "migration/contracts/print_invoice.yaml v1.1.0 (Phase 2-α: D-PR-5 + Sobo27.pdf_variants 11종 + Sobo23.pdf_variants 5종) + print_label.yaml v1.1.0 (label_forms 1..5) + settlement_billing.yaml v1.2.0 (PDF 2건)",
+      "testpack": "test/test_c7_print_phase1.py 22 PASS + test/test_c7_print_phase2_alpha.py 15 testcase + 19 subtest PASS = 총 37 PASS",
       "subscenarios_absorbed": [
         "Sobo46 청구서 인쇄 (P1-A)",
         "Sobo49 세금계산서 인쇄 (P1-B)",
         "Sobo27 출고 거래명세서 (P1-C)",
         "Sobo23 반품 영수증 (P1-D)",
         "Sobo21 거래명세서 (P1-E)",
-        "Seep13 우편엽서 라벨 form=1 (P1-F)"
+        "Seep13 우편엽서 라벨 form=1 (P1-F)",
+        "Sobo27 거래처별 양식 v0..v9 (Phase 2-α — Report_4_51-{0~9}.frf)",
+        "Sobo23 거래처별 양식 v1/v2/v3/v5 (Phase 2-α — Report_2_13-{1,2,3,5}.frf, v4 결번)",
+        "Seep13 라벨 form 2..5 (Phase 2-α — Report_1_22~25.frf, 2단 분할 포함)"
       ],
       "gate_dependency": "인쇄 결과 승인 #5",
       "decisions": [
         "DEC-037 WeasyPrint(Python) 단일 PDF 엔진 + NanumGothic 번들 + 503 graceful fallback",
-        "DEC-038 라벨 = 우편엽서 1종 (form=1 고정, 다른 양식은 Phase 2 이후)",
+        "DEC-038 라벨 = Phase 1 form=1 / Phase 2-α form=1..5 흡수 (단일 빌더 + form 인자 데이터 주도 분기)",
         "DEC-039 .frf (FastReport VCL 4.x) = 참조용 정본, 자동 변환 0 (T9 카탈로그 + T10 OSS 파서 R&D 분리)",
-        "DEC-004 보강: 라벨 = 서버 PDF 분기 = WeasyPrint 단일 엔진 (OQ-002 부분 해소)"
+        "DEC-004 보강: 라벨 = 서버 PDF 분기 = WeasyPrint 단일 엔진 (OQ-002 부분 해소)",
+        "DEC-019/028 패턴 재사용 (Phase 2-α): 거래처/양식 변형은 단일 빌더 + variant/form 인자 데이터 주도 분기 — 코드 분기 금지, base byte-identical 보장"
       ],
       "tasks": {
         "T1": {
@@ -1424,16 +1428,40 @@
           "note": "5 축 매트릭스 (test/type/lint/data/doc) + DEC-028 grep + debug probe 5 신규 그룹 + analysis/regression/c7_phase1.md"
         },
         "T8": {
-          "status": "in_progress",
-          "note": "DEC-037/038/039 동결 + DEC-004 보강 + OQ-002 부분 해소 + 계획서 §7-C7/§8 + dashboard 갱신 (본 항목)"
+          "status": "completed",
+          "note": "DEC-037/038/039 동결 + DEC-004 보강 + OQ-002 부분 해소 + 계획서 §7-C7/§8 + dashboard 갱신 + 카탈로그 명명 가이드 부연 (Phase 1 마감)"
         },
         "T9": {
-          "status": "not_started",
-          "note": ".frf 정본 98건 인벤토리 카탈로그 (analysis/print_specs/frf_catalog.md) + 5 양식 ↔ .frf 매핑표"
+          "status": "completed",
+          "note": ".frf 정본 98건 인벤토리 카탈로그 (analysis/print_specs/frf_catalog.md) + 5 양식 ↔ .frf 매핑표 + Phase 2 변형 처리 정책 §2.1 + 명명 가이드 §2 부연"
         },
         "T10": {
-          "status": "not_started",
-          "note": "(별도 R&D, 비차단) FastReport OSS 분석 → .frf 파서 자체 구현 가능성 리서치 보고서"
+          "status": "completed",
+          "note": "(별도 R&D, 비차단) FastReport OSS 분석 보고서 → analysis/research/c7_frf_parser_oss_research.md. 갱신 (1): FastReport.Documentation (MIT) — .frx XML 시맨틱 95% 호환. 갱신 (2): yusufbal/FastReport.OpenSource.HtmlExporter (MIT) — HTML→PDF 우회 패턴이 OSS 베스트 프랙티스. 갱신 (3): atkins126/FastReportExport (Apache-2.0) — 상용 VCL SDK 래퍼만, .frf 시그니처 hexdump 검증으로 §1.3 가설 확증. ⭐ 갱신 (4) 게임 체인저: FastReports/FastReport 로컬 소스 직접 분석 → (a) HTML export 코어 내장 (1187+992 LOC, MIT, Layer 모드 = 픽셀 절대 좌표) 발견. (b) PdfSimple 라이선스 MIT 로 교정. (c) Import 플러그인 4종 = .frf 임포터 템플릿. (d) 신규 권장 전략 B4 (빌드 타임 변환 + Jinja2) — 자체 파서 비용 6~13 → 4.5~8.5 인주 (30~40% 단축), 운영 .NET 의존성 0, 디자인 충실도 OSS 표준 보장. Phase 2 자체 파서 도입 시 1순위 권장. DEC-039 정책 유지 (Phase 1 자동 변환 0)."
+        },
+        "Phase2A_T1": {
+          "status": "completed",
+          "note": "Phase 2-α — Sobo27.md §11.1 (10 변형) + Sobo23.md §11.1 (4 변형, v4 결번) + Seep13_label.md §8.1 (라벨 5종 form 1..5) 변형 표 신설"
+        },
+        "Phase2A_T3": {
+          "status": "completed",
+          "note": "Phase 2-α — print_invoice.yaml v1.1.0 (D-PR-5 + Sobo27.pdf_variants 11종 + Sobo23.pdf_variants 5종) + print_label.yaml v1.1.0 (label_forms 1..5 + D-LB-1 갱신)"
+        },
+        "Phase2A_T5": {
+          "status": "completed",
+          "note": "Phase 2-α — render_outbound_statement_html(*, variant) + render_return_receipt_html(*, variant) + render_label_html(*, form=1..5) + 라우터 ?variant=/?form= 쿼리 + 422 PR_VARIANT_UNSUPPORTED/PR_FORM_UNSUPPORTED 가드. 신규 SQL 0."
+        },
+        "Phase2A_T4": {
+          "status": "completed",
+          "note": "Phase 2-α — test_c7_print_phase2_alpha.py 15 testcase + 19 subtest PASS. base byte-identical 회귀 (TC-P2A-23a/b/c) + 422 가드 + Phase 1 회귀 22 동시 PASS = 총 37 PASS. Phase 1 의 정확 매칭 단언 1건은 정규식으로 완화 (재귀 회귀 차단)."
+        },
+        "Phase2A_T78": {
+          "status": "completed",
+          "note": "Phase 2-α — debug/probe_backend_all_servers.py 3 신규 그룹 (print.outbound_statement_pdf_variant ?variant=v0 / print.return_receipt_pdf_variant_v4_must_422 / print.label_pdf_form2). 4 서버 라우팅 + 422 가드 검증 (라이브 dry-run 3 가드 모두 422 확인). 계획서 §7-C7-α 신규 + §8 변경 이력. dashboard 동기화."
+        },
+        "B4_PoC": {
+          "status": "completed",
+          "note": "Track B4 PoC 1일 비차단 — analysis/research/c7_b4_poc_1day_report.md 산출. 가설 H1 (.frf→.frx 변환기) ⚠️ 부분, H2 (HTMLExport Layers) ✅ 100%, H3 (Jinja2 placeholder) ⚠️ marker patch 필요. B4 작업 분해 5.5~9.5 인주 (T10 §1.8 추정 +1 인주 보정). Phase 3 진입 보류 (운영 SME 협의 + ROI 비교 + R&D 가용성 3 조건 미충족). 운영 코드 변경 0줄, DEC-039 정책 유지."
         }
       }
     },
@@ -1443,11 +1471,11 @@
       "id": "C8",
       "name": "바코드 스캔 → 출고/입고/반품 매칭",
       "gateId": 5,
-      "purpose": "스캔 1건마다 매칭 SELECT/UPDATE",
-      "summary": "DEC-004: USB-HID 키보드 웨지 1차 (Web Serial은 베타 후 OQ-002 결과로 재검토)",
+      "purpose": "스캔 1건마다 G4_Book 매칭 + Grat 단가 폴백 (서버) → 클라이언트 라인 반영",
+      "summary": "Phase 1 완료 (2026-04-20) — DEC-004 USB-HID 1차 + DEC-040 서버 매칭/클라이언트 라인 분리, 신규 SQL 0. POST /api/v1/scan/match 1 엔드포인트로 출고/입고/반품 3 화면 통합. Web Serial 직결은 OQ-002-R 잔류.",
       "delphi": {
         "primary_form": "(별도 화면 없음, 진입점)",
-        "primary_unit": "Tong08.pas (ComPortRxChar, #13 종결)",
+        "primary_unit": "Tong08.pas (ComPortRxChar, #13 종결) → Tong07.Button100Click",
         "dfm": "Tong08.dfm",
         "related_forms": [
           "FTong07.Button104Click → Sobo21/22/23"
@@ -1456,48 +1484,64 @@
       "permission_keys": [
         "호출 화면 권한 (F24/F25/F26)"
       ],
-      "db_impact": "SELECT/UPDATE",
+      "db_impact": "SELECT only (G4_Book 1건, G1/G2_Ggeo 최대 2건). 신규 INSERT/UPDATE/DELETE 0건.",
       "web": {
         "routes": [
-          "(C2/C3/C4 화면에 통합)"
+          "/outbound/orders/[orderKey] (ScanInput 통합)",
+          "/inbound/receipts/[receiptKey] (ScanInput 통합, editing 모드)",
+          "/returns/receipts/[returnKey] (ScanInput 통합, editMode)"
         ],
         "endpoints": [
-          "POST /api/<flow>/scan-match"
+          "POST /api/v1/scan/match (barcode_scan.yaml v1.0.0)"
         ],
         "backend": [
-          "기존 outbound/inbound/returns router에 scan-match 엔드포인트 추가"
+          "도서물류관리프로그램/backend/app/services/scan_match_service.py (T5 신규)",
+          "도서물류관리프로그램/backend/app/services/pricing_service.py (T5 신규 — G1/G2_Ggeo 폴백 헬퍼 추출)",
+          "도서물류관리프로그램/backend/app/routers/scan.py (T5 신규)"
         ],
         "frontend": [
-          "도서물류관리프로그램/frontend/src/lib/scanner.ts (keydown 핸들러, CR 종결)"
+          "도서물류관리프로그램/frontend/src/lib/scanner.ts (T6 신규 — keydown+CR+디바운스)",
+          "도서물류관리프로그램/frontend/src/lib/scan-api.ts (T6 신규)",
+          "도서물류관리프로그램/frontend/src/components/shared/scan-input.tsx (T6 신규 — FTong07.Edit101 부착)"
         ]
       },
-      "contract": "migration/contracts/barcode_scan.yaml (신규)",
-      "testpack": "migration/test-cases/barcode_scan.json (신규)",
-      "subscenarios_absorbed": [],
+      "contract": "migration/contracts/barcode_scan.yaml v1.0.0",
+      "testpack": "test/test_c8_scan_phase1.py (22 케이스, 100% pass)",
+      "subscenarios_absorbed": [
+        "C2 D-OUT-2 (DEC-010 후속 마감)"
+      ],
       "tasks": {
         "T1": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "Tong08 screen_card + c8_scan_match 레이아웃 매핑 + DEC-028 룰 7 dfm 인벤토리"
         },
         "T2": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "SQL-SC-1~4 카탈로그 + i18n c8.ko.json 8 키"
         },
         "T3": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "barcode_scan.yaml v1.0.0 (POST /scan/match, customer_variants 3건, out_of_scope 명시)"
         },
         "T4": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "test_c8_scan_phase1.py 22 pass (matched/nodata, 단가 폴백 우선순위, 4 server matrix, ScanInput 통합 grep, 신규 DML 0건)"
         },
         "T5": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "scan_match_service + pricing_service 헬퍼 추출 + scan 라우터 + main.py 등록 (G4_Book/G1/G2_Ggeo 재해석, 신규 SQL 0)"
         },
         "T6": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "lib/scanner.ts (USB-HID wedge) + scan-api.ts + ScanInput 공통 컴포넌트 + outbound/inbound/returns 3 페이지 통합"
         },
         "T7": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "5축 회귀 매트릭스 c8_phase1.md + probe_backend scan.match 1 그룹 추가 (POST 지원), tsc/eslint 0 error"
         },
         "T8": {
-          "status": "not_started"
+          "status": "completed",
+          "note": "DEC-040 신규 + DEC-010 마감 표시 + OQ-002-R 분리 + dashboard/계획서 §7-C8 갱신"
         }
       }
     },

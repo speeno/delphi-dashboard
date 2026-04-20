@@ -142,8 +142,8 @@
           "status": "대기",
           "tracker": "docs/decision-print-scanner-web.md",
           "outputs": [
-            "OQ-002 클로저",
-            "DEC-004 후속 — 라벨 직결/Web Serial/로컬 브리지 채택 여부 메모"
+            "OQ-002 부분 해소 (2026-04-20) — 라벨 = 서버 PDF 분기 동결 (DEC-037 WeasyPrint, DEC-038 우편엽서 1종, DEC-039 .frf 참조용)",
+            "OQ-002-R (잔여) — 라벨 직결 프린터 / Web Serial 스캐너 / 로컬 브리지 채택 여부 메모 (Phase 2 이후)"
           ],
           "blocks": [
             "인쇄 결과 승인 #5"
