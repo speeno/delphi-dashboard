@@ -1748,10 +1748,15 @@
           "도서물류관리프로그램/backend/app/routers/stats.py (4 endpoint + require_permission 4종)",
           "도서물류관리프로그램/backend/app/services/stats_service.py (신규 SQL 0건 — reports_service/settlement_service 재사용)"
         ],
-        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/stats/* (Phase 2 — recharts 풀 구현)"]
+        "frontend": [
+          "도서물류관리프로그램/frontend/src/app/(app)/stats/{sales-period,customer-analysis,book-turnover,quarterly-summary}/page.tsx (Phase 2 — recharts 4 화면)",
+          "도서물류관리프로그램/frontend/src/components/stats/{stats-filter-bar,stats-banners,charts}.tsx (공용)",
+          "도서물류관리프로그램/frontend/src/lib/stats-api.ts",
+          "도서물류관리프로그램/frontend/src/i18n/messages/c13.ko.json"
+        ]
       },
       "contract": "migration/contracts/stats_reports.yaml v1.0.0 (frozen)",
-      "testpack": "test/test_c13_stats_phase1.py (12 PASS — 정적 7 + 런타임 5)",
+      "testpack": "test/test_c13_stats_phase1.py (12 PASS — 정적 7 + 런타임 5) + test/test_c13_stats_phase2_fe.py (FE 정적 회귀)",
       "subscenarios_absorbed": [],
       "extensionLine": true,
       "constraints": ["외부 BI 도구 (Tableau/PowerBI) 직결 제외", "신규 SQL 0건 정책"],
@@ -1761,7 +1766,7 @@
         "T3": { "status": "completed", "note": "stats_reports.yaml v1.0 동결 — DEC-STAT-1/2 + AC-STAT-1~5 + PBP-1~3" },
         "T4": { "status": "completed", "note": "test_c13_stats_phase1.py 12 PASS" },
         "T5": { "status": "completed", "note": "stats_service.py + stats router (4 endpoint, require_permission 4종)" },
-        "T6": { "status": "not_started", "note": "Phase 2 — recharts 4 화면 풀 구현" },
+        "T6": { "status": "completed", "note": "Phase 2 — recharts 4 화면 (Sobo50/51/52/53) + 공용 필터/배너/차트 + lib/stats-api + c13.ko.json + form-registry. tsc 0 error." },
         "T7": { "status": "completed", "note": "신규 SQL 0건 grep 가드 PASS + DEC-041 표준 응답 정합" },
         "T8": { "status": "completed", "note": "DEC-044 등록 + permission-keys-catalog §4 등록 (F50/F51e/F52e/F53e)" }
       }
@@ -1798,10 +1803,16 @@
           "도서물류관리프로그램/backend/app/services/ops_service.py (Prometheus + ring + alert queue)",
           "도서물류관리프로그램/backend/app/routers/ops.py (4 endpoint × 3 권한 가드)"
         ],
-        "frontend": ["도서물류관리프로그램/frontend/src/app/(app)/admin/{ops,audit}/* (Phase 2)"]
+        "frontend": [
+          "도서물류관리프로그램/frontend/src/app/(app)/admin/{ops,audit}/page.tsx (Phase 2)",
+          "도서물류관리프로그램/frontend/src/components/ops/global-alert-banner.tsx (글로벌 60s 폴링 + ETag dismiss)",
+          "도서물류관리프로그램/frontend/src/lib/ops-api.ts",
+          "도서물류관리프로그램/frontend/src/i18n/messages/c14.ko.json",
+          "도서물류관리프로그램/frontend/next.config.ts (/metrics 동일 출처 프록시)"
+        ]
       },
       "contract": "migration/contracts/ops_monitoring.yaml v1.0.0 (frozen)",
-      "testpack": "test/test_c14_ops_phase1.py (13 PASS — 정적 7 + 런타임 6)",
+      "testpack": "test/test_c14_ops_phase1.py (13 PASS — 정적 7 + 런타임 6) + test/test_c14_ops_phase2_fe.py (FE 정적 회귀)",
       "subscenarios_absorbed": [],
       "extensionLine": true,
       "constraints": ["외부 SaaS APM (Datadog/NewRelic/Sentry 호스티드) 제외", "외부 알림 채널 (Slack/Teams/PagerDuty) 제외", "외부 로그 집계 (ELK 호스티드/Splunk) 제외", "라벨 카디널리티 정책 (≤ 50 unique value/metric)"],
@@ -1811,7 +1822,7 @@
         "T3": { "status": "completed", "note": "ops_monitoring.yaml v1.0 동결 — DEC-OPS-1/2/3 + AC-OPS-1~5 + DM-1~3 + 라벨 정책" },
         "T4": { "status": "completed", "note": "test_c14_ops_phase1.py 13 PASS" },
         "T5": { "status": "completed", "note": "ops_service.py + ops router (4 endpoint, 3 권한 가드, ETag DEC-042)" },
-        "T6": { "status": "not_started", "note": "Phase 2 — admin/{ops,audit} UI 풀 구현" },
+        "T6": { "status": "completed", "note": "Phase 2 — admin/{ops,audit} 페이지 + GlobalAlertBanner(60s 저빈도 폴링, document.hidden pause) + ETag dismiss 정합 (DEC-042) + /metrics 동일 출처 프록시. tsc 0 error." },
         "T7": { "status": "completed", "note": "신규 SQL 0건 + 라벨 카디널리티 forbidden_label_keys 가드 PASS" },
         "T8": { "status": "completed", "note": "DEC-044 등록 + permission-keys-catalog §4 등록 (F90/F91/F92)" }
       }
@@ -1837,11 +1848,15 @@
       "web": {
         "routes": [],
         "endpoints": [],
-        "backend": ["scripts/cutover_validator.py (VC-1~5 + InMemoryDataSource + CLI)"],
+        "backend": [
+          "scripts/cutover_validator.py (VC-1~5 + InMemoryDataSource + CLI + live-mode wiring)",
+          "scripts/adapters/{base,mysql,sqlserver}.py (시스템 쿼리 only — DEC-CUT-4)",
+          "scripts/cutover_run.py (P1~P6 오케스트레이션 + GATE/confirm/rollback 시뮬)"
+        ],
         "frontend": []
       },
-      "contract": "migration/contracts/cutover.yaml v1.0.0 (frozen)",
-      "testpack": "test/test_c15_cutover_phase1.py (13 PASS — 정적 6 + 런타임 7) + CLI dry-run",
+      "contract": "migration/contracts/cutover.yaml v1.1.0 (Phase 2 phase2_runtime + DEC-CUT-4)",
+      "testpack": "test/test_c15_cutover_phase1.py (13 PASS) + test/test_c15_cutover_phase2_adapter.py (S/R/G 회귀)",
       "subscenarios_absorbed": [],
       "extensionLine": true,
       "constraints": ["외부 마이그레이션 SaaS (AWS DMS / Azure Migrate) 제외", "외부 데이터 변환 서비스 제외", "OQ-IN-1/DBL-001~003 cut-over 차단 게이트 — 미해소 시 진입 불가"],
@@ -1851,7 +1866,7 @@
         "T3": { "status": "completed", "note": "cutover.yaml v1.0 동결 — VC-1~5 + 7 핵심 시나리오 + 롤백 RTO ≤ 30min + OQ 차단" },
         "T4": { "status": "completed", "note": "test_c15_cutover_phase1.py 13 PASS + CLI dry-run 15 PASS" },
         "T5": { "status": "completed", "note": "scripts/cutover_validator.py — DataSource 추상 + InMemoryDataSource + 5종 체크" },
-        "T6": { "status": "not_started", "note": "Phase 2 — 실 DB 어댑터 (mysql/sqlserver) + 운영 cut-over 자동화" },
+        "T6": { "status": "completed", "note": "Phase 2 — scripts/adapters (Mysql/SqlServer, 시스템 쿼리 only) + scripts/cutover_run.py (P1~P6 + GATE/confirm/rollback) + cutover.yaml phase2_runtime + DEC-CUT-4 — test_c15_cutover_phase2_adapter.py PASS" },
         "T7": { "status": "completed", "note": "신규 SQL 0건 + 외부 SaaS 0 imports + RTO 30min 가드 PASS" },
         "T8": { "status": "completed", "note": "DEC-044 등록 + open-questions §확장 라인 cut-over 차단 게이트 등록" }
       }
