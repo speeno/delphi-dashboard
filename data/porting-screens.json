@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-20 — 확장 라인 v0.2 Phase 1 마감 대시보드 동기화: C11/C13/C14/C15 T1~T8 (Phase 1 범위) 모두 completed. C11 mobile_uat.yaml v1.0 + ScanInput 모바일 보강 (min-h-[44px] + sm:) + 37 PASS. C13 stats_reports.yaml v1.0 + stats_service (신규 SQL 0건, reports/settlement_service 재사용) + 12 PASS. C14 ops_monitoring.yaml v1.0 + /health/full + Prometheus /metrics + audit ring buffer + alerts ETag + 13 PASS. C15 cutover.yaml v1.0 + cutover_validator.py (VC-1~5 + InMemoryDataSource) + RTO ≤ 30min 롤백 + OQ-IN-1/DBL-001~003 차단 게이트 + 13 PASS. DEC-044 (외부 시스템 연동 제외) 동결. 게이트 #6/#7 정의. (직전: 2026-04-20 C10 Phase 1.)",
+  "updatedAt": "2026-04-21 — C13 RBAC 시드 동기화: `web_admin.json::role-admin` 에 `admin.stats.{sales,customer,book,quarterly}` 명시 등재(도서 회전율 `admin.stats.book`). 회귀 test_c13_stats_phase1 13 PASS(TC-C13-S-08). — 직전: 2026-04-20 확장 라인 v0.2 Phase 1 마감(C11/C13/C14/C15 T1~T8 completed, C13 기존 12 PASS 등).",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {
@@ -1717,7 +1717,7 @@
       "name": "통계/리포트 확장",
       "gateId": 5,
       "purpose": "기간별 매출 / 거래처 분석 / 도서 회전율 / 분기 손익 4 신규 화면 (외부 BI 직결 제외)",
-      "summary": "확장 라인 v0.2 Phase 1 마감 (2026-04-20). 4 신규 endpoints (STAT-1~4) + 4 permission_keys (F50/F51e/F52e/F53e). 신규 SQL 0건 — stats_service 가 reports_service / settlement_service 만 호출 (DEC-040/044 정합). 외부 BI/ETL/DW 직결 ❌. 12 PASS 테스트.",
+      "summary": "확장 라인 v0.2 Phase 1 마감 (2026-04-20) + RBAC 시드 정합 (2026-04-21). 4 신규 endpoints (STAT-1~4) + 4 permission_keys (F50/F51e/F52e/F53e). 신규 SQL 0건 — stats_service 가 reports_service / settlement_service 만 호출 (DEC-040/044 정합). `web_admin.json::role-admin` 에 `admin.stats.*` 4종 명시 등재(도서 회전율 F52e). 외부 BI/ETL/DW 직결 ❌. 13 PASS 테스트(test_c13_stats_phase1.py).",
       "delphi": {
         "primary_form": "Sobo50/51/52/53/54/55 (Phase 1 미포팅)",
         "primary_unit": "(분석 PENDING)",
@@ -1756,7 +1756,7 @@
         ]
       },
       "contract": "migration/contracts/stats_reports.yaml v1.0.0 (frozen)",
-      "testpack": "test/test_c13_stats_phase1.py (12 PASS — 정적 7 + 런타임 5) + test/test_c13_stats_phase2_fe.py (FE 정적 회귀)",
+      "testpack": "test/test_c13_stats_phase1.py (13 PASS — 정적 8 + 런타임 5) + test/test_c13_stats_phase2_fe.py (FE 정적 회귀)",
       "subscenarios_absorbed": [],
       "extensionLine": true,
       "constraints": ["외부 BI 도구 (Tableau/PowerBI) 직결 제외", "신규 SQL 0건 정책"],
@@ -1764,7 +1764,7 @@
         "T1": { "status": "completed", "note": "screen_card C13_Stats_Reports.md v0.1 골격 + stats_inventory.md (Sobo50~55 인벤토리)" },
         "T2": { "status": "completed", "note": "stats_inventory.md §2 — 4 endpoint × 기존 service 재사용 매핑 (신규 SQL 0건 검증)" },
         "T3": { "status": "completed", "note": "stats_reports.yaml v1.0 동결 — DEC-STAT-1/2 + AC-STAT-1~5 + PBP-1~3" },
-        "T4": { "status": "completed", "note": "test_c13_stats_phase1.py 12 PASS" },
+        "T4": { "status": "completed", "note": "test_c13_stats_phase1.py 13 PASS — TC-C13-S-08 web_admin 시드(admin.stats.*) 정합" },
         "T5": { "status": "completed", "note": "stats_service.py + stats router (4 endpoint, require_permission 4종)" },
         "T6": { "status": "completed", "note": "Phase 2 — recharts 4 화면 (Sobo50/51/52/53) + 공용 필터/배너/차트 + lib/stats-api + c13.ko.json + form-registry. tsc 0 error." },
         "T7": { "status": "completed", "note": "신규 SQL 0건 grep 가드 PASS + DEC-041 표준 응답 정합" },

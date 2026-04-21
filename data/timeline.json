@@ -169,6 +169,13 @@
   },
   {
     "date": "2026-04-21",
+    "type": "milestone",
+    "title": "C13 통계 RBAC 시드 정합 — admin.stats.* 명시 + TC-C13-S-08",
+    "description": "`backend/data/web_admin.json::role-admin` 에 `permission-keys-catalog.md §4` 의 `admin.stats.{sales,customer,book,quarterly}`(도서 회전율=F52e) 및 운영 확장 키를 명시 등재(wildcard `*` 유지). `admin_service.list_role_permissions('admin')` 정합. 회귀 `test/test_c13_stats_phase1.py` 12→13 testcase ALL PASS.",
+    "sprint": 0
+  },
+  {
+    "date": "2026-04-21",
     "type": "decision",
     "title": "DEC-004: 인쇄·바코드 웹 대체 1차 방향",
     "description": "인쇄: 브라우저 인쇄(HTML/CSS) + 라벨 서버 PDF 하이브리드. 바코드: 키보드 웨지(USB-HID) 1차, 시리얼은 베타 후 로컬 브리지/Web Serial 옵션. OQ-002 클로저로 보강.",

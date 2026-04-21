@@ -1,7 +1,7 @@
 {
   "$comment": "32 phase2 화면별 단계(T1~T8) 카드. 도서물류관리프로그램/frontend/src/lib/form-registry.ts FORM_REGISTRY 의 phase==='phase2' 32 항목과 1:1. 시나리오(input/process/output/eta) 는 form-registry 의 단일 원천을 거울. T-phase 는 dashboard 가 자체 트래킹.",
   "title": "Phase 2 32 화면 — 단계 카드 (T1~T8)",
-  "updatedAt": "2026-04-21",
+  "updatedAt": "2026-04-21 — C13 통계 4화면 RBAC 시드(admin.stats.*) 명시 등재 반영(Sobo50~53_stats)",
   "stages": [
     { "id": "T1", "label": "T1 화면카드" },
     { "id": "T2", "label": "T2 SQL/이벤트 추출" },
