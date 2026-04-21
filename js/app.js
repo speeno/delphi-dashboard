@@ -42,6 +42,7 @@ async function loadAll() {
     humanActionItems,
     portingScreens,
     tracks,
+    phase2ScreenCards,
   ] = await Promise.all([
     Promise.resolve(projectMeta),
     loadJSON('sprints.json'),
@@ -60,6 +61,7 @@ async function loadAll() {
     loadJSON('human-action-items.json'),
     loadJSON('porting-screens.json'),
     loadJSON('tracks.json').catch(() => null),
+    loadJSON('phase2-screen-cards.json').catch(() => null),
   ]);
   return {
     project,
@@ -79,6 +81,7 @@ async function loadAll() {
     humanActionItems,
     portingScreens,
     tracks,
+    phase2ScreenCards,
   };
 }
 
@@ -1264,6 +1267,120 @@ function renderEval(data) {
     </div>`;
 }
 
+/**
+ * Phase 2 32화면 단계 카드 (T1~T8) — phase2-screen-cards.json 단일 원천.
+ *
+ * 각 화면 카드:
+ * - 헤더: 화면 ID + 캡션 + (라우트 링크) + ETA 뱃지 + (차단 사유 시 경고)
+ * - 시나리오 1단 카드: 입력 → 처리 → 출력
+ * - T1~T8 단계 점선 + 상태 색
+ * - 차단 사유 (있으면)
+ */
+function renderPhase2ScreenCards(data) {
+  const ps = data.phase2ScreenCards;
+  if (!ps || !Array.isArray(ps.screens) || ps.screens.length === 0) return '';
+  const stages = ps.stages || [];
+  const taskStatusMap = {
+    done: ['✓', '#10b981', '#d1fae5'],
+    in_progress: ['◐', '#f59e0b', '#fef3c7'],
+    pending: ['○', '#9ca3af', '#f3f4f6'],
+    blocked: ['✕', '#ef4444', '#fee2e2'],
+  };
+  const total = ps.screens.length;
+  const counts = { done: 0, in_progress: 0, pending: 0, blocked: 0 };
+  ps.screens.forEach((sc) => {
+    const ts = sc.tasks || {};
+    const allDone = stages.every((st) => ts[st.id] === 'done');
+    const anyBlocked = stages.some((st) => ts[st.id] === 'blocked');
+    if (allDone) counts.done++;
+    else if (anyBlocked) counts.blocked++;
+    else if (stages.some((st) => ts[st.id] === 'in_progress' || ts[st.id] === 'done')) counts.in_progress++;
+    else counts.pending++;
+  });
+
+  const cards = ps.screens.map((sc) => {
+    const ts = sc.tasks || {};
+    const sObj = sc.scenario || {};
+    const blockers = Array.isArray(sObj.blockers) ? sObj.blockers : [];
+    const isBlocked = blockers.length > 0;
+
+    const stepCells = stages.map((st) => {
+      const status = ts[st.id] || 'pending';
+      const [icon, fg, bg] = taskStatusMap[status] || taskStatusMap.pending;
+      return `
+        <div title="${escapeHtml(st.label)} — ${escapeHtml(status)}" style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-width:30px">
+          <div style="width:26px;height:26px;border-radius:50%;background:${bg};color:${fg};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:1px solid ${fg}33">${icon}</div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:600">${escapeHtml(st.id)}</div>
+        </div>`;
+    }).join('<div style="flex:0 0 4px;height:1px;background:var(--text-muted);opacity:.3;align-self:center;margin-top:8px"></div>');
+
+    const routeLink = sc.route
+      ? `<a href="${escapeHtml(sc.route)}" target="_blank" style="font-size:11px;color:var(--text-muted);text-decoration:none"><code style="font-size:11px">${escapeHtml(sc.route)}</code></a>`
+      : `<span style="font-size:11px;color:var(--text-muted)">(라우트 미정)</span>`;
+    const legacyForm = sc.legacy_form
+      ? `<code style="font-size:11px;color:var(--text-muted)">${escapeHtml(sc.legacy_form)}</code>`
+      : '';
+    const etaBadge = sObj.eta
+      ? `<span class="badge badge-progress" style="font-size:10px">📅 ${escapeHtml(sObj.eta)}</span>`
+      : '';
+    const blockerBadge = isBlocked
+      ? `<span class="badge badge-danger" style="font-size:10px">⚠ 차단</span>`
+      : '';
+
+    const blockerSection = isBlocked
+      ? `<div style="margin-top:8px;padding:6px 8px;border-radius:6px;background:#fef2f2;border:1px solid #fecaca;font-size:11px;color:#991b1b">
+          <strong>차단 사유:</strong> ${blockers.map(escapeHtml).join(' · ')}
+        </div>`
+      : '';
+
+    return `
+      <div class="card" style="padding:12px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
+          <div style="min-width:0;flex:1">
+            <div style="font-size:10px;color:var(--text-muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <code style="font-size:10px">${escapeHtml(sc.id)}</code>
+              <span>·</span>
+              <span>${escapeHtml(sc.menu || '')}</span>
+              ${legacyForm ? `<span>·</span>${legacyForm}` : ''}
+            </div>
+            <div style="font-size:13px;font-weight:600;margin-top:2px;line-height:1.3">${escapeHtml(sc.caption)}</div>
+            <div style="margin-top:2px">${routeLink}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">
+            ${etaBadge}
+            ${blockerBadge}
+          </div>
+        </div>
+
+        <div style="background:#f9fafb;border-radius:6px;padding:6px 8px;font-size:11px;line-height:1.5;display:flex;flex-direction:column;gap:2px">
+          <div><span style="display:inline-block;width:30px;font-weight:700;color:#3b82f6">입력</span> ${escapeHtml(sObj.input || '-')}</div>
+          <div><span style="display:inline-block;width:30px;font-weight:700;color:#6366f1">처리</span> ${escapeHtml(sObj.process || '-')}</div>
+          <div><span style="display:inline-block;width:30px;font-weight:700;color:#10b981">출력</span> ${escapeHtml(sObj.output || '-')}</div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:0;padding:4px 0">
+          ${stepCells}
+        </div>
+
+        ${blockerSection}
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="section" id="phase2-screen-cards-section">
+      <div class="section-title">${escapeHtml(ps.title || 'Phase 2 — 화면별 단계 카드')}</div>
+      <p style="font-size:11px;color:var(--text-muted);margin:0 0 10px">
+        총 ${total} 화면 · <span style="color:#10b981">완료 ${counts.done}</span> ·
+        <span style="color:#f59e0b">진행 ${counts.in_progress}</span> ·
+        <span style="color:#9ca3af">대기 ${counts.pending}</span> ·
+        <span style="color:#ef4444">차단 ${counts.blocked}</span>
+        · 단일 원천: <code style="font-size:11px">dashboard/data/phase2-screen-cards.json</code> ↔ <code style="font-size:11px">frontend/src/lib/form-registry.ts</code>
+        ${ps.updatedAt ? `· 갱신: ${escapeHtml(ps.updatedAt)}` : ''}
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:10px">${cards}</div>
+    </div>`;
+}
+
 function renderTracks(data) {
   const tr = data.tracks;
   if (!tr || !Array.isArray(tr.tracks) || tr.tracks.length === 0) return '';
@@ -1297,12 +1414,17 @@ function renderTracks(data) {
     const linked = (t.linked_scenarios || []).map((s) => `<code style="font-size:11px;margin-right:4px">${escapeHtml(s)}</code>`).join('');
     const rationale = (t.rationale || []).map((r) => `<li>${escapeHtml(r)}</li>`).join('');
     const extBadge = t.extensionLine ? `<span class="badge badge-progress" style="margin-left:6px">확장 라인</span>` : '';
+    // 트랙은 done 이지만 후속 게이트(예: T-B4 → Phase 3 운영 결합)가 별도 결정으로
+    // 이관된 경우 사용자에게 즉시 보이도록 라벨 노출.
+    const phase3FollowupBadge = t.phase3_followup
+      ? `<span class="badge badge-wait" style="margin-left:6px" title="후속 게이트 — 별도 결정으로 이관">후속: ${escapeHtml(t.phase3_followup)}</span>`
+      : '';
     return `
       <div class="card" style="padding:14px;margin-bottom:10px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px">
           <div style="min-width:0;flex:1">
             <div style="font-size:11px;color:var(--text-muted)"><code style="font-size:11px">${escapeHtml(t.id)}</code> · ${escapeHtml(t.category || 'Track')}</div>
-            <div style="font-size:15px;font-weight:600;margin-top:2px">${escapeHtml(t.name)}${extBadge}</div>
+            <div style="font-size:15px;font-weight:600;margin-top:2px">${escapeHtml(t.name)}${extBadge}${phase3FollowupBadge}</div>
           </div>
           <span class="badge ${stCls}">${escapeHtml(stLabel)}</span>
         </div>
@@ -1441,6 +1563,7 @@ async function init() {
       renderHumanActionItems(data),
       renderWebPortingProgressSection(data),
       renderPortingScreens(data),
+      renderPhase2ScreenCards(data),
       renderCalendarSection(data),
       renderReleaseMilestones(data),
       renderTimeline(data),

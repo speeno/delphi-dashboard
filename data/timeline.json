@@ -114,6 +114,13 @@
   {
     "date": "2026-04-21",
     "type": "decision",
+    "title": "DEC-048: T-B4 트랙 종결 + Phase 3(운영 결합) 별도 게이트로 이관",
+    "description": "사용자 확인 (2026-04-21) — .frf→HTML 자동 변환 작업 자체는 100% 완료(1744 양식 1:1). T-B4 트랙 status: phase3_hold → done. Phase 3 진입(운영 FastAPI/WeasyPrint 결합)은 운영 SME 협의 + ROI 비교 + R&D 가용성 3 조건의 별도 게이트로 분리, DEC-039(운영 .frf 자동 변환 0) 정책은 Phase 3 게이트 통과 전까지 계속 유지. dashboard/js/app.js 의 phase3_followup 라벨 노출 + DEC-048 등록.",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-21",
+    "type": "decision",
     "title": "진행·DB 메타 대시보드는 허브 dashboard/에만 유지",
     "description": "제품 Next 대시보드는 업무 KPI 중심, 웹 포팅 진행·DB 스키마 요약은 GitHub Pages용 dashboard/data(JSON)·일정 달력과 동기.",
     "sprint": 0
