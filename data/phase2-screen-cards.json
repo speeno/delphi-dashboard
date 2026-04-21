@@ -1,7 +1,7 @@
 {
   "$comment": "32 phase2 화면별 단계(T1~T8) 카드. 도서물류관리프로그램/frontend/src/lib/form-registry.ts FORM_REGISTRY 의 phase==='phase2' 32 항목과 1:1. 시나리오(input/process/output/eta) 는 form-registry 의 단일 원천을 거울. T-phase 는 dashboard 가 자체 트래킹.",
   "title": "Phase 2 32 화면 — 단계 카드 (T1~T8)",
-  "updatedAt": "2026-04-21 — C13 통계 4화면 RBAC 시드(admin.stats.*) 명시 등재 반영(Sobo50~53_stats)",
+  "updatedAt": "2026-04-21 — Sobo67 출고현황 본사/창고/전체 토글 복원(DEC-051/052) + 카드 T7 done 승격",
   "stages": [
     { "id": "T1", "label": "T1 화면카드" },
     { "id": "T2", "label": "T2 SQL/이벤트 추출" },
@@ -86,8 +86,8 @@
     },
     {
       "id": "Sobo67_status", "caption": "출고현황", "menu": "shipment", "route": "/outbound/status",
-      "scenario": { "input": "기간 + 거래처(선택)", "process": "outboundApi.list 페이지네이션 누적 + 일자·거래처 집계", "output": "일자/거래처 합계 + 취소 카운트", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "in_progress", "T4": "in_progress", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "scenario": { "input": "기간 + 거래처(선택) + 도서구분(창고 B 기본 / 본사 A / 전체)", "process": "GET /api/v1/outbound/shipment-status (storeKind=A|B|ALL, 서버 집계·페이징)", "output": "일자×거래처 매트릭스 + 합계/취소 카운트, Sobo67 Panel102 토글 복원", "eta": "Phase 1 (2026-04-W4) — 본·창고 토글 복원 완료(2026-04-21)" },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "in_progress" }
     },
     {
       "id": "Sobo44_inv", "caption": "재고현황", "menu": "inventory", "route": "/inventory/status",

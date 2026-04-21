@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-21 — C13 RBAC 시드 동기화: `web_admin.json::role-admin` 에 `admin.stats.{sales,customer,book,quarterly}` 명시 등재(도서 회전율 `admin.stats.book`). 회귀 test_c13_stats_phase1 13 PASS(TC-C13-S-08). — 직전: 2026-04-20 확장 라인 v0.2 Phase 1 마감(C11/C13/C14/C15 T1~T8 completed, C13 기존 12 PASS 등).",
+  "updatedAt": "2026-04-21 — DEC-051(인증 서버 단일화 BLS_AUTH_SERVER_ID) + DEC-052(사용자-데이터 서버 1:1 Primary) 적용. 로그인 화면 서버 콤보 제거, /admin/user-servers 라디오 1선택 + PUT /api/v1/admin/user-servers/primary 신설. /outbound/status 에 본사/창고/전체 토글 복원(GET /outbound/shipment-status?store_kind=A|B|ALL = Sobo67 Panel102 동등). 회귀 14 신규 PASS · 전 회귀 551 PASS · tsc 0. — 직전: 2026-04-21 C13 RBAC 시드 동기화(admin.stats.*).",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {
@@ -486,6 +486,7 @@
           "GET /api/v1/masters/logistics-cost",
           "GET|POST /api/v1/admin/users",
           "POST /api/v1/admin/user-servers",
+          "PUT /api/v1/admin/user-servers/primary (DEC-052)",
           "GET|POST /api/v1/admin/roles",
           "POST /api/v1/admin/user-roles",
           "GET /api/v1/admin/legacy-permission-map",

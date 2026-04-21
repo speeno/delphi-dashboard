@@ -177,6 +177,20 @@
   {
     "date": "2026-04-21",
     "type": "decision",
+    "title": "DEC-051/052: 로그인 서버 단일화 + 사용자-데이터 서버 1:1(Primary)",
+    "description": "DEC-051 — `BLS_AUTH_SERVER_ID`(기본 `remote_138`) 한 곳에서만 비밀번호 검증, 로그인 화면 서버 콤보 제거. DEC-052 — `web_user_servers` 다대다→1대1 의미 좁힘, admin 라디오 1개 선택 UI + 부팅 1회 idempotent 마이그레이션 + 미설정 헤더 경고 배지. JWT `sid` = primary 데이터 서버, 미설정 시 인증 서버 폴백.",
+    "sprint": 0
+  },
+  {
+    "date": "2026-04-21",
+    "type": "milestone",
+    "title": "출고현황 Sobo67 토글 복원 + 로그인 단순화 + 회귀 14건 신규 PASS",
+    "description": "출고현황(Sobo67) Panel102 「창고도서(B 기본)/본사도서(A)/전체」 라디오 복원(`storeKind` 쿼리 + `_shipment_status_where` 정정). 로그인 화면 서버 콤보 제거(인증 항상 138), admin 화면 라디오 1개 Primary UI(`adminApi.setPrimaryServer`). 회귀: `test_outbound_shipment_status`(4) + `test_auth_login_fixed_server`(4) + `test_admin_primary_server`(6) — 14 PASS, tsc 0, 전 회귀 551 PASS.",
+    "sprint": 0
+  },
+  {
+    "date": "2026-04-21",
+    "type": "decision",
     "title": "DEC-004: 인쇄·바코드 웹 대체 1차 방향",
     "description": "인쇄: 브라우저 인쇄(HTML/CSS) + 라벨 서버 PDF 하이브리드. 바코드: 키보드 웨지(USB-HID) 1차, 시리얼은 베타 후 로컬 브리지/Web Serial 옵션. OQ-002 클로저로 보강.",
     "sprint": 0
