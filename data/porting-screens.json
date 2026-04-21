@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-21 — DEC-051(인증 서버 단일화 BLS_AUTH_SERVER_ID) + DEC-052(사용자-데이터 서버 1:1 Primary) 적용. 로그인 화면 서버 콤보 제거, /admin/user-servers 라디오 1선택 + PUT /api/v1/admin/user-servers/primary 신설. /outbound/status 에 본사/창고/전체 토글 복원(GET /outbound/shipment-status?store_kind=A|B|ALL = Sobo67 Panel102 동등). 회귀 14 신규 PASS · 전 회귀 551 PASS · tsc 0. — 직전: 2026-04-21 C13 RBAC 시드 동기화(admin.stats.*).",
+  "updatedAt": "2026-04-21 — 사이드바 「기초관리」 정합화: form-registry master 그룹 11행 → 7행(Sobo39_1/_2/_5 + Sobo19 stub 4건 제거, DEC-019/023 단일 원천 정책 정합). 미구현 1건(Sobo16_special 특별관리) 추가 구현 계획 docs/master-special-implementation-plan.md 신설(T1~T8 + BLK-SPC-1/2 해소 절차 + 7d 일정). — 직전: 2026-04-21 Sobo67_status(출고현황) phase1 정식 승격: 본사/창고/전체 토글 복원(DEC-051/052) + count_grouped 서버 집계 + in_clause_lookup 청크 마스터 룩업 5축 PASS → form-registry phase=phase1, sidebar P2 배지 → CheckCircle2 초록 체크 마무리.",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {

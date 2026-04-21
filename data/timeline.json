@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-04-21",
+    "type": "improvement",
+    "title": "사이드바 「기초관리」 정합화 — stub 4건 제거 + Sobo16_special 구현 계획 수립",
+    "description": "form-registry.ts master 그룹 11행 → 7행 정리. (1) Sobo39_1/_2/_5(할인율 변형 3건) — DEC-023 「대표 1폼만 1차 노출」 정책에 따라 사이드바에서 제거(변형 차이는 contract `customer_variants` 단일 원천만 보유, `/master/discount/[type]` 동적 라우트는 직접 진입용 placeholder 보존). (2) Sobo19(환경설정 레거시) — DEC-019 분리 정책에 따라 사이드바에서 제거(레거시 Subu14/12/11/15.pas 의 ShowModal InputBox 다이얼로그로 정식 메뉴 아님; Wave D `WebAdmEnv` 단일 원천 노출만 유지). (3) Sobo16_special(특별관리) — phase2 stub 으로 잔존 → `docs/master-special-implementation-plan.md` 신설(T1~T8 + BLK-SPC-1 SQL 추출 / BLK-SPC-2 분류 카탈로그 합의 해소 절차 + 5축 audit §AH 입력 정의 + 7d 일정 + 위험·완화). DEC-019/023 §영향 보강 + phase2-screen-cards Sobo16_special blockers ID 부착. 코드 변경 0(메타/문서만), tsc/lint/회귀 0 영향.",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-21",
+    "type": "improvement",
+    "title": "Sobo67_status(출고현황) phase1 정식 승격 — 사이드바 초록 체크 마무리",
+    "description": "본사/창고/전체 토글 복원(DEC-051/052) + count_grouped 서버 집계 + in_clause_lookup 청크 마스터 룩업 5축 PASS 결과를 종합하여 form-registry phase=phase1 승격. 사이드바 P2 배지 → CheckCircle2 초록 체크로 마무리. phase2-screen-cards Sobo67_status T8=done + phase1-component-fidelity §2.3 승격 사례 기록 + DEC-053 보강. 매트릭스 34행 정식 편입은 다음 audit 사이클 예약(현 33행 동결 유지).",
+    "sprint": 1
+  },
+  {
     "date": "2026-04-11",
     "type": "milestone",
     "title": "프로젝트 시작",

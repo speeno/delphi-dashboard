@@ -1,7 +1,7 @@
 {
-  "$comment": "32 phase2 화면별 단계(T1~T8) 카드. 도서물류관리프로그램/frontend/src/lib/form-registry.ts FORM_REGISTRY 의 phase==='phase2' 32 항목과 1:1. 시나리오(input/process/output/eta) 는 form-registry 의 단일 원천을 거울. T-phase 는 dashboard 가 자체 트래킹.",
+  "$comment": "phase2 화면별 단계(T1~T8) 카드. 도서물류관리프로그램/frontend/src/lib/form-registry.ts FORM_REGISTRY 의 phase==='phase2' 와 1:1 (현 31항목 + Sobo67_status 1항목 = phase1 정식 승격으로 다음 사이클 제거 예정). 시나리오(input/process/output/eta) 는 form-registry 의 단일 원천을 거울. T-phase 는 dashboard 가 자체 트래킹.",
   "title": "Phase 2 32 화면 — 단계 카드 (T1~T8)",
-  "updatedAt": "2026-04-21 — Sobo67 출고현황 본사/창고/전체 토글 복원(DEC-051/052) + 카드 T7 done 승격",
+  "updatedAt": "2026-04-21 — 사이드바 「기초관리」 정합화: Sobo39_1/_2/_5 + Sobo19 stub 4건 사이드바 제거(DEC-019/023 단일 원천 위배 정합화). Sobo16_special(특별관리) 카드에 implementation_plan 링크 + blockers ID(BLK-SPC-1/2) 부착. 직전: 2026-04-21 Sobo67_status(출고현황) phase1 정식 승격(T8 done).",
   "stages": [
     { "id": "T1", "label": "T1 화면카드" },
     { "id": "T2", "label": "T2 SQL/이벤트 추출" },
@@ -86,8 +86,8 @@
     },
     {
       "id": "Sobo67_status", "caption": "출고현황", "menu": "shipment", "route": "/outbound/status",
-      "scenario": { "input": "기간 + 거래처(선택) + 도서구분(창고 B 기본 / 본사 A / 전체)", "process": "GET /api/v1/outbound/shipment-status (storeKind=A|B|ALL, 서버 집계·페이징)", "output": "일자×거래처 매트릭스 + 합계/취소 카운트, Sobo67 Panel102 토글 복원", "eta": "Phase 1 (2026-04-W4) — 본·창고 토글 복원 완료(2026-04-21)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "in_progress" }
+      "scenario": { "input": "기간 + 거래처(선택) + 도서구분(창고 B 기본 / 본사 A / 전체)", "process": "GET /api/v1/outbound/shipment-status (storeKind=A|B|ALL, 서버 집계·페이징)", "output": "일자×거래처 매트릭스 + 합계/취소 카운트, Sobo67 Panel102 토글 복원", "eta": "phase1 정식 승격(2026-04-21) — 본·창고 토글 복원 + count_grouped + in_clause_lookup 청크 적용 5축 PASS" },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
       "id": "Sobo44_inv", "caption": "재고현황", "menu": "inventory", "route": "/inventory/status",
@@ -121,7 +121,7 @@
     },
     {
       "id": "Sobo16_special", "caption": "특별관리", "menu": "master", "route": "/master/special", "legacy_form": "Sobo16.dfm",
-      "scenario": { "input": "거래처코드 + 분류", "process": "특별관리 플래그 토글 + 비고 저장", "output": "특별관리 거래처 목록", "eta": "Phase 2 (2026-Q2)", "blockers": ["레거시 SQL 미확정", "특별관리 분류 카탈로그 합의 필요"] },
+      "scenario": { "input": "거래처코드 + 분류", "process": "특별관리 플래그 토글 + 비고 저장", "output": "특별관리 거래처 목록", "eta": "Phase 2 (2026-Q2)", "blockers": ["BLK-SPC-1 레거시 SQL 미확정 (T2.1 query_capture 단계에서 해소)", "BLK-SPC-2 분류 카탈로그 enum 비즈니스 합의 필요 (T2.2 단계, 1차 OTHER 폴백 가능)"], "implementation_plan": "docs/master-special-implementation-plan.md" },
       "tasks": { "T1": "done", "T2": "in_progress", "T3": "blocked", "T4": "pending", "T5": "pending", "T6": "in_progress", "T7": "pending", "T8": "pending" }
     },
     {
