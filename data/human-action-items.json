@@ -383,6 +383,19 @@
             "각 시나리오 porting-screens.json 에 layout_inputs / layout_mappings 필드 후행 등록 [C2·C6·C9 적용]"
           ],
           "blocks": []
+        },
+        {
+          "id": "HA-RET-02",
+          "title": "Phase1 컴포넌트 동등성 audit-driven retrofit (DEC-053 후속)",
+          "owner": "메인개발자",
+          "due": "P0/P1 발견 시 즉시 처리 (예약 일정 없음 — 매트릭스 재실행 트리거)",
+          "status": "예약 (현재 항목 0)",
+          "tracker": "analysis/audit/phase1-component-fidelity.md + .cursor/rules/dfm-layout-input.mdc",
+          "outputs": [
+            "2026-04-22 1차 매트릭스 동결 — 33행 GAP-P0 = 0 / GAP-P1 = 0 / GAP-P2 = 15(deltas 의식적 차이) — 코드 변경 0 [완료, audit_only]",
+            "현재 retrofit 항목 0 — 신규 DEC, 백엔드/프런트 변경, 사용자 보고 발생 시 매트릭스 재실행 후 P0/P1 발견 항목만 본 ID 에 누적 등록"
+          ],
+          "blocks": []
         }
       ]
     }

@@ -191,6 +191,20 @@
   {
     "date": "2026-04-21",
     "type": "decision",
+    "title": "DEC-053: phase1 33 폼 컴포넌트 동등성 정기 재점검 (Component Fidelity Audit)",
+    "description": "`form-registry.ts::phase=phase1` 33 폼 전수에 5축(W/B/U/D/O) audit 단일 매트릭스 `analysis/audit/phase1-component-fidelity.md` 도입. phase1 승격 게이트(DEC-045) 에 GAP-P0 = 0 의무 추가. P0 = 사용자 작업 차단(예: Sobo67 본사/창고 토글 부재 → 핫픽스 사례). DEC-028 §영향 1줄 보강 + `.cursor/rules/dfm-layout-input.mdc` §회귀 가드 1줄 추가.",
+    "sprint": 0
+  },
+  {
+    "date": "2026-04-21",
+    "type": "milestone",
+    "title": "phase1 33 폼 컴포넌트 동등성 매트릭스 동결 — GAP-P0 = 0",
+    "description": "`analysis/audit/phase1-component-fidelity.md` 매트릭스 33행 작성. 결과: P0 = 0 / P1 = 0 / P2 = 15(모두 §7 deltas 의식적 차이) / OOS = 33행 모두 §6 항목 보유. 코드 변경 0 (audit_only 사이클). HA-RET-02 ID 예약 + 항목 = 0(현재 retrofit 대상 없음).",
+    "sprint": 0
+  },
+  {
+    "date": "2026-04-21",
+    "type": "decision",
     "title": "DEC-004: 인쇄·바코드 웹 대체 1차 방향",
     "description": "인쇄: 브라우저 인쇄(HTML/CSS) + 라벨 서버 PDF 하이브리드. 바코드: 키보드 웨지(USB-HID) 1차, 시리얼은 베타 후 로컬 브리지/Web Serial 옵션. OQ-002 클로저로 보강.",
     "sprint": 0
