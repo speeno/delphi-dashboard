@@ -211,6 +211,13 @@
   },
   {
     "date": "2026-04-21",
+    "type": "improvement",
+    "title": "POC 효율성 일반화 — 마스터 lookup 청크 분할 의무화 (`in_clause_lookup`)",
+    "description": "POC `seak80-sample/backend/main.py` 의 `_SOBO67_GNAME_CODES_CHUNK = 400` 정책(거대 IN(...) 단발 쿼리가 mysql3 raw socket 에서 SQL 파싱 stall / read_timeout 회귀를 유발)을 일반화. `app.core.sql_mysql3.in_clause_lookup(server_id, sql_template, keys, prefix_params, chunk_size)` 공통 헬퍼 신설 — placeholders 자리표시 SQL + 자동 청크 분할(`BLS_IN_CHUNK_SIZE`, 기본 400) + dedupe + prefix_params. 9 곳 lookup 호출처 모두 헬퍼로 일괄 교체: `transactions_service._fetch_customer_names/_fetch_product_names`, `inbound_service._fetch_publisher_names/_fetch_vendor_names/_fetch_product_names`, `outbound_service._fetch_customer_names/_fetch_product_names`, `inventory_service.get_inventory_ledger` 인라인 lookup, `reports_service.get_book_sales/get_customer_sales` 인라인 lookup, `returns_service.list_returns/get_daily_summary` publisher lookup. DEC-033 §결정 사항 (e) 보강 + `.cursor/rules/multi-db-compat.mdc` §의무 사항 2 「거대 IN(...) 단발 쿼리 금지」 추가. 회귀 가드 `test/test_in_clause_lookup_chunked.py` 17/17 신규 PASS(헬퍼 단위 6 + 통합 spy 11), 인접 회귀 `test/test_list_count_grouped_mysql3.py` 11/11 PASS(returns lookup mock 위치 보강), 전체 581 PASS(이전 563 + 신규 17 + 보강 1).",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-21",
     "type": "decision",
     "title": "DEC-004: 인쇄·바코드 웹 대체 1차 방향",
     "description": "인쇄: 브라우저 인쇄(HTML/CSS) + 라벨 서버 PDF 하이브리드. 바코드: 키보드 웨지(USB-HID) 1차, 시리얼은 베타 후 로컬 브리지/Web Serial 옵션. OQ-002 클로저로 보강.",
