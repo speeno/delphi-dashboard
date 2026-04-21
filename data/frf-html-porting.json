@@ -1,0 +1,209 @@
+{
+  "$comment": ".frf → HTML/IR 운영 결합 추적 카드. migration/coverage/frf-html-form-catalog.md (1744 자산 카탈로그) + frf-to-screen-usage-map.md (호출 화면 매핑) ↔ docs/print-html-status.md (운영 라우트) 의 단일 원천. mappingType: catalogued=카탈로그만, manual_in_use=운영 수동HTML 사용, ir_in_use=화이트리스트 IR 결합, gap=레거시는 있으나 웹 미구현. DEC-046 단일 원천 = 본 screens[] 행 수 = print_template_registry._WHITELIST 행 수 (현재 1).",
+  "title": ".frf → HTML/IR 운영 결합 — Phase 3 게이트 + 화이트리스트 추적",
+  "updatedAt": "2026-04-21",
+  "stages": [
+    { "id": "T1", "label": "T1 카탈로그 등재" },
+    { "id": "T2", "label": "T2 매핑/시나리오" },
+    { "id": "T3", "label": "T3 SME 합의(G1)" },
+    { "id": "T4", "label": "T4 ROI(G2)" },
+    { "id": "T5", "label": "T5 화이트리스트 PR" },
+    { "id": "T6", "label": "T6 시각/5축 회귀" },
+    { "id": "T7", "label": "T7 운영 결합" },
+    { "id": "T8", "label": "T8 동결+승격" }
+  ],
+  "legend": {
+    "done": "완료",
+    "in_progress": "진행 중",
+    "pending": "착수 전",
+    "blocked": "차단 사유 있음 (scenario.blockers)",
+    "na": "해당 없음(매핑 유형상 단계 미적용)"
+  },
+  "summary": {
+    "totalCatalogued": 1744,
+    "uniqueLegacyIds": 78,
+    "totalCards": 8,
+    "byMappingType": { "ir_in_use": 1, "manual_in_use": 2, "catalogued": 1, "gap": 4 },
+    "qualityBuckets": { "high": 996, "mid": 436, "low": 248, "outlier_or_other": 64 },
+    "phase3GateStatus": "PENDING (G1 SME 미실시 / G2 ROI 미회의 / G3 R&D 인프라만 done)",
+    "priority": { "P0": 2, "P1": 2, "P2": 2, "P3": 2 }
+  },
+  "screens": [
+    {
+      "id": "Frf_label_form_1",
+      "legacyMenuPath": "Seep13 라벨 출력 / form=1 일반 라벨",
+      "legacyForm": "Report_1_21.frf",
+      "legacyUnit": "Seep13.pas",
+      "webFormId": "label_form_1",
+      "menuGroup": "shipment",
+      "route": "/api/v1/print/label/{shipment_key}.pdf?form=1",
+      "canonicalRoute": "/api/v1/print/label/{shipment_key}.pdf?form=1",
+      "mappingType": "ir_in_use",
+      "priority": "P1",
+      "scenario": {
+        "input": "shipment_key (Sg_Csum.Skey)",
+        "process": "PRINT_TEMPLATE_MODE=auto + print_template_registry.try_render_with_ir('label_form_1', ctx)",
+        "output": "WeasyPrint PDF (1매)",
+        "eta": "DEC-038 Phase 1 / DEC-050 인프라 선행"
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "na", "T4": "na", "T5": "done", "T6": "in_progress", "T7": "done", "T8": "in_progress" },
+      "note": "DEC-050 시행 전 인프라 선행 — Report_1_21.ir.json 1건이 운영 결합 정본 (registry.whitelist_size()=1)"
+    },
+    {
+      "id": "Frf_billing_v0",
+      "legacyMenuPath": "Sobo46 청구서출력",
+      "legacyForm": "Report_4_51.frf (137 복제)",
+      "legacyUnit": "Subu46.pas",
+      "webFormId": "billing_v0 (예정)",
+      "menuGroup": "settlement",
+      "route": "/api/v1/settlement/billing/{billing_key}/print.pdf",
+      "canonicalRoute": "/api/v1/settlement/billing/{billing_key}/print.pdf",
+      "mappingType": "manual_in_use",
+      "priority": "P0",
+      "scenario": {
+        "input": "billing_key",
+        "process": "현재 settlement_print_service.render_billing_html (수동) — 화이트리스트 PR 후 try_render_with_ir 분기 추가",
+        "output": "WeasyPrint PDF (청구서)",
+        "eta": "Phase 3 게이트 통과 후 sprint",
+        "blockers": ["G1 SME 합의 미실시", "G2 ROI 미회의"]
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "pending", "T4": "pending", "T5": "pending", "T6": "pending", "T7": "pending", "T8": "pending" },
+      "note": "P0 — 운영 사용 중 + 137 복제 변환 자산 → 시각 회귀로 정합도 향상"
+    },
+    {
+      "id": "Frf_tax_invoice_v0",
+      "legacyMenuPath": "Sobo49 세금계산서",
+      "legacyForm": "Report_2_11/2_13/2_19.frf (210+ 복제)",
+      "legacyUnit": "Subu49.pas (Tong40.PrinTing00 '49')",
+      "webFormId": "tax_invoice_v0 (예정)",
+      "menuGroup": "settlement",
+      "route": "/api/v1/settlement/tax-invoice/{billing_key}/print.pdf",
+      "canonicalRoute": "/api/v1/settlement/tax-invoice/{billing_key}/print.pdf",
+      "mappingType": "manual_in_use",
+      "priority": "P0",
+      "scenario": {
+        "input": "billing_key",
+        "process": "현재 tax_invoice_service.render_tax_invoice_html (수동) — IR 3종 중 SME 합의 정본 1건 선택",
+        "output": "WeasyPrint PDF (세금계산서)",
+        "eta": "Phase 3 게이트 통과 후 sprint",
+        "blockers": ["G1 SME 합의 — 3 IR 변형 중 정본 지정 필요"]
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "pending", "T4": "pending", "T5": "pending", "T6": "pending", "T7": "pending", "T8": "pending" },
+      "note": "P0 — Report_2_11(67) + Report_2_13(123) + Report_2_19(20) 변형 정본 선택 필요"
+    },
+    {
+      "id": "Frf_label_form_2_to_5",
+      "legacyMenuPath": "Seep13 라벨 출력 / form=2~5 (우편엽서/대형/2단×2)",
+      "legacyForm": "Report_1_22.frf ~ Report_1_25.frf (4종)",
+      "legacyUnit": "Seep13.pas",
+      "webFormId": "label_form_2 / 3 / 4 / 5 (예정)",
+      "menuGroup": "shipment",
+      "route": "/api/v1/print/label/{shipment_key}.pdf?form=2..5",
+      "canonicalRoute": "/api/v1/print/label/{shipment_key}.pdf?form=2..5",
+      "mappingType": "manual_in_use",
+      "priority": "P1",
+      "scenario": {
+        "input": "shipment_key + form=2..5",
+        "process": "현재 label_service form 2~5 = manual HTML — 화이트리스트 4행 추가 PR 단위로 IR 결합",
+        "output": "WeasyPrint PDF (라벨 변형)",
+        "eta": "Phase 3 게이트 통과 후 sprint (form 1건씩 단위 PR)"
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "pending", "T4": "pending", "T5": "pending", "T6": "pending", "T7": "pending", "T8": "pending" },
+      "note": "P1 — _try_render_label_auto 의 호환 폴백이 form 2~5 의 frf 파일명 유추로 시도 중 (R&D)"
+    },
+    {
+      "id": "Frf_settlement_4_95_96",
+      "legacyMenuPath": "Tong04 정산 변형 (Report_4_95/96)",
+      "legacyForm": "Report_4_95.frf + Report_4_96.frf",
+      "legacyUnit": "Tong04.pas (L538~597)",
+      "webFormId": null,
+      "menuGroup": "settlement",
+      "route": null,
+      "canonicalRoute": "(웹 라우트 미신설)",
+      "mappingType": "gap",
+      "priority": "P2",
+      "scenario": {
+        "input": "기간 + (거래처)",
+        "process": "Tong04 정산 변형 — 웹 settlement 모듈에 신규 라우트 + 서비스 신설 후 SOP-A 적용",
+        "output": "WeasyPrint PDF",
+        "eta": "Phase 3 게이트 + sprint 1회 (백로그)"
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "pending", "T4": "pending", "T5": "pending", "T6": "pending", "T7": "pending", "T8": "pending" },
+      "note": "P2 — 매핑 표 §1 행 6, SME 가 정본 지정 시 우선순위 재산정"
+    },
+    {
+      "id": "Frf_statement_2_12",
+      "legacyMenuPath": "Tong04 명세 변형 (Report_2_12)",
+      "legacyForm": "Report_2_12.frf",
+      "legacyUnit": "Tong04.pas (L2629~3028)",
+      "webFormId": null,
+      "menuGroup": "transactions",
+      "route": null,
+      "canonicalRoute": "(웹 라우트 미신설)",
+      "mappingType": "gap",
+      "priority": "P2",
+      "scenario": {
+        "input": "거래일자 + 거래처 + jubun",
+        "process": "거래명세 변형 — sales-statement 의 variant 추가 또는 신규 라우트",
+        "output": "WeasyPrint PDF",
+        "eta": "Phase 3 게이트 + sprint 1회 (백로그)"
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "pending", "T4": "pending", "T5": "pending", "T6": "pending", "T7": "pending", "T8": "pending" },
+      "note": "P2 — 매핑 표 §1 행 7"
+    },
+    {
+      "id": "Frf_welove_ftp_customer_dup",
+      "legacyMenuPath": "WeLove_FTP 고객 복제본 (도서유통-New 967 + 도서유통-출판 524 + book_21 77 + book_99 76)",
+      "legacyForm": "1646 .frf (복제 다양)",
+      "legacyUnit": "(고객 분기 — 정본 지정 PENDING)",
+      "webFormId": null,
+      "menuGroup": null,
+      "route": null,
+      "canonicalRoute": "(SME 정본 지정 시 승격)",
+      "mappingType": "catalogued",
+      "priority": "P3",
+      "scenario": {
+        "input": "고객별 분기 양식",
+        "process": "카탈로그만 보존 — SME 가 정본 지정 시 SOP-A 로 승격",
+        "output": "(미신설)",
+        "eta": "후속 (SME 합의 종속)"
+      },
+      "tasks": { "T1": "done", "T2": "in_progress", "T3": "pending", "T4": "pending", "T5": "pending", "T6": "pending", "T7": "pending", "T8": "pending" },
+      "note": "P3 — DEC-039 정합 (카탈로그 = 참조 only). 정본 지정 없이는 운영 결합 0"
+    },
+    {
+      "id": "Frf_subu99_subu39_subu33",
+      "legacyMenuPath": "Subu99/39/33 단일 호출 (Report_3_91/92/33)",
+      "legacyForm": "Report_3_91.frf + Report_3_92.frf + Report_3_33.frf",
+      "legacyUnit": "Subu99.pas / Subu39.pas / Subu33.pas",
+      "webFormId": null,
+      "menuGroup": null,
+      "route": null,
+      "canonicalRoute": "(웹 라우트 미신설)",
+      "mappingType": "gap",
+      "priority": "P3",
+      "scenario": {
+        "input": "(레거시 화면별 입력)",
+        "process": "단일 호출 통계/현황 — Phase 3 후 SOP-A/B 선택",
+        "output": "(미신설)",
+        "eta": "후속"
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "pending", "T4": "pending", "T5": "pending", "T6": "pending", "T7": "pending", "T8": "pending" },
+      "note": "P3 — 매핑 표 §1 행 9~11"
+    }
+  ],
+  "phase3_gate": {
+    "status": "PENDING",
+    "doc": "docs/phase3-print-gate.md",
+    "conditions": [
+      { "id": "G1", "label": "SME 협의", "doc": "analysis/research/c7_phase3_sme_review.md", "status": "PENDING" },
+      { "id": "G2", "label": "B1 vs B4 ROI", "doc": "analysis/research/c7_b1_vs_b4_roi.md", "status": "PENDING" },
+      { "id": "G3", "label": "R&D 가용성", "doc": "analysis/research/c7_phase3_capacity.md", "status": "PARTIAL (M2 인프라만 done)" }
+    ]
+  },
+  "single_source_invariants": [
+    "registry._WHITELIST 행 수 = print_templates/auto/*.ir.json 파일 수 = mappingType='ir_in_use' 행 수 (3 곳 동수, DEC-046)",
+    "총 카탈로그 = 1744 (manifest.total_input)",
+    "운영 결합 자동 sync 코드 = 0 (DEC-039 영속)"
+  ]
+}

@@ -1,14 +1,14 @@
 {
   "$comment": "C10 이후 R&D/DX 트랙 — 시나리오 (C1~C15) 와 평행하게 운영되는 비즈니스 외 작업 라인. 본 페이즈는 2종 (T-B4: .frf 자동 변환 PoC, T-DEV: 개발 인프라/DX) 등록. 트랙은 시나리오와 달리 T1~T8 고정 단계가 없고, 자유 마일스톤으로 추적.",
   "title": "R&D / DX Tracks",
-  "updatedAt": "2026-04-21 — T-B4: 변환 작업 자체는 100% 완료 (1744 양식 IR+HTML 산출) → status=done. Phase 3(운영 파이프라인 결합)는 DEC-048 별도 게이트로 분리.",
+  "updatedAt": "2026-04-21 — T-B4: 변환 작업 100% 완료 (1744 양식 IR+HTML 산출) → status=done. Phase 3(운영 파이프라인 결합)는 DEC-048 + DEC-050 별도 게이트로 분리. DEC-050 시행으로 화이트리스트 인프라(print_template_registry) + 4 산출물 + 대시보드 단일 원천(frf-html-porting.json/renderFrfHtmlPorting) 동결.",
   "tracks": [
     {
       "id": "T-B4",
       "name": ".frf → HTML 자동 변환 (B4 PoC)",
       "category": "R&D",
       "status": "done",
-      "phase3_followup": "deferred_dec048",
+      "phase3_followup": "deferred_dec048 + opt_in_dec050",
       "purpose": "레거시 FastReport `.frf` 양식 → 모던 HTML 자동 변환 → WeasyPrint PDF 파이프라인 (운영 .NET 의존성 0)",
       "summary": "✅ 변환 작업 100% 완료 (2026-04-21) — 저장소 전역 .frf 1744건을 *.template.html + *.ir.json 으로 1:1 자동 변환 (debug/frf_batch_convert_all.py + debug/frf_quality_report.py). PoC 1일 보고서 + 3 가설 검증 (H1 부분, H2 ✅, H3 ⚠️) 완료. 운영 FastAPI 경로 결합(=Phase 3) 만 별도 게이트(DEC-048)로 분리 보류 — DEC-039 정책 유지하며 R&D 트랙 자체는 종결.",
       "rationale": [
@@ -27,11 +27,19 @@
           "note": "레거시_source·WeLove_FTP 등 포함 전체 탐색 산출. 운영 FastAPI 경로 미연결 — 빌드 타임 참조 자산."
         },
         { "id": "M1c", "name": "변환 작업 본 트랙 종결 — status=done 전환", "status": "done", "date": "2026-04-21", "note": "Phase 3 운영 결합은 DEC-048 별도 게이트로 이관 (사용자 확인)" },
-        { "id": "M2", "name": "운영 SME 협의 (98 양식 변경 빈도) — Phase 3 게이트", "status": "blocked", "blocker": "외부 의존", "tracked_by": "DEC-048" },
-        { "id": "M3", "name": "자체 파서 B1 vs B4 비교 회의록 — Phase 3 게이트", "status": "pending", "tracked_by": "DEC-048" },
-        { "id": "M4", "name": "Phase 3 진입 결정 (운영 파이프라인 결합)", "status": "pending", "depends_on": ["M2", "M3"], "tracked_by": "DEC-048" }
+        {
+          "id": "M1d",
+          "name": "DEC-050 시행 — per-form 화이트리스트 인프라 + 4 산출물 + 대시보드 단일 원천",
+          "status": "done",
+          "date": "2026-04-21",
+          "artifact": "backend/app/services/print_template_registry.py, migration/coverage/frf-html-form-catalog.md, migration/coverage/frf-to-screen-usage-map.md, docs/print-html-status.md, docs/print-form-add-sop.md, docs/phase3-print-gate.md, dashboard/data/frf-html-porting.json, dashboard/js/app.js::renderFrfHtmlPorting, test/test_print_template_registry.py",
+          "note": "label_service._try_render_label_auto 가 registry 위임 (행동 정합). 회귀 19 PASS. _WHITELIST 행 수=1 = print_templates/auto/*.ir.json=1 = screens[ir_in_use]=1 (DEC-046 invariant)."
+        },
+        { "id": "M2", "name": "운영 SME 협의 (98 양식 변경 빈도) — Phase 3 게이트 G1", "status": "pending", "blocker": "외부 의존", "tracked_by": "DEC-048+DEC-050", "artifact": "analysis/research/c7_phase3_sme_review.md (양식 동결, 인터뷰 미실시)" },
+        { "id": "M3", "name": "자체 파서 B1 vs B4 비교 회의록 — Phase 3 게이트 G2", "status": "pending", "tracked_by": "DEC-048+DEC-050", "artifact": "analysis/research/c7_b1_vs_b4_roi.md (양식 동결, 회의 미실시)" },
+        { "id": "M4", "name": "Phase 3 진입 결정 (운영 파이프라인 결합) — G3 R&D 가용성 + 첫 화이트리스트 PR", "status": "pending", "depends_on": ["M2", "M3"], "tracked_by": "DEC-048+DEC-050", "artifact": "analysis/research/c7_phase3_capacity.md (M2 인프라만 done)" }
       ],
-      "decisions": ["DEC-037", "DEC-038", "DEC-039", "DEC-048"],
+      "decisions": ["DEC-037", "DEC-038", "DEC-039", "DEC-048", "DEC-050"],
       "extensionLine": true,
       "linked_scenarios": ["C7"]
     },

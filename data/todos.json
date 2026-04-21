@@ -117,6 +117,36 @@
           "note": "Phase 1+T8/T9 완료 후 Phase 2-α variant/form·계약 v1.1.0·pytest 37·probe 3·§7-C7-α. B4 PoC 보고서·§7-C7-β + 2026-04-21 저장소 전역 배치 변환(debug/output/frf_converted_all, 각 1744× template+IR)."
         },
         {
+          "id": "M-S1-PORT-C7-FRF-INFRA",
+          "task": "C7 .frf→HTML 운영 결합 인프라 (DEC-050) — print_template_registry 화이트리스트 + label_service 일반화 + frf-html-porting.json/renderFrfHtmlPorting + SOP/게이트 4 산출물 동결",
+          "done": true,
+          "note": "1744 카탈로그 + 매핑 표 + 운영 현황표 + Phase 3 게이트(G1/G2/G3) + SOP A/B 경로. test_print_template_registry 8 PASS + test_c7_print_phase3_auto_template 11 PASS 회귀 0."
+        },
+        {
+          "id": "M-S1-PORT-C7-FRF-P0",
+          "task": "C7 .frf→HTML P0 — Sobo46 청구서(Report_4_51) + Sobo49 세금(Report_2_11/2_13/2_19) IR 결합 — Phase 3 게이트 통과 후 sprint",
+          "done": false,
+          "note": "blockers: G1 SME 합의 미실시 + G2 ROI 미회의 (docs/phase3-print-gate.md 참조). 통과 시 화이트리스트 PR 1행/form."
+        },
+        {
+          "id": "M-S1-PORT-C7-FRF-P1",
+          "task": "C7 .frf→HTML P1 — 라벨 4종 확장 (Report_1_22~1_25 화이트리스트 추가, label_service form 2~5 IR 결합)",
+          "done": false,
+          "note": "P0 통과 직후 sprint. _try_render_label_auto 호환 폴백 → registry 위임 전환."
+        },
+        {
+          "id": "M-S1-PORT-C7-FRF-P2",
+          "task": "C7 .frf→HTML P2 — Tong04 정산/명세 변형 (Report_4_95/96, Report_2_12) 신규 라우트 + SOP-A 적용",
+          "done": false,
+          "note": "신규 settlement/transactions 라우트 신설 후 화이트리스트 PR. SME 합의 의존."
+        },
+        {
+          "id": "M-S1-PORT-C7-FRF-P3",
+          "task": "C7 .frf→HTML P3 — WeLove_FTP 고객 복제본 1646건 + Subu99/39/33 단일 호출분 카탈로그 보존",
+          "done": false,
+          "note": "DEC-039 정합 — 카탈로그 only. SME 가 정본 지정 시 SOP-A 로 승격."
+        },
+        {
           "id": "M-S1-PORT-C8",
           "task": "C8 바코드 스캔 → 출고/입고/반품 매칭 — T1~T8 진행 (단계 4)",
           "done": true,

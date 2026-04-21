@@ -135,6 +135,20 @@
   {
     "date": "2026-04-21",
     "type": "decision",
+    "title": "DEC-050: .frf→HTML 운영 결합 = per-form 화이트리스트 옵트인 (자동 변환 0 영속)",
+    "description": "1744 변환 자산 운영 결합 = backend/app/services/print_template_registry.py::_WHITELIST 화이트리스트 PR 단위 옵트인 (PR 1건=1행+IR 파일 수동 복사). 환경변수 PRINT_TEMPLATE_MODE=auto 게이트 + Phase 3 게이트 3 조건(G1 SME/G2 ROI/G3 R&D 가용성) + 품질 점수 게이트(binding_fill≥0.7 AND coord_recovery≥0.95). graceful fallback (IR 누락/컴파일 에러 → manual). DEC-039 자동 변환 0 영속. label_service._try_render_label_auto 가 registry 위임 (행동 정합, test_print_template_registry 8 PASS + test_c7_print_phase3_auto_template 11 PASS 회귀 0). DEC-046 단일 원천 invariant: _WHITELIST 행 수 = print_templates/auto/*.ir.json 파일 수 = frf-html-porting.json screens[ir_in_use] 행 수 (현재 1).",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-21",
+    "type": "milestone",
+    "title": ".frf→HTML 운영 결합 인프라 + 대시보드 섹션 동결 (renderFrfHtmlPorting)",
+    "description": "4 산출물 동결: migration/coverage/frf-html-form-catalog.md (1744 카탈로그, 그룹 6분류/품질 H 996+M 436+L 248) + migration/coverage/frf-to-screen-usage-map.md (169 직접 호출 + Tong40.PrinTing00 디스패처 5개 코드, P0~P3 우선순위) + docs/print-html-status.md (운영 라우트 6 + IR 결합 1) + docs/print-form-add-sop.md (A 변환 자산 활용/B 신규 직접 작성 두 경로). Phase 3 게이트 3 산출물 양식 신설(c7_phase3_sme_review/c7_b1_vs_b4_roi/c7_phase3_capacity, PENDING). dashboard/data/frf-html-porting.json (8 카드 + 게이트 상태 + 단일 원천 invariant) + dashboard/js/app.js::renderFrfHtmlPorting 추가. todos.json 에 P0~P3 백로그 4 분류 등록. tracks.json T-B4 phase3_followup 갱신.",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-21",
+    "type": "decision",
     "title": "진행·DB 메타 대시보드는 허브 dashboard/에만 유지",
     "description": "제품 Next 대시보드는 업무 KPI 중심, 웹 포팅 진행·DB 스키마 요약은 GitHub Pages용 dashboard/data(JSON)·일정 달력과 동기.",
     "sprint": 0

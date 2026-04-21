@@ -44,6 +44,7 @@ async function loadAll() {
     tracks,
     phase2ScreenCards,
     billingMenuPorting,
+    frfHtmlPorting,
   ] = await Promise.all([
     Promise.resolve(projectMeta),
     loadJSON('sprints.json'),
@@ -64,6 +65,7 @@ async function loadAll() {
     loadJSON('tracks.json').catch(() => null),
     loadJSON('phase2-screen-cards.json').catch(() => null),
     loadJSON('billing-c5-menu-porting.json').catch(() => null),
+    loadJSON('frf-html-porting.json').catch(() => null),
   ]);
   return {
     project,
@@ -85,6 +87,7 @@ async function loadAll() {
     tracks,
     phase2ScreenCards,
     billingMenuPorting,
+    frfHtmlPorting,
   };
 }
 
@@ -1531,6 +1534,179 @@ function renderBillingMenuPorting(data) {
     </div>`;
 }
 
+/**
+ * .frf → HTML/IR 운영 결합 추적 — frf-html-porting.json 단일 원천.
+ *
+ * 1744 변환 자산 카탈로그 + Phase 3 게이트 (G1/G2/G3) + per-form 화이트리스트
+ * 진행을 T1~T8 카드로 노출. mappingType: catalogued / manual_in_use / ir_in_use / gap.
+ *
+ * DEC-046 단일 원천 = screens[] 행 수 = print_template_registry._WHITELIST 행 수
+ *                    = print_templates/auto/*.ir.json 파일 수 (3 곳 동수).
+ */
+function renderFrfHtmlPorting(data) {
+  const fd = data.frfHtmlPorting;
+  if (!fd || !Array.isArray(fd.screens) || fd.screens.length === 0) return '';
+  const stages = fd.stages || [];
+  const taskStatusMap = {
+    done: ['✓', '#10b981', '#d1fae5'],
+    in_progress: ['◐', '#f59e0b', '#fef3c7'],
+    pending: ['○', '#9ca3af', '#f3f4f6'],
+    blocked: ['✕', '#ef4444', '#fee2e2'],
+    na: ['—', '#9ca3af', '#f3f4f6'],
+  };
+  const mappingTypeBadge = {
+    ir_in_use: ['IR 결합', '#166534', '#dcfce7'],
+    manual_in_use: ['수동 사용중', '#b45309', '#fef3c7'],
+    catalogued: ['카탈로그', '#0369a1', '#e0f2fe'],
+    gap: ['미구현', '#b91c1c', '#fee2e2'],
+  };
+  const priorityColor = {
+    P0: '#dc2626',
+    P1: '#ea580c',
+    P2: '#d97706',
+    P3: '#65a30d',
+    low: '#6b7280',
+  };
+
+  const sm = fd.summary || {};
+  const counts = sm.byMappingType || {};
+  const qb = sm.qualityBuckets || {};
+  const total = fd.screens.length;
+
+  const cards = fd.screens.map((sc) => {
+    const ts = sc.tasks || {};
+    const sObj = sc.scenario || {};
+    const blockers = Array.isArray(sObj.blockers) ? sObj.blockers : [];
+    const isBlocked = blockers.length > 0;
+    const mt = sc.mappingType || 'gap';
+    const [mtLabel, mtFg, mtBg] = mappingTypeBadge[mt] || mappingTypeBadge.gap;
+
+    const stepCells = stages.map((st) => {
+      const status = ts[st.id] || 'pending';
+      const [icon, fg, bg] = taskStatusMap[status] || taskStatusMap.pending;
+      return `
+        <div title="${escapeHtml(st.label)} — ${escapeHtml(status)}" style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-width:30px">
+          <div style="width:26px;height:26px;border-radius:50%;background:${bg};color:${fg};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:1px solid ${fg}33">${icon}</div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:600">${escapeHtml(st.id)}</div>
+        </div>`;
+    }).join('<div style="flex:0 0 4px;height:1px;background:var(--text-muted);opacity:.3;align-self:center;margin-top:8px"></div>');
+
+    const routeBlock = sc.route
+      ? `<a href="${escapeHtml(sc.route)}" target="_blank" style="font-size:11px;color:var(--text-muted);text-decoration:none"><code style="font-size:11px">${escapeHtml(sc.route)}</code></a>`
+      : sc.canonicalRoute
+        ? `<span style="font-size:11px;color:var(--text-muted)">예정: <code style="font-size:11px">${escapeHtml(sc.canonicalRoute)}</code></span>`
+        : `<span style="font-size:11px;color:var(--text-muted)">(라우트 미정)</span>`;
+
+    const etaBadge = sObj.eta
+      ? `<span class="badge badge-progress" style="font-size:10px">📅 ${escapeHtml(sObj.eta)}</span>`
+      : '';
+    const blockerBadge = isBlocked
+      ? `<span class="badge badge-danger" style="font-size:10px">⚠ 차단</span>`
+      : '';
+    const priorityBadge = sc.priority
+      ? `<span style="font-size:9px;font-weight:700;color:${priorityColor[sc.priority] || '#6b7280'};border:1px solid ${priorityColor[sc.priority] || '#6b7280'}55;padding:1px 5px;border-radius:4px">${escapeHtml(sc.priority)}</span>`
+      : '';
+    const mtBadge = `<span style="font-size:9px;font-weight:700;color:${mtFg};background:${mtBg};border:1px solid ${mtFg}33;padding:1px 5px;border-radius:4px">${escapeHtml(mtLabel)}</span>`;
+
+    const blockerSection = isBlocked
+      ? `<div style="margin-top:8px;padding:6px 8px;border-radius:6px;background:#fef2f2;border:1px solid #fecaca;font-size:11px;color:#991b1b">
+          <strong>차단/주의:</strong> ${blockers.map(escapeHtml).join(' · ')}
+        </div>`
+      : '';
+    const noteSection = sc.note
+      ? `<div style="margin-top:6px;font-size:10px;color:var(--text-muted);line-height:1.4">${escapeHtml(sc.note)}</div>`
+      : '';
+
+    return `
+      <div class="card" style="padding:12px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
+          <div style="min-width:0;flex:1">
+            <div style="font-size:10px;color:var(--text-muted);display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+              ${mtBadge} ${priorityBadge}
+              <code style="font-size:10px">${escapeHtml(sc.legacyForm || '')}</code>
+            </div>
+            <div style="font-size:13px;font-weight:600;margin-top:3px;line-height:1.3">${escapeHtml(sc.legacyMenuPath || sc.id)}</div>
+            <div style="margin-top:2px">${routeBlock}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">
+            ${etaBadge}
+            ${blockerBadge}
+          </div>
+        </div>
+
+        <div style="background:#f9fafb;border-radius:6px;padding:6px 8px;font-size:11px;line-height:1.5;display:flex;flex-direction:column;gap:2px">
+          <div><span style="display:inline-block;width:30px;font-weight:700;color:#3b82f6">입력</span> ${escapeHtml(sObj.input || '-')}</div>
+          <div><span style="display:inline-block;width:30px;font-weight:700;color:#6366f1">처리</span> ${escapeHtml(sObj.process || '-')}</div>
+          <div><span style="display:inline-block;width:30px;font-weight:700;color:#10b981">출력</span> ${escapeHtml(sObj.output || '-')}</div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:0;padding:4px 0">
+          ${stepCells}
+        </div>
+
+        ${blockerSection}
+        ${noteSection}
+      </div>`;
+  }).join('');
+
+  const gate = fd.phase3_gate || {};
+  const gateConditions = Array.isArray(gate.conditions) ? gate.conditions : [];
+  const gateColor = (status) => {
+    const s = String(status || '').toUpperCase();
+    if (s.startsWith('PASS') || s.startsWith('DONE')) return ['#166534', '#dcfce7'];
+    if (s.startsWith('PARTIAL')) return ['#b45309', '#fef3c7'];
+    return ['#991b1b', '#fee2e2'];
+  };
+  const gateSection = gateConditions.length
+    ? `<div class="card" style="padding:10px 12px;margin-bottom:10px;border:1px solid #fde68a;background:#fffbeb">
+        <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:6px">
+          🚦 Phase 3 게이트 — ${escapeHtml(gate.status || 'PENDING')} ·
+          <a href="../${escapeHtml(gate.doc || '')}" target="_blank" style="color:#92400e;font-weight:600">${escapeHtml(gate.doc || '')}</a>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px">
+          ${gateConditions.map((g) => {
+            const [fg, bg] = gateColor(g.status);
+            return `
+              <div style="font-size:11px;line-height:1.5;background:${bg};border:1px solid ${fg}55;border-radius:6px;padding:6px 8px">
+                <div><strong style="color:${fg}">${escapeHtml(g.id)} ${escapeHtml(g.label)}</strong> — ${escapeHtml(g.status || '')}</div>
+                <div style="color:#6b7280;font-size:10px"><code style="font-size:10px">${escapeHtml(g.doc || '')}</code></div>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>`
+    : '';
+
+  const invariants = Array.isArray(fd.single_source_invariants) ? fd.single_source_invariants : [];
+  const invariantSection = invariants.length
+    ? `<div style="font-size:10px;color:var(--text-muted);margin:4px 0 10px;line-height:1.5;padding:6px 8px;background:#f3f4f6;border-radius:6px">
+        <strong>단일 원천 불변식:</strong>
+        <ul style="margin:2px 0 0 18px;padding:0">
+          ${invariants.map((i) => `<li>${escapeHtml(i)}</li>`).join('')}
+        </ul>
+      </div>`
+    : '';
+
+  return `
+    <div class="section" id="frf-html-porting-section">
+      <div class="section-title">${escapeHtml(fd.title || '.frf → HTML/IR 운영 결합')}</div>
+      <p style="font-size:11px;color:var(--text-muted);margin:0 0 10px">
+        총 카탈로그 ${sm.totalCatalogued || 0} (legacy 정본 ${sm.uniqueLegacyIds || 0}) ·
+        카드 ${total} 행 ·
+        <span style="color:#166534">IR 결합 ${counts.ir_in_use || 0}</span> ·
+        <span style="color:#b45309">수동 ${counts.manual_in_use || 0}</span> ·
+        <span style="color:#0369a1">카탈로그 ${counts.catalogued || 0}</span> ·
+        <span style="color:#b91c1c">미구현 ${counts.gap || 0}</span> ·
+        품질 H/M/L = ${qb.high || 0}/${qb.mid || 0}/${qb.low || 0}
+        · 단일 원천: <code style="font-size:11px">dashboard/data/frf-html-porting.json</code>
+        ↔ <code style="font-size:11px">migration/coverage/frf-html-form-catalog.md</code>
+        ${fd.updatedAt ? `· 갱신: ${escapeHtml(fd.updatedAt)}` : ''}
+      </p>
+      ${gateSection}
+      ${invariantSection}
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:10px">${cards}</div>
+    </div>`;
+}
+
 function renderTracks(data) {
   const tr = data.tracks;
   if (!tr || !Array.isArray(tr.tracks) || tr.tracks.length === 0) return '';
@@ -1715,6 +1891,7 @@ async function init() {
       renderPortingScreens(data),
       renderPhase2ScreenCards(data),
       renderBillingMenuPorting(data),
+      renderFrfHtmlPorting(data),
       renderCalendarSection(data),
       renderReleaseMilestones(data),
       renderTimeline(data),
