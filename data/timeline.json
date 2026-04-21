@@ -121,6 +121,20 @@
   {
     "date": "2026-04-21",
     "type": "decision",
+    "title": "DEC-049: 발송비/입금 메뉴 IA 복원 = settlement 라우트 별칭",
+    "description": "웹 billing(발송비/입금) 그룹은 레거시 「메인 메뉴 / 발송비/입금관리」 IA 복원 전용. C5 기능 8개(청구서관리·청구서관리-택배·청구금액·청구서출력·세금계산서·입금내역·입금현황 거래처/일자)는 settlement 라우트를 그대로 두고 form-registry.ts 에 _bill 접미 별칭 8행 추가 → 사이드바 「준비 중」 해소. wrong_id 2건(Sobo43_stats_route↔Subu43 발송비, Sobo44_inv↔Subu44 발송비현황) 가드 + 진짜 발송비 도메인은 신규 ID(Sobo43_shipping_ledger/Sobo44_shipping_status)로 P2 백로그 분리. 신규 SQL 0(DEC-040 정합). 단일 원천: migration/coverage/billing-deposit-menu-legacy-to-web-map.md + dashboard/data/billing-c5-menu-porting.json.",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-21",
+    "type": "milestone",
+    "title": "대시보드에 발송비/입금 메뉴 포팅 섹션 추가 (renderBillingMenuPorting)",
+    "description": "dashboard/data/billing-c5-menu-porting.json 신설 (16행: alias 8 / moved 3 / gap 5, wrong_id_warnings 2). dashboard/js/app.js 에 loadAll() + renderBillingMenuPorting() 추가 — phase2 카드와 동일한 T1~T8 단계 카드 패턴 + 매핑 유형(alias/moved/gap) 배지 + 우선순위(P0~P3) 배지 + wrong_id 경고 박스. 사이드바에는 form-registry.ts billing 별칭 8행으로 진입점 노출.",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-21",
+    "type": "decision",
     "title": "진행·DB 메타 대시보드는 허브 dashboard/에만 유지",
     "description": "제품 Next 대시보드는 업무 KPI 중심, 웹 포팅 진행·DB 스키마 요약은 GitHub Pages용 dashboard/data(JSON)·일정 달력과 동기.",
     "sprint": 0

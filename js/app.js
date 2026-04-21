@@ -43,6 +43,7 @@ async function loadAll() {
     portingScreens,
     tracks,
     phase2ScreenCards,
+    billingMenuPorting,
   ] = await Promise.all([
     Promise.resolve(projectMeta),
     loadJSON('sprints.json'),
@@ -62,6 +63,7 @@ async function loadAll() {
     loadJSON('porting-screens.json'),
     loadJSON('tracks.json').catch(() => null),
     loadJSON('phase2-screen-cards.json').catch(() => null),
+    loadJSON('billing-c5-menu-porting.json').catch(() => null),
   ]);
   return {
     project,
@@ -82,6 +84,7 @@ async function loadAll() {
     portingScreens,
     tracks,
     phase2ScreenCards,
+    billingMenuPorting,
   };
 }
 
@@ -1381,6 +1384,153 @@ function renderPhase2ScreenCards(data) {
     </div>`;
 }
 
+/**
+ * 발송비/입금 메뉴 포팅 추적 — billing-c5-menu-porting.json 단일 원천.
+ *
+ * 레거시 「발송비/입금관리」 메뉴 트리 16행을 alias/moved/gap 으로 분류하여
+ * T1~T8 단계 카드로 노출. wrong_id 경고는 별도 박스로 강조.
+ */
+function renderBillingMenuPorting(data) {
+  const bd = data.billingMenuPorting;
+  if (!bd || !Array.isArray(bd.screens) || bd.screens.length === 0) return '';
+  const stages = bd.stages || [];
+  const taskStatusMap = {
+    done: ['✓', '#10b981', '#d1fae5'],
+    in_progress: ['◐', '#f59e0b', '#fef3c7'],
+    pending: ['○', '#9ca3af', '#f3f4f6'],
+    blocked: ['✕', '#ef4444', '#fee2e2'],
+    na: ['—', '#9ca3af', '#f3f4f6'],
+  };
+  const mappingTypeBadge = {
+    alias: ['별칭', '#0369a1', '#e0f2fe'],
+    moved: ['이전', '#7c3aed', '#ede9fe'],
+    gap: ['미구현', '#b91c1c', '#fee2e2'],
+    wrong_id: ['ID충돌', '#b45309', '#fef3c7'],
+  };
+  const priorityColor = {
+    P0: '#dc2626',
+    P1: '#ea580c',
+    P2: '#d97706',
+    P3: '#65a30d',
+    low: '#6b7280',
+  };
+
+  const sm = bd.summary || {};
+  const counts = sm.byMappingType || { alias: 0, moved: 0, gap: 0 };
+  const total = bd.screens.length;
+
+  const cards = bd.screens.map((sc) => {
+    const ts = sc.tasks || {};
+    const sObj = sc.scenario || {};
+    const blockers = Array.isArray(sObj.blockers) ? sObj.blockers : [];
+    const isBlocked = blockers.length > 0;
+    const mt = sc.mappingType || 'gap';
+    const [mtLabel, mtFg, mtBg] = mappingTypeBadge[mt] || mappingTypeBadge.gap;
+
+    const stepCells = stages.map((st) => {
+      const status = ts[st.id] || 'pending';
+      const [icon, fg, bg] = taskStatusMap[status] || taskStatusMap.pending;
+      return `
+        <div title="${escapeHtml(st.label)} — ${escapeHtml(status)}" style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-width:30px">
+          <div style="width:26px;height:26px;border-radius:50%;background:${bg};color:${fg};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:1px solid ${fg}33">${icon}</div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:600">${escapeHtml(st.id)}</div>
+        </div>`;
+    }).join('<div style="flex:0 0 4px;height:1px;background:var(--text-muted);opacity:.3;align-self:center;margin-top:8px"></div>');
+
+    const routeBlock = sc.route
+      ? `<a href="${escapeHtml(sc.route)}" target="_blank" style="font-size:11px;color:var(--text-muted);text-decoration:none"><code style="font-size:11px">${escapeHtml(sc.route)}</code></a>`
+      : sc.canonicalRoute
+        ? `<span style="font-size:11px;color:var(--text-muted)">예정: <code style="font-size:11px">${escapeHtml(sc.canonicalRoute)}</code></span>`
+        : `<span style="font-size:11px;color:var(--text-muted)">(라우트 미정)</span>`;
+    const aliasLine = sc.canonicalRoute && sc.route && sc.route !== sc.canonicalRoute
+      ? `<div style="font-size:10px;color:var(--text-muted);margin-top:1px">정본: <code style="font-size:10px">${escapeHtml(sc.canonicalRoute)}</code></div>`
+      : '';
+
+    const etaBadge = sObj.eta
+      ? `<span class="badge badge-progress" style="font-size:10px">📅 ${escapeHtml(sObj.eta)}</span>`
+      : '';
+    const blockerBadge = isBlocked
+      ? `<span class="badge badge-danger" style="font-size:10px">⚠ 차단</span>`
+      : '';
+    const priorityBadge = sc.priority
+      ? `<span style="font-size:9px;font-weight:700;color:${priorityColor[sc.priority] || '#6b7280'};border:1px solid ${priorityColor[sc.priority] || '#6b7280'}55;padding:1px 5px;border-radius:4px">${escapeHtml(sc.priority)}</span>`
+      : '';
+    const mtBadge = `<span style="font-size:9px;font-weight:700;color:${mtFg};background:${mtBg};border:1px solid ${mtFg}33;padding:1px 5px;border-radius:4px">${escapeHtml(mtLabel)}</span>`;
+
+    const blockerSection = isBlocked
+      ? `<div style="margin-top:8px;padding:6px 8px;border-radius:6px;background:#fef2f2;border:1px solid #fecaca;font-size:11px;color:#991b1b">
+          <strong>차단/주의:</strong> ${blockers.map(escapeHtml).join(' · ')}
+        </div>`
+      : '';
+    const noteSection = sc.note
+      ? `<div style="margin-top:6px;font-size:10px;color:var(--text-muted);line-height:1.4">${escapeHtml(sc.note)}</div>`
+      : '';
+
+    return `
+      <div class="card" style="padding:12px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
+          <div style="min-width:0;flex:1">
+            <div style="font-size:10px;color:var(--text-muted);display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+              ${mtBadge} ${priorityBadge}
+              <code style="font-size:10px">${escapeHtml(sc.legacyForm || '')}</code>
+            </div>
+            <div style="font-size:13px;font-weight:600;margin-top:3px;line-height:1.3">${escapeHtml(sc.legacyMenuPath || sc.id)}</div>
+            <div style="margin-top:2px">${routeBlock}</div>
+            ${aliasLine}
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">
+            ${etaBadge}
+            ${blockerBadge}
+          </div>
+        </div>
+
+        <div style="background:#f9fafb;border-radius:6px;padding:6px 8px;font-size:11px;line-height:1.5;display:flex;flex-direction:column;gap:2px">
+          <div><span style="display:inline-block;width:30px;font-weight:700;color:#3b82f6">입력</span> ${escapeHtml(sObj.input || '-')}</div>
+          <div><span style="display:inline-block;width:30px;font-weight:700;color:#6366f1">처리</span> ${escapeHtml(sObj.process || '-')}</div>
+          <div><span style="display:inline-block;width:30px;font-weight:700;color:#10b981">출력</span> ${escapeHtml(sObj.output || '-')}</div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:0;padding:4px 0">
+          ${stepCells}
+        </div>
+
+        ${blockerSection}
+        ${noteSection}
+      </div>`;
+  }).join('');
+
+  const wrongIds = Array.isArray(bd.wrong_id_warnings) ? bd.wrong_id_warnings : [];
+  const wrongIdSection = wrongIds.length
+    ? `<div class="card" style="padding:10px 12px;margin-bottom:10px;border:1px solid #fecaca;background:#fef2f2">
+        <div style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:6px">⚠ wrong_id 경고 (${wrongIds.length}건) — 동일 폴더, 다른 도메인</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:8px">
+          ${wrongIds.map((w) => `
+            <div style="font-size:11px;line-height:1.5;color:#7f1d1d">
+              <div><code>${escapeHtml(w.webFormId)}</code> (${escapeHtml(w.webFolder)}) → <strong>${escapeHtml(w.webCaption)}</strong> @ <code>${escapeHtml(w.webRoute)}</code></div>
+              <div style="color:#991b1b">레거시 충돌: ${escapeHtml(w.legacyClash)}</div>
+              <div style="color:#6b7280;margin-top:2px">조치: ${escapeHtml(w.remediation)}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>`
+    : '';
+
+  return `
+    <div class="section" id="billing-menu-porting-section">
+      <div class="section-title">${escapeHtml(bd.title || '발송비/입금 메뉴 포팅')}</div>
+      <p style="font-size:11px;color:var(--text-muted);margin:0 0 10px">
+        총 ${total} 행 ·
+        <span style="color:#0369a1">별칭 ${counts.alias || 0}</span> ·
+        <span style="color:#7c3aed">이전 ${counts.moved || 0}</span> ·
+        <span style="color:#b91c1c">미구현 ${counts.gap || 0}</span>
+        · 단일 원천: <code style="font-size:11px">dashboard/data/billing-c5-menu-porting.json</code> ↔ <code style="font-size:11px">migration/coverage/billing-deposit-menu-legacy-to-web-map.md</code>
+        ${bd.updatedAt ? `· 갱신: ${escapeHtml(bd.updatedAt)}` : ''}
+      </p>
+      ${wrongIdSection}
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:10px">${cards}</div>
+    </div>`;
+}
+
 function renderTracks(data) {
   const tr = data.tracks;
   if (!tr || !Array.isArray(tr.tracks) || tr.tracks.length === 0) return '';
@@ -1564,6 +1714,7 @@ async function init() {
       renderWebPortingProgressSection(data),
       renderPortingScreens(data),
       renderPhase2ScreenCards(data),
+      renderBillingMenuPorting(data),
       renderCalendarSection(data),
       renderReleaseMilestones(data),
       renderTimeline(data),

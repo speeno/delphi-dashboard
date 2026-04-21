@@ -1,0 +1,369 @@
+{
+  "$comment": "레거시 「발송비/입금관리」 메뉴 포팅 추적 카드. migration/coverage/billing-deposit-menu-legacy-to-web-map.md 와 1:1 정합. form-registry.ts 의 menuGroup='billing' 별칭 행과도 1:1. mappingType: alias=동일기능 별칭노출, moved=타그룹 이전, gap=미구현, wrong_id=ID 충돌 경고.",
+  "title": "발송비/입금 메뉴 — 레거시 IA 복원 + 포팅 단계",
+  "updatedAt": "2026-04-21",
+  "stages": [
+    { "id": "T1", "label": "T1 인벤토리/매핑" },
+    { "id": "T2", "label": "T2 시나리오 카드" },
+    { "id": "T3", "label": "T3 Contract" },
+    { "id": "T4", "label": "T4 TestPack" },
+    { "id": "T5", "label": "T5 백엔드" },
+    { "id": "T6", "label": "T6 프론트(별칭/페이지)" },
+    { "id": "T7", "label": "T7 5축 회귀" },
+    { "id": "T8", "label": "T8 동결+승격" }
+  ],
+  "legend": {
+    "done": "완료",
+    "in_progress": "진행 중",
+    "pending": "착수 전",
+    "blocked": "차단 사유 있음 (scenario.blockers)",
+    "na": "해당 없음(매핑 유형상 단계 미적용)"
+  },
+  "summary": {
+    "total": 16,
+    "byMappingType": { "alias": 8, "moved": 3, "gap": 5 },
+    "wrong_id_warnings": 2,
+    "priority": { "P0": 8, "P1": 1, "P2": 2, "P3": 4, "low": 1 }
+  },
+  "screens": [
+    {
+      "id": "Bill_alias_billing",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 청구서관리",
+      "legacyForm": "Sobo45.dfm",
+      "legacyUnit": "Subu45.pas",
+      "webFormId": "Sobo45_billing",
+      "menuGroup": "settlement",
+      "route": "/settlement/billing",
+      "canonicalRoute": "/settlement/billing",
+      "mappingType": "alias",
+      "priority": "P0",
+      "scenario": {
+        "input": "거래일자 + 거래처",
+        "process": "T2_Ssub 청구 헤더 + T3_Ssub 라인 (DEC-031 마감 가드)",
+        "output": "청구 목록 + 집계/확정/취소 액션",
+        "eta": "Phase 1 완료"
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "pending", "T7": "done", "T8": "pending" },
+      "note": "C5 Phase 1 — billing 그룹에는 별칭 노출만 추가 필요"
+    },
+    {
+      "id": "Bill_alias_billing_takbae",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 청구서관리-택배",
+      "legacyForm": "Sobo45_1.dfm",
+      "legacyUnit": "Subu45_1.pas",
+      "webFormId": "Sobo45_billing",
+      "menuGroup": "settlement",
+      "route": "/settlement/billing?variant=takbae",
+      "canonicalRoute": "/settlement/billing",
+      "mappingType": "alias",
+      "priority": "P0",
+      "scenario": {
+        "input": "거래일자 + 거래처 (택배)",
+        "process": "동일 청구 흐름 + variant=takbae",
+        "output": "청구 목록 (택배 변형)",
+        "eta": "Phase 1 완료"
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "pending", "T7": "done", "T8": "pending" },
+      "note": "DEC-019 단일화 — variant 쿼리"
+    },
+    {
+      "id": "Bill_alias_period",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 청구금액(년월)",
+      "legacyForm": "Sobo47.dfm",
+      "legacyUnit": "Subu47.pas",
+      "webFormId": "Sobo47_billing",
+      "menuGroup": "settlement",
+      "route": "/settlement/period",
+      "canonicalRoute": "/settlement/period",
+      "mappingType": "alias",
+      "priority": "P0",
+      "scenario": {
+        "input": "년월 (YYYYMM)",
+        "process": "T2_Ssub 월 합계 (DEC-031)",
+        "output": "월합계 표 + 거래처별 잔액",
+        "eta": "Phase 1 완료"
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "pending", "T7": "done", "T8": "pending" }
+    },
+    {
+      "id": "Bill_alias_print",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 청구서출력",
+      "legacyForm": "Sobo46.dfm",
+      "legacyUnit": "Subu46.pas",
+      "webFormId": "Sobo46_billing",
+      "menuGroup": "settlement",
+      "route": "/settlement/billing/{billingKey}/print",
+      "canonicalRoute": "/settlement/billing",
+      "mappingType": "alias",
+      "priority": "P0",
+      "scenario": {
+        "input": "청구키 (gdate|hcode)",
+        "process": "S2_Ssum + 마감 가드 + WeasyPrint PDF",
+        "output": "HTML 미리보기 + PDF 다운로드",
+        "eta": "Phase 2 (DEC-035)"
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "in_progress", "T5": "done", "T6": "in_progress", "T7": "pending", "T8": "pending" },
+      "note": "phase2 화면 — billing 메뉴에는 진입점(목록 → 행 액션) 별칭만"
+    },
+    {
+      "id": "Bill_alias_tax",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 세금계산서",
+      "legacyForm": "Sobo49.dfm",
+      "legacyUnit": "Subu49.pas",
+      "webFormId": "Sobo49_tax",
+      "menuGroup": "settlement",
+      "route": "/settlement/tax-invoice",
+      "canonicalRoute": "/settlement/tax-invoice",
+      "mappingType": "alias",
+      "priority": "P0",
+      "scenario": {
+        "input": "거래처 + 년월",
+        "process": "청구금액 + 사업자번호 + 세액 계산",
+        "output": "세금계산서 미리보기 + 발행번호",
+        "eta": "Phase 2 (DEC-034)"
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "in_progress", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+    },
+    {
+      "id": "Bill_alias_cash",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 입금관리 / 입금내역",
+      "legacyForm": "Sobo41.dfm",
+      "legacyUnit": "Subu41.pas",
+      "webFormId": "Sobo41_cash",
+      "menuGroup": "settlement",
+      "route": "/settlement/cash",
+      "canonicalRoute": "/settlement/cash",
+      "mappingType": "alias",
+      "priority": "P0",
+      "scenario": {
+        "input": "거래일자 + 거래처",
+        "process": "T5_Ssub 입금 헤더 INSERT/UPDATE",
+        "output": "입금 내역 표 + 신규/수정 폼",
+        "eta": "Phase 1 완료"
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "pending", "T7": "done", "T8": "pending" }
+    },
+    {
+      "id": "Bill_alias_cash_status_hcode",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 입금관리 / 입금현황(1)",
+      "legacyForm": "Sobo42.dfm",
+      "legacyUnit": "Subu42.pas",
+      "webFormId": "Sobo42_cash",
+      "menuGroup": "settlement",
+      "route": "/settlement/cash-status?variant=hcode",
+      "canonicalRoute": "/settlement/cash-status",
+      "mappingType": "alias",
+      "priority": "P0",
+      "scenario": {
+        "input": "년월 (거래처별)",
+        "process": "T2_Ssub ⨝ T5_Ssub GROUP BY Hcode",
+        "output": "거래처별 입금/미수 현황",
+        "eta": "Phase 1 완료"
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "pending", "T7": "done", "T8": "pending" }
+    },
+    {
+      "id": "Bill_alias_cash_status_sdate",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 입금관리 / 입금현황(2)",
+      "legacyForm": "Sobo42_1.dfm",
+      "legacyUnit": "Subu42_1.pas",
+      "webFormId": "Sobo42_cash",
+      "menuGroup": "settlement",
+      "route": "/settlement/cash-status?variant=sdate",
+      "canonicalRoute": "/settlement/cash-status",
+      "mappingType": "alias",
+      "priority": "P0",
+      "scenario": {
+        "input": "년월 (일자별)",
+        "process": "T2_Ssub ⨝ T5_Ssub GROUP BY Gdate (GPSUM 추가)",
+        "output": "일자별 입금/미수 현황",
+        "eta": "Phase 1 완료"
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "pending", "T7": "done", "T8": "pending" }
+    },
+    {
+      "id": "Bill_moved_returns_collect_list",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 반 품 수 거 / 반품수거내역",
+      "legacyForm": "Sobo36.dfm",
+      "legacyUnit": "Subu36.pas",
+      "webFormId": "Sobo36_stats_route",
+      "menuGroup": "statistics",
+      "route": "/stats/customer",
+      "canonicalRoute": "/stats/customer",
+      "mappingType": "moved",
+      "priority": "low",
+      "scenario": {
+        "input": "기간 + 정렬축",
+        "process": "거래처 매출/판매수 합계",
+        "output": "거래처 Top N (반품수거내역은 통계로 분기)"
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "in_progress", "T4": "in_progress", "T5": "done", "T6": "in_progress", "T7": "pending", "T8": "na" },
+      "note": "billing 메뉴 미노출 (중복 방지). 본 카드는 출처 추적용"
+    },
+    {
+      "id": "Bill_moved_returns_collect_status",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 반 품 수 거 / 반품수거현황",
+      "legacyForm": "Sobo37.dfm",
+      "legacyUnit": "Subu37.pas",
+      "webFormId": "Sobo37_stats_route",
+      "menuGroup": "statistics",
+      "route": "/stats/book",
+      "canonicalRoute": "/stats/book",
+      "mappingType": "moved",
+      "priority": "low",
+      "scenario": {
+        "input": "기간 + 도서코드 구간",
+        "process": "도서별 판매수/매출 합계",
+        "output": "도서 판매 표 + Top N"
+      },
+      "tasks": { "T1": "done", "T2": "done", "T3": "in_progress", "T4": "in_progress", "T5": "done", "T6": "in_progress", "T7": "pending", "T8": "na" },
+      "note": "billing 메뉴 미노출 (중복 방지)"
+    },
+    {
+      "id": "Bill_moved_outbound_report",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 출고내역서",
+      "legacyForm": "Sobo39.dfm",
+      "legacyUnit": "Subu39.pas",
+      "webFormId": null,
+      "menuGroup": "report",
+      "route": null,
+      "canonicalRoute": "/outbound/reports/* (예정)",
+      "mappingType": "moved",
+      "priority": "low",
+      "scenario": {
+        "input": "기간 + (거래처/출판사)",
+        "process": "출고 헤더+라인 BETWEEN 집계",
+        "output": "출고 내역서"
+      },
+      "tasks": { "T1": "done", "T2": "pending", "T3": "pending", "T4": "pending", "T5": "pending", "T6": "pending", "T7": "pending", "T8": "na" },
+      "note": "report 그룹에서 별도 추적 — billing 메뉴 미노출"
+    },
+    {
+      "id": "Bill_gap_shipping_ledger",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 발송비관리 / 발송비내역",
+      "legacyForm": "Sobo43.dfm",
+      "legacyUnit": "Subu43.pas",
+      "webFormId": null,
+      "menuGroup": "billing",
+      "route": null,
+      "canonicalRoute": "/settlement/shipping-ledger (예정)",
+      "mappingType": "gap",
+      "priority": "P2",
+      "scenario": {
+        "input": "거래일자 + 거래처",
+        "process": "발송비 라인 SELECT/INSERT/UPDATE (T3_Ssub.NAME1/NAME2/GSSUM 도메인)",
+        "output": "발송비 내역 표 + 합계",
+        "eta": "Phase 2 후속",
+        "blockers": [
+          "Sobo43_stats_route(출판사통계) 와 ID/folder 충돌 — 신규 ID Sobo43_shipping_ledger 사용",
+          "신규 SQL 0 정책(DEC-040) 검토 필요",
+          "T1 카드 (analysis/screen_cards/Sobo43_shipping.md) 미작성"
+        ]
+      },
+      "backlog": "migration/coverage/billing-subu43-44-shipping-backlog.md",
+      "tasks": { "T1": "pending", "T2": "pending", "T3": "pending", "T4": "pending", "T5": "pending", "T6": "pending", "T7": "pending", "T8": "pending" }
+    },
+    {
+      "id": "Bill_gap_shipping_status",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 발송비관리 / 발송비현황",
+      "legacyForm": "Sobo44.dfm",
+      "legacyUnit": "Subu44.pas",
+      "webFormId": null,
+      "menuGroup": "billing",
+      "route": null,
+      "canonicalRoute": "/settlement/shipping-status (예정)",
+      "mappingType": "gap",
+      "priority": "P2",
+      "scenario": {
+        "input": "기간 + 거래처(선택)",
+        "process": "발송비 GROUP BY 거래처/일자",
+        "output": "발송비 현황 표 + 합계",
+        "eta": "Phase 2 후속",
+        "blockers": [
+          "Sobo44_inv(재고현황) 와 ID/folder 충돌 — 신규 ID Sobo44_shipping_status 사용",
+          "Sobo43_shipping_ledger 와 동일 도메인 — T1 통합 카드 권장"
+        ]
+      },
+      "backlog": "migration/coverage/billing-subu43-44-shipping-backlog.md",
+      "tasks": { "T1": "pending", "T2": "pending", "T3": "pending", "T4": "pending", "T5": "pending", "T6": "pending", "T7": "pending", "T8": "pending" }
+    },
+    {
+      "id": "Bill_gap_freight_takbae",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 운임관리-택배",
+      "legacyForm": "Sobo38_1.dfm",
+      "legacyUnit": "Subu38_1.pas",
+      "webFormId": null,
+      "menuGroup": "billing",
+      "route": null,
+      "canonicalRoute": "/settlement/freight-takbae (예정)",
+      "mappingType": "gap",
+      "priority": "P3",
+      "scenario": {
+        "input": "택배사 + 단가표 (거래처별)",
+        "process": "택배 운임 단가 마스터 CRUD",
+        "output": "운임 단가 표",
+        "eta": "Phase 3",
+        "blockers": ["C7 인쇄 트랙과 분리 합의 필요"]
+      },
+      "tasks": { "T1": "pending", "T2": "pending", "T3": "pending", "T4": "pending", "T5": "pending", "T6": "pending", "T7": "pending", "T8": "pending" }
+    },
+    {
+      "id": "Bill_gap_dispatch_count",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 명세서 발송건수",
+      "legacyForm": "Sobo24_9.dfm",
+      "legacyUnit": "Subu24_9.pas",
+      "webFormId": null,
+      "menuGroup": "billing",
+      "route": null,
+      "canonicalRoute": "/transactions/dispatch-count (예정)",
+      "mappingType": "gap",
+      "priority": "P3",
+      "scenario": {
+        "input": "기간 + (거래처)",
+        "process": "거래명세서 발행 건수 GROUP BY 거래처",
+        "output": "거래처별 명세서 건수 표",
+        "eta": "Phase 3"
+      },
+      "tasks": { "T1": "pending", "T2": "pending", "T3": "pending", "T4": "pending", "T5": "pending", "T6": "pending", "T7": "pending", "T8": "pending" }
+    },
+    {
+      "id": "Bill_gap_message_popup",
+      "legacyMenuPath": "메인 메뉴 / 발송비/입금관리 / 메세지(팝업창)",
+      "legacyForm": "Seok30.dfm",
+      "legacyUnit": "Seok03.pas",
+      "webFormId": null,
+      "menuGroup": null,
+      "route": null,
+      "canonicalRoute": "Wave D 알림 통합 (예정)",
+      "mappingType": "gap",
+      "priority": "low",
+      "scenario": {
+        "input": "관리자 메세지 본문",
+        "process": "사용자 단위 알림 발송",
+        "output": "알림 모달",
+        "eta": "후속"
+      },
+      "tasks": { "T1": "pending", "T2": "pending", "T3": "pending", "T4": "pending", "T5": "pending", "T6": "pending", "T7": "pending", "T8": "pending" }
+    }
+  ],
+  "wrong_id_warnings": [
+    {
+      "webFormId": "Sobo43_stats_route",
+      "webFolder": "Subu43",
+      "webCaption": "출판사통계",
+      "webRoute": "/stats/publisher",
+      "legacyClash": "Subu43.pas = 발송비내역",
+      "severity": "HIGH",
+      "remediation": "진짜 발송비내역 신설 시 신규 ID Sobo43_shipping_ledger 사용"
+    },
+    {
+      "webFormId": "Sobo44_inv",
+      "webFolder": "Subu44",
+      "webCaption": "재고현황",
+      "webRoute": "/inventory/status",
+      "legacyClash": "Subu44.pas = 발송비현황",
+      "severity": "HIGH",
+      "remediation": "진짜 발송비현황 신설 시 신규 ID Sobo44_shipping_status 사용"
+    }
+  ]
+}
