@@ -204,6 +204,13 @@
   },
   {
     "date": "2026-04-21",
+    "type": "hotfix",
+    "title": "출고관리 4화면 HTTP 500 핫픽스 — derived-table count_sql → mysql3 1064 회귀",
+    "description": "원인: C2 출고접수/C3 입고접수/C4 반품/C6 거래명세서 LIST 라우터의 `total` 산출이 `SELECT COUNT(*) FROM (subquery) t` 파생 테이블 패턴이라 `mysql3_protocol: true` 서버에서 1064 SQL syntax error → HTTP 500. 출고현황(Sobo67)만 별도 분기로 살아남아 사용자 체감 「출고현황만 정상」. 수정: `app.core.sql_mysql3.count_grouped(server_id, table, where_sql, group_by, having, params)` 공통 헬퍼 도입(modern=derived 1회, mysql3=단일 GROUP BY → len(rows)). 4 서비스(`outbound_service.list_orders`, `inbound_service.list_receipts`, `transactions_service.list_sales_statements`, `returns_service.list_returns`) 모두 동일 헬퍼 사용. 부산물: `transactions_service.list_sales_statements` `hcode` 옵셔널화(빈 값 = 전체 거래처 — 사용자 명시 정책). DEC-033 §결정 사항 (d) 보강 + `.cursor/rules/multi-db-compat.mdc` §의무 사항 2 보강. 회귀 `test/test_list_count_grouped_mysql3.py` 11/11 PASS, 인접 스모크 무회귀(563 passed).",
+    "sprint": 0
+  },
+  {
+    "date": "2026-04-21",
     "type": "decision",
     "title": "DEC-004: 인쇄·바코드 웹 대체 1차 방향",
     "description": "인쇄: 브라우저 인쇄(HTML/CSS) + 라벨 서버 PDF 하이브리드. 바코드: 키보드 웨지(USB-HID) 1차, 시리얼은 베타 후 로컬 브리지/Web Serial 옵션. OQ-002 클로저로 보강.",
