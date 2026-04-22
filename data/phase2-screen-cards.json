@@ -1,7 +1,7 @@
 {
-  "$comment": "phase2 화면별 단계(T1~T8) 카드. 도서물류관리프로그램/frontend/src/lib/form-registry.ts FORM_REGISTRY 의 phase==='phase2' 와 1:1. 2026-04-21 재고관리 3종(Sobo44_inv/Sobo33_ledger/Sobo33_1_ledger) + 2026-04-22 거래현황 3종(Sobo21_status_list/summary/memo) 총 6항목이 phase1 정식 승격(다음 사이클에서 본 카드 목록 제거 예정). 시나리오(input/process/output/eta) 는 form-registry 의 단일 원천을 거울. T-phase 는 dashboard 가 자체 트래킹.",
-  "title": "Phase 2 32 화면 — 단계 카드 (T1~T8)",
-  "updatedAt": "2026-04-22 — 거래현황 메뉴 3종(Sobo21_status_list 거래현황(LIST) / Sobo21_status_summary 거래현황(요약) / Sobo21_status_memo 거래현황(메모)) C6 phase2 → phase1 정식 승격(사이드바 초록 체크). 백엔드: GET /api/v1/transactions/status?view=list|summary|memo facade 신설 + canonical /sales-statement 확장(memoPresence/memoLike/includeMemoPreview/groupBy=customer). DEC-033 mysql3 호환 위해 메모 필터·요약은 두 번째 fetch + Python 교집합·집계(EXISTS/derived table 회피, _list_with_memo_filter / summarize_sales_statements_by_customer). 프론트: status/page.tsx 가 useListSession(DEC-055) + DataGridPager 서버 페이징 + 메모 미리보기·memoLike UI 통합, 클라이언트 fetchAllPages 자동 누적 제거. 계약: sales_inquiry.yaml phase2_addendum.transactions_status_view canonical/facade 분리 + AC-INQ-P2-5(memoLike) / AC-INQ-P2-6(canonical 등가). 회귀: test_c6_inquiry_phase2.py 신설(56/56 PASS) · 거래현황 sales-statement 회귀 무영향 · tsc 0 · ReadLints 0. 직전: 2026-04-21 재고관리 3종(Sobo44_inv/Sobo33_ledger/Sobo33_1_ledger) DEC-033 (g) 7화면 공통 페이저 phase1 승격.",
+  "$comment": "phase2 화면별 단계(T1~T8) 카드. 도서물류관리프로그램/frontend/src/lib/form-registry.ts FORM_REGISTRY 의 phase==='phase2' 와 1:1. 2026-04-22 C3 입고내역서 2종(Sobo54/Sobo57) phase1 승격으로 본 목록에서 제거. 시나리오(input/process/output/eta) 는 form-registry 의 단일 원천을 거울. T-phase 는 dashboard 가 자체 트래킹.",
+  "title": "Phase 2 30 화면 — 단계 카드 (T1~T8)",
+  "updatedAt": "2026-04-22 — C3 내역서 Sobo54 일별 입고내역서 / Sobo57 기간별 입고내역서 phase2 → phase1 정식 승격(사이드바 초록 체크). 백엔드: mysql3 read_timeout 회귀 제거 — 메인 GROUP BY 에서 JOIN 3개 분리 → in_clause_lookup 청크 룩업(inbound_receipt v1.2.2) + LIMIT+1 페이저 · 프론트 totals 캐시. 회귀: test_c3_inbound_reports_phase2.py 등 24 PASS. 직전: 거래현황 3종 phase1 승격.",
   "stages": [
     { "id": "T1", "label": "T1 화면카드" },
     { "id": "T2", "label": "T2 SQL/이벤트 추출" },
@@ -19,18 +19,6 @@
     "blocked": "차단 사유 있음 (scenario.blockers)"
   },
   "screens": [
-    {
-      "id": "Sobo54", "caption": "일별 입고내역서", "menu": "report", "route": "/inbound/reports/daily", "legacy_form": "Sobo54.dfm",
-      "scenario": { "input": "거래일자 1일", "process": "S1_Ssub GROUP BY 출판사·입고처", "output": "출판사 단위 + 입고처 단위 2 그리드 + 합계 (페이저 동기 롤)", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" },
-      "_t7_blocker": "30s HTTP TIMEOUT 회귀 근본 수정 (v1.2.1): count_grouped 가 6컬럼 GROUP BY 결과를 전부 Python 으로 가져오던 구조 제거 → LIMIT+1 has_more 패턴 + offset==0 시에만 grand_totals 산출. RUN_DB_SMOKE 등록 후 200 확인 시 T8 승격."
-    },
-    {
-      "id": "Sobo57", "caption": "기간별 입고내역서", "menu": "report", "route": "/inbound/reports/period", "legacy_form": "Sobo57.dfm",
-      "scenario": { "input": "시작일 ~ 종료일 BETWEEN", "process": "S1_Ssub BETWEEN GROUP BY 출판사·입고처", "output": "출판사·입고처 일자별 합계 + 누적 합계 (페이저 동기 롤)", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" },
-      "_t7_blocker": "30s HTTP TIMEOUT 회귀 근본 수정 (v1.2.1): 22일 BETWEEN 검색에서 count_grouped 가 모든 그룹 행을 Python 으로 가져오던 구조가 원인. LIMIT+1 has_more 전환 + 프론트 60s 타임아웃 + offset==0 totals 캐시. RUN_DB_SMOKE 등록 후 200 확인 시 T8 승격."
-    },
     {
       "id": "Sobo34_4", "caption": "기간별재고원장(상세)", "menu": "returns", "route": "/returns/ledger", "legacy_form": "Sobo34_4.dfm",
       "scenario": { "input": "거래처+기간", "process": "반품원장 일자별 누적 잔량 계산", "output": "일자별 입출고/반품 + 잔량 표", "eta": "Phase 1 (2026-04-W4)" },

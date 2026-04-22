@@ -771,15 +771,15 @@
           "도서물류관리프로그램/frontend/src/app/(app)/inbound/receipts/new/page.tsx (phase2 — 출판사·입고처 자동완성 연동)",
           "도서물류관리프로그램/frontend/src/app/(app)/inbound/receipts/[receiptKey]/page.tsx (phase2 — 라인 편집 토글 + InboundLineGrid)",
           "도서물류관리프로그램/frontend/src/app/(app)/inbound/import/page.tsx",
-          "도서물류관리프로그램/frontend/src/app/(app)/inbound/reports/daily/page.tsx (phase2 — Sobo54)",
-          "도서물류관리프로그램/frontend/src/app/(app)/inbound/reports/period/page.tsx (phase2 — Sobo57)",
+          "도서물류관리프로그램/frontend/src/app/(app)/inbound/reports/daily/page.tsx (phase1 — Sobo54)",
+          "도서물류관리프로그램/frontend/src/app/(app)/inbound/reports/period/page.tsx (phase1 — Sobo57)",
           "도서물류관리프로그램/frontend/src/components/inbound/inbound-line-grid.tsx (phase2 — Sobo22 라인 편집 그리드)",
           "도서물류관리프로그램/frontend/src/lib/form-registry.ts (Sobo22 + Sobo22_import + Sobo54 + Sobo57 등록 — Menu208 + 내역서 메뉴 정합)"
         ]
       },
-      "contract": "migration/contracts/inbound_receipt.yaml v1.2.0 (DEC-027 + DEC-028 + DEC-033(g) 페이저 표준 + DEC-055 useListSession — Sobo54/57 P2 승격 준비)",
-      "testpack": "test/test_c3_inbound_phase1.py (15 passed) + test/test_c3_inbound_reports_phase2.py (8 passed: 422/500 가드 + 동기 롤 페이징 + 전역/페이지 합 분리)",
-      "phase1_test_results": "test/test_c3_inbound_phase1.py — 15 passed (2026-04-19) · test/test_c3_inbound_reports_phase2.py — 8 passed (2026-04-22)",
+      "contract": "migration/contracts/inbound_receipt.yaml v1.2.2 (DEC-027 + DEC-028 + DEC-033(g) 페이저 + mysql3 JOIN 분리 — Sobo54/57 phase1 승격)",
+      "testpack": "test/test_c3_inbound_phase1.py (15 passed) + test/test_c3_inbound_reports_phase2.py (9 passed: 페이저·JOIN 분리 회귀)",
+      "phase1_test_results": "test/test_c3_inbound_phase1.py — 15 passed · test/test_c3_inbound_reports_phase2.py — 9 passed (2026-04-22)",
       "layout_inputs": [
         "tools/delphi_porting_accelerator/examples/generated/legacy_source_root/Subu22/Sobo22.html",
         "tools/delphi_porting_accelerator/examples/generated/legacy_source_root/Subu22_1/Sobo22_1.html",
@@ -864,7 +864,7 @@
         "OQ-IN-1 — Sobo38 FTP 자동수신 (Indy idFTP) 은 phase2 에서도 보류. 사용자 직접 업로드(/inbound/import) 로 대체 (DEC-027). 별행 스파이크 후 인프라 합의 필요.",
         "출판사·입고처 마스터 자동완성 위젯 — phase2 완료 (CustomerSearchInput 재사용).",
         "라인 수정 그리드 UI — phase2 완료 (InboundLineGrid + inboundApi.update 연결, status=cancelled read-only 유지).",
-        "Sobo54·Sobo57 일별·기간 입고내역서 UI — phase2 완료 (백엔드 reports/daily·period 그대로 활용)."
+        "Sobo54·Sobo57 일별·기간 입고내역서 UI — phase1 승격 (JOIN 분리 + LIMIT+1 페이저 + 실운영 검증)."
       ],
       "tasks": {
         "T1": {
