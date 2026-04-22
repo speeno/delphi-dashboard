@@ -1,6 +1,20 @@
 [
   {
     "date": "2026-04-21",
+    "type": "architecture",
+    "title": "DEC-033 (h) 재고관리 SQL 레벨 일자 페이지네이션 — truncated 초기 노출 회귀 근본 해결",
+    "description": "사용자 후속 보고 — 디폴트 정합화(1년→1개월) 만으로는 1개월치 raw 가 5,000행 초과 시 여전히 truncated 배너 노출. 분석: 기존 `truncated` 가드가 raw 행 fetch *이후* Python 누적 단계에서만 페이지네이션이 적용됐기 때문(가드와 페이지네이션 직교). 근본 해결 = 페이지네이션을 SQL 레벨로 끌어올림. 신규 3-step: ①`COUNT(DISTINCT Gdate)` total 산출, ②`SELECT DISTINCT Gdate ... LIMIT/OFFSET` 으로 페이지 일자 목록, ③`SELECT ... WHERE Gdate IN (page_dates)` 로 해당 일자만 raw fetch, ④Python by_date 누적. raw fetch 가 페이지에 한정 → LEDGER_MAX(5,000) 가드는 사실상 도달 불가능한 안전망 역할만 수행. mysql3 호환은 `apply_limit_offset_syntax` + `limit_offset_bind` + `in_clause_lookup`(raw 행 IN 청크 분할) 로 흡수. 변경: `inventory_service` 본체(`_build_filter_where`/`_dates_count_sql`/`_dates_page_sql`/`_ledger_rows_sql` 분리 + 3-step 흐름), 프런트 truncated 배너 문구 재작성. 회귀 가드 재설계: paging 8/8 + optional 10/10(메인 SQL=count+dates 양쪽 옵셔널 절 검증, `test_three_step_sqls_emitted` 신설) + lookup-chunked book 갱신(book lookup = 마지막 in_clause_lookup, raw 호출은 `G4_Book` 미포함 분리). 검증: pytest 603 PASS(2 사전 환경 dfm2html/res_string 무관) · tsc 0 · ReadLints 0 · API 시그니처 무변동(LedgerResponse.total/page/truncated 동일).",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-21",
+    "type": "ux",
+    "title": "재고현황 초기 디폴트 정합화(1년 → 1개월) + truncated 배너 문구 명확화",
+    "description": "사용자 보고 — 재고현황(Sobo44_inv) 초기 진입 시 truncated 배너가 상시 노출. 원인 분석: `truncated` 는 raw S1_Ssub fetch 가 `BLS_INVENTORY_LEDGER_MAX`(기본 5,000) 도달 시 트리거되며 DEC-033 (g) 페이지네이션과 직교(독립). 그러나 Sobo44_inv 만 디폴트 시작일이 `yearAgo`(1년) 였고, 형제 화면 Sobo33_ledger / Sobo33_1_ledger 은 모두 `monthAgo`(1개월) → 1년치 raw 누적이 자연스럽게 5,000행 초과해 매 진입마다 배너 노출. 수정: `(app)/inventory/status/page.tsx` 의 디폴트를 `monthAgo` 로 통일(형제 메뉴 일관 정책 = SOLID 일관성 원칙). 1개월 이상 누적이 필요하면 사용자가 시작일을 직접 확장하도록 안내. 부수: truncated 배너 문구를 「원시 거래 행이 가드 상한 도달 + mysql3 stall 회피용 가드라 페이지네이션과 별개로 동작」 으로 정확히 표현(Sobo44_inv/Sobo33_ledger 양쪽 정합화). tsc 0 · ReadLints 0 · 백엔드/회귀 영향 0(디폴트는 클라이언트 상태만 변경, API 시그니처 무변동).",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-21",
     "type": "improvement",
     "title": "재고관리 메뉴 3종 표준 페이지네이션 + 사이드바 phase1 정식 승격(초록 체크)",
     "description": "DEC-033 (g) 신규 — 재고관리 메뉴 3종(Sobo44_inv 재고현황 / Sobo33_ledger 도서수불장 / Sobo33_1_ledger 통합 도서수불장) 에 DEC-024 표준 페이지네이션 일관 적용. 백엔드 inventory_service.get_inventory_ledger 시그니처에 limit/offset 추가 — 일자(by_date) 누적 결과에 clamp_limit(default=100, ceil=2000) + clamp_offset + build_page 적용해 {rows, total, page:{limit,offset,total,has_more}, truncated} 반환. 라우터 routers/inventory.py 에 limit/offset Query 파라미터 추가, LedgerResponse 모델에 total + page(PageMeta) 필드 추가(default factory 로 BC). 통합 도서수불장은 book_sales API 의 기존 페이지 메타를 DataGridPager 로 노출(기존 fetchAllPages 자동 누적 → 사용자 요구 「순차 쿼리」 로 교체). 가드 직교 — truncated(raw 행 LIMIT_MAX) 와 page.has_more(누적 페이지) 의미 독립. 적용 백엔드: routers/inventory.py + services/inventory_service.py(clamp_limit/clamp_offset/build_page 임포트) + models/inquiry.py(LedgerResponse.{total,page}). 적용 프런트: lib/inquiry-api.ts(inventoryApi.ledger limit/offset + LedgerResponse.page) + (app)/inventory/status|ledger/book|ledger/book-integrated/page.tsx (DataGridPager + useEffect 자동 첫 페이지 + 「조회」 버튼은 offset=0 리셋, 7화면 동일 패턴). 사이드바: lib/form-registry.ts 의 Sobo44_inv / Sobo33_ledger / Sobo33_1_ledger 모두 phase: phase2 → phase1 정식 승격(P2 amber 배지 → 초록 CheckCircle2 자동 전환). 회귀 가드 test_inventory_ledger_paging.py 7/7 신규(page 메타 보장, limit/offset 슬라이싱, has_more 정확성, ceil 상한, truncated 직교성) + 기존 test_inventory_ledger_optional.py 9/9 + test_book_sales_optional_hcode.py 4/4 무회귀. 전체 스위트 601 PASS(594+7, 2 사전 환경 dfm2html 외 무회귀) + tsc 0 + YAML/JSON 무결성 OK + ReadLints 0. 직전 사이클: DEC-033 (f) hcode/bcode 옵셔널화 + truncated 가드.",
