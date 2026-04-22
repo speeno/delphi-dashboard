@@ -1,7 +1,7 @@
 {
-  "$comment": "phase2 화면별 단계(T1~T8) 카드. 도서물류관리프로그램/frontend/src/lib/form-registry.ts FORM_REGISTRY 의 phase==='phase2' 와 1:1 (현 31항목 + Sobo67_status 1항목 = phase1 정식 승격으로 다음 사이클 제거 예정). 시나리오(input/process/output/eta) 는 form-registry 의 단일 원천을 거울. T-phase 는 dashboard 가 자체 트래킹.",
+  "$comment": "phase2 화면별 단계(T1~T8) 카드. 도서물류관리프로그램/frontend/src/lib/form-registry.ts FORM_REGISTRY 의 phase==='phase2' 와 1:1. 2026-04-21 재고관리 3종(Sobo44_inv/Sobo33_ledger/Sobo33_1_ledger) + 2026-04-22 거래현황 3종(Sobo21_status_list/summary/memo) 총 6항목이 phase1 정식 승격(다음 사이클에서 본 카드 목록 제거 예정). 시나리오(input/process/output/eta) 는 form-registry 의 단일 원천을 거울. T-phase 는 dashboard 가 자체 트래킹.",
   "title": "Phase 2 32 화면 — 단계 카드 (T1~T8)",
-  "updatedAt": "2026-04-21 — 재고관리 메뉴 3종(Sobo44_inv 재고현황 / Sobo33_ledger 도서수불장 / Sobo33_1_ledger 통합 도서수불장) DEC-033 (g) 표준 페이지네이션 + 사이드바 phase1 정식 승격(초록 체크). DataGridPager 7화면 공통 페이저 적용으로 T7 5축 PASS / T8 done. inventory_service.get_inventory_ledger limit/offset + LedgerResponse.{total,page} 확장, 통합 도서수불장은 book_sales 기존 페이지 메타를 DataGridPager 로 노출(fetchAllPages 자동 누적 교체). form-registry phase=phase1 승격으로 사이드바 P2 amber → 초록 CheckCircle2 자동 전환. 회귀 7/7 신규 + 13/13 무회귀 = 20/20, 전체 601 PASS, tsc 0, YAML/JSON OK. 직전: DEC-033 (f) hcode/bcode 옵셔널화 + truncated 가드(594 PASS).",
+  "updatedAt": "2026-04-22 — 거래현황 메뉴 3종(Sobo21_status_list 거래현황(LIST) / Sobo21_status_summary 거래현황(요약) / Sobo21_status_memo 거래현황(메모)) C6 phase2 → phase1 정식 승격(사이드바 초록 체크). 백엔드: GET /api/v1/transactions/status?view=list|summary|memo facade 신설 + canonical /sales-statement 확장(memoPresence/memoLike/includeMemoPreview/groupBy=customer). DEC-033 mysql3 호환 위해 메모 필터·요약은 두 번째 fetch + Python 교집합·집계(EXISTS/derived table 회피, _list_with_memo_filter / summarize_sales_statements_by_customer). 프론트: status/page.tsx 가 useListSession(DEC-055) + DataGridPager 서버 페이징 + 메모 미리보기·memoLike UI 통합, 클라이언트 fetchAllPages 자동 누적 제거. 계약: sales_inquiry.yaml phase2_addendum.transactions_status_view canonical/facade 분리 + AC-INQ-P2-5(memoLike) / AC-INQ-P2-6(canonical 등가). 회귀: test_c6_inquiry_phase2.py 신설(56/56 PASS) · 거래현황 sales-statement 회귀 무영향 · tsc 0 · ReadLints 0. 직전: 2026-04-21 재고관리 3종(Sobo44_inv/Sobo33_ledger/Sobo33_1_ledger) DEC-033 (g) 7화면 공통 페이저 phase1 승격.",
   "stages": [
     { "id": "T1", "label": "T1 화면카드" },
     { "id": "T2", "label": "T2 SQL/이벤트 추출" },
@@ -126,18 +126,18 @@
     },
     {
       "id": "Sobo21_status_list", "caption": "거래현황(LIST)", "menu": "transactions", "route": "/transactions/status?view=list",
-      "scenario": { "input": "거래처(선택) + 기간", "process": "거래명세서 행 페이지네이션 누적", "output": "전표 단위 행 리스트", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "in_progress", "T4": "in_progress", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "scenario": { "input": "거래처(선택) + 기간", "process": "거래명세서 행 페이지네이션 누적 (canonical /sales-statement + facade /transactions/status?view=list 동일 위임, useListSession 보존)", "output": "전표 단위 행 리스트 + DataGridPager 서버 페이징", "eta": "phase1 정식 승격(2026-04-22) — 사이드바 초록 체크" },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
       "id": "Sobo21_status_summary", "caption": "거래현황(요약)", "menu": "transactions", "route": "/transactions/status?view=summary",
-      "scenario": { "input": "거래처(선택) + 기간", "process": "거래처별 전표수/수량/금액 합계", "output": "거래처 행 + 금액 내림차순", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "in_progress", "T4": "in_progress", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "scenario": { "input": "거래처(선택) + 기간", "process": "거래처별 전표수/수량/금액 합계 (mysql3 호환을 위해 fetch 후 Python groupBy=customer 집계, summarize_sales_statements_by_customer)", "output": "거래처 행 + 금액 내림차순 + truncated 배너 + 페이지 메타", "eta": "phase1 정식 승격(2026-04-22) — 사이드바 초록 체크" },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
       "id": "Sobo21_status_memo", "caption": "거래현황(메모)", "menu": "transactions", "route": "/transactions/status?view=memo",
-      "scenario": { "input": "거래처(선택) + 기간", "process": "메모 보유 전표 필터", "output": "전표 + 메모 미리보기", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "in_progress", "T4": "in_progress", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "scenario": { "input": "거래처(선택) + 기간 + memoLike(선택)", "process": "메모 보유 전표 필터 + memoLike LIKE 검색 (mysql3 EXISTS 회피 — S1_Memo 키 fetch 후 Python 교집합, _list_with_memo_filter)", "output": "전표 + 메모 미리보기(memo_preview) + 페이지 메타", "eta": "phase1 정식 승격(2026-04-22) — 사이드바 초록 체크" },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
       "id": "Sobo29_other", "caption": "기타명세서", "menu": "transactions", "route": "/transactions/other", "legacy_form": "Sobo29.dfm",
