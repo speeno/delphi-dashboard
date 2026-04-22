@@ -21,13 +21,15 @@
   "screens": [
     {
       "id": "Sobo54", "caption": "일별 입고내역서", "menu": "report", "route": "/inbound/reports/daily", "legacy_form": "Sobo54.dfm",
-      "scenario": { "input": "거래일자 1일", "process": "S1_Ssub GROUP BY 출판사·입고처", "output": "출판사 단위 + 입고처 단위 2 그리드 + 합계", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "in_progress", "T4": "in_progress", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "scenario": { "input": "거래일자 1일", "process": "S1_Ssub GROUP BY 출판사·입고처", "output": "출판사 단위 + 입고처 단위 2 그리드 + 합계 (페이저 동기 롤)", "eta": "Phase 1 (2026-04-W4)" },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" },
+      "_t7_blocker": "30s HTTP TIMEOUT 회귀 근본 수정 (v1.2.1): count_grouped 가 6컬럼 GROUP BY 결과를 전부 Python 으로 가져오던 구조 제거 → LIMIT+1 has_more 패턴 + offset==0 시에만 grand_totals 산출. RUN_DB_SMOKE 등록 후 200 확인 시 T8 승격."
     },
     {
       "id": "Sobo57", "caption": "기간별 입고내역서", "menu": "report", "route": "/inbound/reports/period", "legacy_form": "Sobo57.dfm",
-      "scenario": { "input": "시작일 ~ 종료일 BETWEEN", "process": "S1_Ssub BETWEEN GROUP BY 출판사·입고처", "output": "출판사·입고처 일자별 합계 + 누적 합계", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "in_progress", "T4": "in_progress", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "scenario": { "input": "시작일 ~ 종료일 BETWEEN", "process": "S1_Ssub BETWEEN GROUP BY 출판사·입고처", "output": "출판사·입고처 일자별 합계 + 누적 합계 (페이저 동기 롤)", "eta": "Phase 1 (2026-04-W4)" },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" },
+      "_t7_blocker": "30s HTTP TIMEOUT 회귀 근본 수정 (v1.2.1): 22일 BETWEEN 검색에서 count_grouped 가 모든 그룹 행을 Python 으로 가져오던 구조가 원인. LIMIT+1 has_more 전환 + 프론트 60s 타임아웃 + offset==0 totals 캐시. RUN_DB_SMOKE 등록 후 200 확인 시 T8 승격."
     },
     {
       "id": "Sobo34_4", "caption": "기간별재고원장(상세)", "menu": "returns", "route": "/returns/ledger", "legacy_form": "Sobo34_4.dfm",

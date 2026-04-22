@@ -777,9 +777,9 @@
           "도서물류관리프로그램/frontend/src/lib/form-registry.ts (Sobo22 + Sobo22_import + Sobo54 + Sobo57 등록 — Menu208 + 내역서 메뉴 정합)"
         ]
       },
-      "contract": "migration/contracts/inbound_receipt.yaml v1.1.0 (DEC-027 + DEC-028, phase2 UI 보강 — 행위 변경 0)",
-      "testpack": "test/test_c3_inbound_phase1.py (15 passed: 5 컨트랙트 + 7 라우터 + 3 서비스 단위)",
-      "phase1_test_results": "test/test_c3_inbound_phase1.py — 15 passed (2026-04-19)",
+      "contract": "migration/contracts/inbound_receipt.yaml v1.2.0 (DEC-027 + DEC-028 + DEC-033(g) 페이저 표준 + DEC-055 useListSession — Sobo54/57 P2 승격 준비)",
+      "testpack": "test/test_c3_inbound_phase1.py (15 passed) + test/test_c3_inbound_reports_phase2.py (8 passed: 422/500 가드 + 동기 롤 페이징 + 전역/페이지 합 분리)",
+      "phase1_test_results": "test/test_c3_inbound_phase1.py — 15 passed (2026-04-19) · test/test_c3_inbound_reports_phase2.py — 8 passed (2026-04-22)",
       "layout_inputs": [
         "tools/delphi_porting_accelerator/examples/generated/legacy_source_root/Subu22/Sobo22.html",
         "tools/delphi_porting_accelerator/examples/generated/legacy_source_root/Subu22_1/Sobo22_1.html",
