@@ -2,6 +2,20 @@
   {
     "date": "2026-04-21",
     "type": "improvement",
+    "title": "재고관리 메뉴 3종 표준 페이지네이션 + 사이드바 phase1 정식 승격(초록 체크)",
+    "description": "DEC-033 (g) 신규 — 재고관리 메뉴 3종(Sobo44_inv 재고현황 / Sobo33_ledger 도서수불장 / Sobo33_1_ledger 통합 도서수불장) 에 DEC-024 표준 페이지네이션 일관 적용. 백엔드 inventory_service.get_inventory_ledger 시그니처에 limit/offset 추가 — 일자(by_date) 누적 결과에 clamp_limit(default=100, ceil=2000) + clamp_offset + build_page 적용해 {rows, total, page:{limit,offset,total,has_more}, truncated} 반환. 라우터 routers/inventory.py 에 limit/offset Query 파라미터 추가, LedgerResponse 모델에 total + page(PageMeta) 필드 추가(default factory 로 BC). 통합 도서수불장은 book_sales API 의 기존 페이지 메타를 DataGridPager 로 노출(기존 fetchAllPages 자동 누적 → 사용자 요구 「순차 쿼리」 로 교체). 가드 직교 — truncated(raw 행 LIMIT_MAX) 와 page.has_more(누적 페이지) 의미 독립. 적용 백엔드: routers/inventory.py + services/inventory_service.py(clamp_limit/clamp_offset/build_page 임포트) + models/inquiry.py(LedgerResponse.{total,page}). 적용 프런트: lib/inquiry-api.ts(inventoryApi.ledger limit/offset + LedgerResponse.page) + (app)/inventory/status|ledger/book|ledger/book-integrated/page.tsx (DataGridPager + useEffect 자동 첫 페이지 + 「조회」 버튼은 offset=0 리셋, 7화면 동일 패턴). 사이드바: lib/form-registry.ts 의 Sobo44_inv / Sobo33_ledger / Sobo33_1_ledger 모두 phase: phase2 → phase1 정식 승격(P2 amber 배지 → 초록 CheckCircle2 자동 전환). 회귀 가드 test_inventory_ledger_paging.py 7/7 신규(page 메타 보장, limit/offset 슬라이싱, has_more 정확성, ceil 상한, truncated 직교성) + 기존 test_inventory_ledger_optional.py 9/9 + test_book_sales_optional_hcode.py 4/4 무회귀. 전체 스위트 601 PASS(594+7, 2 사전 환경 dfm2html 외 무회귀) + tsc 0 + YAML/JSON 무결성 OK + ReadLints 0. 직전 사이클: DEC-033 (f) hcode/bcode 옵셔널화 + truncated 가드.",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-21",
+    "type": "improvement",
+    "title": "재고관리 메뉴 3종 필수값 옵셔널화 — 전체 조회 허용 + 풀스캔 가드(LIMIT/truncated)",
+    "description": "DEC-033 (f) 신규 — 재고관리 메뉴 3종(Sobo44_inv 재고현황 / Sobo33_ledger 도서수불장 / Sobo33_1_ledger 통합 도서수불장) 의 hcode/bcode 입력을 옵셔널화. 빈/None/'%' 입력 시 백엔드가 Hcode·Bcode WHERE 절을 SQL 본문에서 동적으로 제거해 「전체 대상」 조회를 허용한다. mysql3 stall 회귀 차단을 위해 (1) 일자 범위(date_from/date_to)는 라우터 Query(...) 필수 유지, (2) 서버측 결과 상한 LIMIT(BLS_INVENTORY_LEDGER_MAX, 기본 5,000행) + LedgerResponse.truncated 응답 플래그, (3) 도서명 lookup 은 기존 in_clause_lookup 청크 그대로 사용하되 hcode 미입력 케이스에서는 helper sql_template 의 Hcode 절도 동적 제거(prefix_params=()) 가드 3중 적용. 적용: routers/inventory.py + routers/reports.py(book_sales) + services/inventory_service.py(_normalize_filter, _opening_sql, _ledger_main_sql, LEDGER_MAX) + services/reports_service.py(SQL-INQ-7/8 양쪽) + models/inquiry.py(LedgerResponse.truncated) + frontend lib/inquiry-api.ts + (app)/inventory/status|ledger/book|ledger/book-integrated/page.tsx. Sobo33_ledger 의 기존 hcode='%' 트릭(정확 일치 SQL 에서 0행이던 잠재 버그) 동시 정리. 계약 sales_inquiry.yaml ledger_filter / reports_filter / endpoint / ledger_rows.flags.truncated 동기화. 부산물 — test/conftest.py 신설(autouse `_ensure_default_event_loop`): 신규 IsolatedAsyncioTestCase(test_book_sales_*.py 등) 가 알파벳 순으로 더 앞에 배치되며 후속 일반 회귀(c2/c3/c4 서비스 단위)에서 `RuntimeError: There is no current event loop` 가 무더기로 발생하던 격리 회귀를 일반 정책으로 차단(향후 모든 IsolatedAsyncioTestCase 추가 시 자동 적용). 회귀 가드 test_inventory_ledger_optional.py(9/9) + test_book_sales_optional_hcode.py(4/4) 신규 + 전체 스위트 594 PASS(2 사전 환경 dfm2html 이슈 외 무회귀) + tsc 0 + JSON/YAML 무결성 OK + ReadLints 0.",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-21",
+    "type": "improvement",
     "title": "사이드바 「기초관리」 정합화 — stub 4건 제거 + Sobo16_special 구현 계획 수립",
     "description": "form-registry.ts master 그룹 11행 → 7행 정리. (1) Sobo39_1/_2/_5(할인율 변형 3건) — DEC-023 「대표 1폼만 1차 노출」 정책에 따라 사이드바에서 제거(변형 차이는 contract `customer_variants` 단일 원천만 보유, `/master/discount/[type]` 동적 라우트는 직접 진입용 placeholder 보존). (2) Sobo19(환경설정 레거시) — DEC-019 분리 정책에 따라 사이드바에서 제거(레거시 Subu14/12/11/15.pas 의 ShowModal InputBox 다이얼로그로 정식 메뉴 아님; Wave D `WebAdmEnv` 단일 원천 노출만 유지). (3) Sobo16_special(특별관리) — phase2 stub 으로 잔존 → `docs/master-special-implementation-plan.md` 신설(T1~T8 + BLK-SPC-1 SQL 추출 / BLK-SPC-2 분류 카탈로그 합의 해소 절차 + 5축 audit §AH 입력 정의 + 7d 일정 + 위험·완화). DEC-019/023 §영향 보강 + phase2-screen-cards Sobo16_special blockers ID 부착. 코드 변경 0(메타/문서만), tsc/lint/회귀 0 영향.",
     "sprint": 1
