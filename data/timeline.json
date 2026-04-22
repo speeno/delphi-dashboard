@@ -1,6 +1,13 @@
 [
   {
     "date": "2026-04-21",
+    "type": "tuning",
+    "title": "DEC-033 (i) 재고관리 raw 가드 디폴트 상향(5,000→10,000) + 미사용 Gbigo 컬럼 제거 + 속도 리팩토링 후보 검토",
+    "description": "사용자 보고 후속 — DEC-033 (h) SQL 페이지네이션으로 raw 가드 도달 가능성은 매우 낮아졌지만, 거래 밀도가 높은 단일 일자(월말 정산일 등)에서 truncated 배너 잔존 가능성을 추가 완화하기 위해 `BLS_INVENTORY_LEDGER_MAX` 디폴트를 5,000→10,000 으로 상향(환경변수 오버라이드 정책 그대로 유지). 부수 미세 최적화로 `_ledger_rows_sql` SELECT 에서 누적/응답 미사용 `Gbigo` 텍스트 컬럼 제거 — by_date 누적 dict 에 gbigo 키가 없어 이미 `LedgerRow.gbigo` 디폴트 ''만 나가던 동작이라 응답 동등, 네트워크/메모리 페이로드 약 10-20% 절감. 검색 속도 리팩토링 후보 검토는 ranked 보고서로 제출(B-1 COUNT 제거+over-fetch / B-2 도서명 lookup 캐시 / B-3 라우터 일자 범위 상한 가드 / B-5 reports_service.get_book_sales 동일 3-step 적용 / B-6 인덱스 권장 문서) — 적용은 사용자 결정 후 별도 사이클. 검증: pytest 603 PASS(2 사전 환경 dfm2html/res_string 무관) · tsc 0 · ReadLints 0 · API/응답 schema 무변동.",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-21",
     "type": "architecture",
     "title": "DEC-033 (h) 재고관리 SQL 레벨 일자 페이지네이션 — truncated 초기 노출 회귀 근본 해결",
     "description": "사용자 후속 보고 — 디폴트 정합화(1년→1개월) 만으로는 1개월치 raw 가 5,000행 초과 시 여전히 truncated 배너 노출. 분석: 기존 `truncated` 가드가 raw 행 fetch *이후* Python 누적 단계에서만 페이지네이션이 적용됐기 때문(가드와 페이지네이션 직교). 근본 해결 = 페이지네이션을 SQL 레벨로 끌어올림. 신규 3-step: ①`COUNT(DISTINCT Gdate)` total 산출, ②`SELECT DISTINCT Gdate ... LIMIT/OFFSET` 으로 페이지 일자 목록, ③`SELECT ... WHERE Gdate IN (page_dates)` 로 해당 일자만 raw fetch, ④Python by_date 누적. raw fetch 가 페이지에 한정 → LEDGER_MAX(5,000) 가드는 사실상 도달 불가능한 안전망 역할만 수행. mysql3 호환은 `apply_limit_offset_syntax` + `limit_offset_bind` + `in_clause_lookup`(raw 행 IN 청크 분할) 로 흡수. 변경: `inventory_service` 본체(`_build_filter_where`/`_dates_count_sql`/`_dates_page_sql`/`_ledger_rows_sql` 분리 + 3-step 흐름), 프런트 truncated 배너 문구 재작성. 회귀 가드 재설계: paging 8/8 + optional 10/10(메인 SQL=count+dates 양쪽 옵셔널 절 검증, `test_three_step_sqls_emitted` 신설) + lookup-chunked book 갱신(book lookup = 마지막 in_clause_lookup, raw 호출은 `G4_Book` 미포함 분리). 검증: pytest 603 PASS(2 사전 환경 dfm2html/res_string 무관) · tsc 0 · ReadLints 0 · API 시그니처 무변동(LedgerResponse.total/page/truncated 동일).",
