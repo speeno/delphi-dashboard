@@ -1,5 +1,5 @@
 {
-  "$comment": "phase2 화면별 단계(T1~T8) 카드. 도서물류관리프로그램/frontend/src/lib/form-registry.ts FORM_REGISTRY 의 phase==='phase2' 와 1:1. 2026-04-22 C3 입고내역서 2종(Sobo54/Sobo57) phase1 승격으로 본 목록에서 제거. 시나리오(input/process/output/eta) 는 form-registry 의 단일 원천을 거울. T-phase 는 dashboard 가 자체 트래킹.",
+  "$comment": "phase2 화면별 단계(T1~T8) 카드. 도서물류관리프로그램/frontend/src/lib/form-registry.ts FORM_REGISTRY 의 phase==='phase2' 와 1:1. 2026-04-22 C3 입고내역서 2종(Sobo54/Sobo57) phase1 승격으로 본 목록에서 제거. 시나리오(input/process/output/eta) 는 form-registry 의 단일 원천을 거울. T-phase 는 dashboard 가 자체 트래킹. 2026-04-23: docs/menu-roadmap-waves.md 신설 — 향후 본 카드의 'wave' / 'crudParity' 필드는 form-registry 의 roadmapWave/crudParity 와 1:1 동기화한다(drift 발생 시 dashboard 빌드 시 경고). 1차에는 form-registry 만 단일 원천으로 두고 본 JSON 은 거울 — 화면별 'wave' / 'crud' 키 추가는 다음 사이클에 일괄 채움 예정.",
   "title": "Phase 2 30 화면 — 단계 카드 (T1~T8)",
   "updatedAt": "2026-04-22 — C3 내역서 Sobo54 일별 입고내역서 / Sobo57 기간별 입고내역서 phase2 → phase1 정식 승격(사이드바 초록 체크). 백엔드: mysql3 read_timeout 회귀 제거 — 메인 GROUP BY 에서 JOIN 3개 분리 → in_clause_lookup 청크 룩업(inbound_receipt v1.2.2) + LIMIT+1 페이저 · 프론트 totals 캐시. 회귀: test_c3_inbound_reports_phase2.py 등 24 PASS. 직전: 거래현황 3종 phase1 승격.",
   "stages": [
