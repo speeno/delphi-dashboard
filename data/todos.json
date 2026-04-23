@@ -92,23 +92,27 @@
         },
         {
           "id": "M-S1-PORT-C3",
-          "task": "C3 입고 접수 — T1~T8 진행 (단계 2, 게이트 #2)",
-          "done": false
+          "task": "C3 입고 접수 — T1~T8 1차 완료 (단계 2 선행 과제, 공식 게이트 #2 승인 회의는 approvals.json 별도)",
+          "done": true,
+          "note": "HA-DEC-13 완료(inbound_receipt.yaml + DEC-027). `/api/v1/inbound/*`·`/inbound/receipts|import|reports/*` UI. 회귀 test_c3_inbound_phase1 등 — 상세 dashboard/data/web-porting-progress.json · human-action-items HA-DEC-13."
         },
         {
           "id": "M-S1-PORT-C2",
-          "task": "C2 출고 접수(주문 입력, +C11 수정/취소) — T1~T8 진행 (단계 3, 게이트 #3)",
-          "done": false
+          "task": "C2 출고 접수(주문 입력, +C11 수정/취소) — T1~T8 1차 완료 (단계 3 선행 과제, 공식 게이트 #3 승인 회의는 approvals.json 별도)",
+          "done": true,
+          "note": "HA-DEC-09 완료(outbound_order.yaml v1.0.0 + DEC-009~012). `/outbound/orders*`·pytest test_c2_outbound_phase1 14 PASS. HOT-OUT-4 DEC-028 retrofit 등 — web-porting-progress backend/frontend 블록."
         },
         {
           "id": "M-S1-PORT-C4",
-          "task": "C4 반품 처리 — T1~T8 진행 (단계 3, 게이트 #3)",
-          "done": false
+          "task": "C4 반품 처리 — T1~T8 1차 완료 (단계 3 선행 과제, 공식 게이트 #3 승인 회의는 approvals.json 별도)",
+          "done": true,
+          "note": "returns_service + returns 라우터 SQL-RT-*, Phase 2(DEC-029/030) 백엔드·`/returns/*` UI(ledger·period-report·재고·감사). web-porting-progress C4 블록·회귀(187 PASS 시점 기록) 동기."
         },
         {
           "id": "M-S1-PORT-C5",
-          "task": "C5 정산(일·월 마감, +C12 마감 후 차단) — T1~T8 진행 (단계 3, 게이트 #3)",
-          "done": false
+          "task": "C5 정산(일·월 마감, +C12 마감 후 차단) — T1~T8 1차 완료 (단계 3 선행 과제, 공식 게이트 #3 승인 회의는 approvals.json 별도)",
+          "done": true,
+          "note": "DEC-031/032 + settlement 10 엔드포인트·프론트 settlement/* 4+화면. web-porting-progress 명시 「2026-04-19 T1~T8 완료」·pytest C5 32 PASS."
         },
         {
           "id": "M-S1-PORT-C7",
