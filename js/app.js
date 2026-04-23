@@ -100,6 +100,32 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;');
 }
 
+/**
+ * 로컬 제품(Next.js dev) 화면 링크 — 항상 http://localhost:3000/ 하위 경로만 사용.
+ * route 가 이미 http://localhost:3000/... 형태면 pathname 만 재조합한다.
+ */
+const LOCAL_APP_ORIGIN = 'http://localhost:3000';
+
+function localAppHref(route) {
+  if (route == null || route === '') return '';
+  const raw = String(route).trim();
+  let path = raw;
+  if (/^https?:\/\//i.test(raw)) {
+    try {
+      const u = new URL(raw);
+      if (u.hostname === 'localhost' && String(u.port || '') === '3000') {
+        path = (u.pathname || '/') + u.search + u.hash;
+      } else {
+        return raw;
+      }
+    } catch {
+      return raw;
+    }
+  }
+  if (!path.startsWith('/')) path = `/${path}`;
+  return LOCAL_APP_ORIGIN.replace(/\/$/, '') + path;
+}
+
 function buildTaskMap(todos) {
   const map = {};
   Object.keys(todos.roles).forEach((roleKey) => {
@@ -1320,8 +1346,12 @@ function renderPhase2ScreenCards(data) {
         </div>`;
     }).join('<div style="flex:0 0 4px;height:1px;background:var(--text-muted);opacity:.3;align-self:center;margin-top:8px"></div>');
 
+    const fullHref = localAppHref(sc.route);
+    const captionHtml = sc.route
+      ? `<a href="${escapeHtml(fullHref)}" target="_blank" rel="noopener noreferrer" style="font-size:13px;font-weight:600;line-height:1.3;color:inherit;text-decoration:none;border-bottom:1px dashed #64748b" title="로컬 제품에서 열기: ${escapeHtml(fullHref)}">${escapeHtml(sc.caption)} <span aria-hidden="true" style="font-size:11px;opacity:.75">↗</span></a>`
+      : `<span style="font-size:13px;font-weight:600;line-height:1.3">${escapeHtml(sc.caption)}</span>`;
     const routeLink = sc.route
-      ? `<a href="${escapeHtml(sc.route)}" target="_blank" style="font-size:11px;color:var(--text-muted);text-decoration:none"><code style="font-size:11px">${escapeHtml(sc.route)}</code></a>`
+      ? `<a href="${escapeHtml(fullHref)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(fullHref)}" style="font-size:11px;color:#2563eb;text-decoration:underline;text-underline-offset:2px"><code style="font-size:11px">${escapeHtml(sc.route)}</code></a>`
       : `<span style="font-size:11px;color:var(--text-muted)">(라우트 미정)</span>`;
     const legacyForm = sc.legacy_form
       ? `<code style="font-size:11px;color:var(--text-muted)">${escapeHtml(sc.legacy_form)}</code>`
@@ -1349,7 +1379,7 @@ function renderPhase2ScreenCards(data) {
               <span>${escapeHtml(sc.menu || '')}</span>
               ${legacyForm ? `<span>·</span>${legacyForm}` : ''}
             </div>
-            <div style="font-size:13px;font-weight:600;margin-top:2px;line-height:1.3">${escapeHtml(sc.caption)}</div>
+            <div style="margin-top:2px;line-height:1.3">${captionHtml}</div>
             <div style="margin-top:2px">${routeLink}</div>
           </div>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">
@@ -1381,6 +1411,7 @@ function renderPhase2ScreenCards(data) {
         <span style="color:#9ca3af">대기 ${counts.pending}</span> ·
         <span style="color:#ef4444">차단 ${counts.blocked}</span>
         · 단일 원천: <code style="font-size:11px">dashboard/data/phase2-screen-cards.json</code> ↔ <code style="font-size:11px">frontend/src/lib/form-registry.ts</code>
+        · 로컬 링크: <code style="font-size:11px">http://localhost:3000/</code> 하위 경로 고정
         ${ps.updatedAt ? `· 갱신: ${escapeHtml(ps.updatedAt)}` : ''}
       </p>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:10px">${cards}</div>
@@ -1441,12 +1472,12 @@ function renderBillingMenuPorting(data) {
     }).join('<div style="flex:0 0 4px;height:1px;background:var(--text-muted);opacity:.3;align-self:center;margin-top:8px"></div>');
 
     const routeBlock = sc.route
-      ? `<a href="${escapeHtml(sc.route)}" target="_blank" style="font-size:11px;color:var(--text-muted);text-decoration:none"><code style="font-size:11px">${escapeHtml(sc.route)}</code></a>`
+      ? `<a href="${escapeHtml(localAppHref(sc.route))}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(localAppHref(sc.route))}" style="font-size:11px;color:#2563eb;text-decoration:underline"><code style="font-size:11px">${escapeHtml(sc.route)}</code></a>`
       : sc.canonicalRoute
-        ? `<span style="font-size:11px;color:var(--text-muted)">예정: <code style="font-size:11px">${escapeHtml(sc.canonicalRoute)}</code></span>`
+        ? `<a href="${escapeHtml(localAppHref(sc.canonicalRoute))}" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#2563eb;text-decoration:underline">예정: <code style="font-size:11px">${escapeHtml(sc.canonicalRoute)}</code></a>`
         : `<span style="font-size:11px;color:var(--text-muted)">(라우트 미정)</span>`;
     const aliasLine = sc.canonicalRoute && sc.route && sc.route !== sc.canonicalRoute
-      ? `<div style="font-size:10px;color:var(--text-muted);margin-top:1px">정본: <code style="font-size:10px">${escapeHtml(sc.canonicalRoute)}</code></div>`
+      ? `<div style="font-size:10px;color:var(--text-muted);margin-top:1px">정본: <a href="${escapeHtml(localAppHref(sc.canonicalRoute))}" target="_blank" rel="noopener noreferrer" style="color:#2563eb;text-decoration:underline"><code style="font-size:10px">${escapeHtml(sc.canonicalRoute)}</code></a></div>`
       : '';
 
     const etaBadge = sObj.eta
@@ -1477,7 +1508,7 @@ function renderBillingMenuPorting(data) {
               ${mtBadge} ${priorityBadge}
               <code style="font-size:10px">${escapeHtml(sc.legacyForm || '')}</code>
             </div>
-            <div style="font-size:13px;font-weight:600;margin-top:3px;line-height:1.3">${escapeHtml(sc.legacyMenuPath || sc.id)}</div>
+            <div style="font-size:13px;font-weight:600;margin-top:3px;line-height:1.3">${sc.route || sc.canonicalRoute ? `<a href="${escapeHtml(localAppHref(sc.route || sc.canonicalRoute))}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;border-bottom:1px dashed #64748b" title="로컬 제품에서 열기">${escapeHtml(sc.legacyMenuPath || sc.id)} ↗</a>` : escapeHtml(sc.legacyMenuPath || sc.id)}</div>
             <div style="margin-top:2px">${routeBlock}</div>
             ${aliasLine}
           </div>
@@ -1592,9 +1623,9 @@ function renderFrfHtmlPorting(data) {
     }).join('<div style="flex:0 0 4px;height:1px;background:var(--text-muted);opacity:.3;align-self:center;margin-top:8px"></div>');
 
     const routeBlock = sc.route
-      ? `<a href="${escapeHtml(sc.route)}" target="_blank" style="font-size:11px;color:var(--text-muted);text-decoration:none"><code style="font-size:11px">${escapeHtml(sc.route)}</code></a>`
+      ? `<a href="${escapeHtml(localAppHref(sc.route))}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(localAppHref(sc.route))}" style="font-size:11px;color:#2563eb;text-decoration:underline"><code style="font-size:11px">${escapeHtml(sc.route)}</code></a>`
       : sc.canonicalRoute
-        ? `<span style="font-size:11px;color:var(--text-muted)">예정: <code style="font-size:11px">${escapeHtml(sc.canonicalRoute)}</code></span>`
+        ? `<a href="${escapeHtml(localAppHref(sc.canonicalRoute))}" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#2563eb;text-decoration:underline">예정: <code style="font-size:11px">${escapeHtml(sc.canonicalRoute)}</code></a>`
         : `<span style="font-size:11px;color:var(--text-muted)">(라우트 미정)</span>`;
 
     const etaBadge = sObj.eta
