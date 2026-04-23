@@ -433,15 +433,21 @@
         "primary_form": "TSobo11 (거래처-마스터)",
         "primary_unit": "Subu11.pas",
         "dfm": "Subu11.dfm",
-        "menu_path": "MainMenu1 > 기초관리 > 거래처/도서/출판사/할인율/물류비",
+        "menu_path": "MainMenu1 > 기초관리 > 거래처/도서/출판사/할인율 (구 물류비 포함 — DEC-060 정정 2026-04-23)",
         "single_source_map": {
           "customer": "Sobo11 (G1_Ggeo + G1_Gbun)",
           "book": "Sobo14 (G4_Book + G4_Gbun)",
           "publisher_g7": "Sobo17 (G7_Ggeo + G7_Gbun, 자동완성과 동일)",
           "book_code": "Sobo38 (G4_Book READ)",
-          "discount": "Sobo39 (G7_Ggeo.Gpper, 4 변종 중 대표 1폼)",
-          "logistics_cost": "Sobo45 (G5_Ggeo.Gposa READ)"
+          "discount": "Sobo39 (G7_Ggeo.Gpper, 4 변종 중 대표 1폼)"
         },
+        "deprecated_mappings": [
+          {
+            "key": "logistics_cost",
+            "removed_in": "master_data.yaml v1.2.0 (2026-04-23, DEC-060)",
+            "reason": "「Sobo45 = 물류비」 매핑 추정 오류. 레거시 Subu45.dfm Caption='청구서관리' (Sobo45_billing, /settlement/billing 으로 정상 등록). G5_Ggeo.Gposa 는 청구서관리 내부 lookup 으로 흡수."
+          }
+        ],
         "related_forms_excluded_as_stats": [
           "TSobo36 거래처(통계)",
           "TSobo37 도서(통계)",
@@ -468,7 +474,6 @@
           "/master/publisher",
           "/master/book-code",
           "/master/discount",
-          "/master/logistics-cost",
           "/admin",
           "/admin/user-servers",
           "/admin/rbac",
@@ -486,7 +491,6 @@
           "GET /api/v1/masters/publisher",
           "GET /api/v1/masters/book-code",
           "GET /api/v1/masters/discount",
-          "GET /api/v1/masters/logistics-cost",
           "GET|POST /api/v1/admin/users",
           "POST /api/v1/admin/user-servers",
           "PUT /api/v1/admin/user-servers/primary (DEC-052)",
