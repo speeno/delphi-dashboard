@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-04-26",
+    "type": "architecture",
+    "title": "총판–출판사 소속 판정 정합화 (whitelist 복합키 + tenants 관계키 + T2_DIST 재소속 API)",
+    "description": "동일 DB·단일 hcode만으로 총판 소속을 확정하지 않도록 인증·화이트리스트 경로를 보강. `publisher_whitelist_service.lookup_by_dist_and_publisher` / `list_by_publisher_hcode` 도입, `auth_service._resolve_account_type` 에서 web_user `dist_hcode`·tenant `parent_tenant_id`·whitelist `dist_tenant_id` 정합 소비, 동일 `publisher_hcode` 다중 총판 시 T2_PUB 자동 확정 금지(fail-safe). 총판(T2_DIST) 전용 `POST /api/v1/admin/whitelist/reaffiliate` — 동일 DB 검증·`AFFILIATION_CROSS_DB_FORBIDDEN`·cap·활성 whitelist. 운영 점검 `debug/check_affiliation_integrity.py`. 문서 `docs/onboarding-account-type-resolution.md`·`docs/decision-login-db-routing.md`·`docs/account-type-alignment-inventory.md` 동결. 프론트 `whitelist-api.ts` 재소속·`dist_hcode` 쿼리 옵션. 회귀: `test_auth_whitelist_relation_resolution.py`·`test_admin_whitelist_reaffiliate.py`·`test_whitelist_service`·`test_actr_priority` 갱신.",
+    "sprint": 1
+  },
+  {
     "date": "2026-04-22",
     "type": "fix",
     "title": "C5 청구서관리(/settlement/billing) 500 핫픽스 — DEC-033 (d+) `_SQL_LIST_BILLING` SELECT 인라인 스칼라 서브쿼리 제거 + `_fetch_billing_line_counts` 헬퍼 분리(`in_clause_lookup` GROUP BY 청크 + Python merge)",

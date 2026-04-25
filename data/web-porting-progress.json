@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-04-23T17:30:00Z",
-  "phase": "Phase 1 + C2~C5 1차 T1~T8 + C7 Phase 2-α + C8 + Track B4 done — 2026-04-23 사용자 보고: `/master/logistics-cost` 화면이 레거시 `Subu45.dfm Caption='청구서관리'` 와 어긋나게 「Sobo45 = 물류비」로 잘못 매핑 → DEC-060 신규 + 옵션 (B) 채택(화면 제거 + Sobo45_billing 으로 통합). master_data.yaml v1.1.0→v1.2.0 (catalog/SQL-MAS-10/customer_variants 제거, 6→5 마스터 정정), 백엔드 3 파일·프론트 4 파일·테스트 3 파일 동시 정정, 회귀 가드 LogisticsCostMappingRemovedTests 5축 부재 단언 신규. 2026-04-23 (직전) C4 Sobo34_4 기간별재고원장(상세) phase1 정식 승격 — return_receipt v1.2.0.",
+  "updatedAt": "2026-04-26T16:00:00Z",
+  "phase": "2026-04-26 총판–출판사 소속 판정 정합화 — whitelist `dist_hcode+publisher_hcode` 복합키·`parent_tenant_id`/`dist_tenant_id` 소비·동일 hcode 다중 총판 fail-safe, `POST /api/v1/admin/whitelist/reaffiliate`(T2_DIST 전용·동일DB·AFFILIATION_CROSS_DB_FORBIDDEN), `debug/check_affiliation_integrity.py`, 회귀 `test_auth_whitelist_relation_resolution`·`test_admin_whitelist_reaffiliate` 등. 문서 `docs/onboarding-account-type-resolution.md`·`docs/decision-login-db-routing.md`·`docs/account-type-alignment-inventory.md` 동결. | Phase 1 + C2~C5 1차 T1~T8 + C7 Phase 2-α + C8 + Track B4 done — 2026-04-23 사용자 보고: `/master/logistics-cost` 화면이 레거시 `Subu45.dfm Caption='청구서관리'` 와 어긋나게 「Sobo45 = 물류비」로 잘못 매핑 → DEC-060 신규 + 옵션 (B) 채택(화면 제거 + Sobo45_billing 으로 통합). master_data.yaml v1.1.0→v1.2.0 (catalog/SQL-MAS-10/customer_variants 제거, 6→5 마스터 정정), 백엔드 3 파일·프론트 4 파일·테스트 3 파일 동시 정정, 회귀 가드 LogisticsCostMappingRemovedTests 5축 부재 단언 신규. 2026-04-23 (직전) C4 Sobo34_4 기간별재고원장(상세) phase1 정식 승격 — return_receipt v1.2.0.",
   "productNote": "실행 UI는 저장소 `도서물류관리프로그램/` (제품 웹). 본 섹션은 개발 진행용 허브 대시보드 전용.",
   "docLinks": [
     {
@@ -22,6 +22,18 @@
     {
       "label": "포팅 진행 트래커 (머신리더블)",
       "path": "dashboard/data/porting-screens.json"
+    },
+    {
+      "label": "계정 유형 자동 결정 (ACTR) — 소속 판정 보강",
+      "path": "docs/onboarding-account-type-resolution.md"
+    },
+    {
+      "label": "로그인·DB 라우팅 (DSN) — 소속 경계",
+      "path": "docs/decision-login-db-routing.md"
+    },
+    {
+      "label": "계정 유형 정합 인벤토리",
+      "path": "docs/account-type-alignment-inventory.md"
     }
   ],
   "blocks": [
@@ -29,6 +41,7 @@
       "id": "backend",
       "title": "백엔드 · 데이터 연동",
       "items": [
+        "총판–출판사 소속 판정 정합화 (2026-04-26) — `publisher_whitelist_service.lookup_by_dist_and_publisher` / `list_by_publisher_hcode` 도입, `auth_service._resolve_account_type` 에서 web_user `dist_hcode`·tenant `parent_tenant_id`·whitelist `dist_tenant_id` 정합 소비, 동일 `publisher_hcode` 다중 총판 시 T2_PUB 자동 확정 금지. 총판 전용 사후 재소속 `POST /api/v1/admin/whitelist/reaffiliate`(JWT `hcode` 강제, cross-DB `AFFILIATION_CROSS_DB_FORBIDDEN`, cap·whitelist·tenant 정합). 운영 점검 `debug/check_affiliation_integrity.py`. 프론트 `whitelist-api.ts` 재소속·`dist_hcode` 쿼리 옵션. 회귀: `tests/test_auth_whitelist_relation_resolution.py`, `tests/test_admin_whitelist_reaffiliate.py`, `test_whitelist_service`·`test_actr_priority` 갱신.",
         "FastAPI: `servers.yaml` 프로필 기준 DB 풀·SSH·MySQL 3.x raw 경로",
         "인증: 레거시 `Id_Logn` + 기존 비밀번호 형식·JWT",
         "문자셋: EUCKR 등 서버별 반영",
@@ -100,6 +113,7 @@
         "C7 인쇄 미리보기 — `lib/print-api.ts` URL 빌더 + `/print/label/[shipmentKey]` 및 출고·반품·거래명세·정산 세금/청구 인쇄 페이지 PDF 다운로드.",
         "C8 스캔 입력 — `lib/scanner.ts`(USB-HID 웨지) + `components/shared/scan-input.tsx` + 출고·입고·반품 상세 페이지 통합 · `lib/scan-api.ts` · i18n c8.ko.json.",
         "C5 정산 Phase 1 프론트엔드 (2026-04-19) — 신규 메뉴 그룹 `settlement`(Receipt 아이콘) + 4 페이지: `/settlement/billing` (Sobo45/45_1 청구서관리, master-detail + variant=standard|takbae 토글 + 14컬럼 SUM 푸터, audit modal 게이팅) + `/settlement/period` (Sobo47 청구금액(년월) 보고) + `/settlement/cash` (Sobo41 입금내역, 슬라이드 입력 폼 UPSERT + 소프트 취소 audit modal) + `/settlement/cash-status` (Sobo42/42_1 입금현황, variant=hcode|sdate 토글 단일 컴포넌트, 9~10컬럼 동적 헤더). `lib/settlement-api.ts` 신설 — billing/cash/auditApi.rotateGpass (DEC-032 `/audit/gpass-rotate`). `lib/api-client.ts` 에 `patchWithHeaders` 추가 (PATCH 의 audit 헤더 전달용 — OCP, 기존 메서드 무변경). `form-registry.ts` 에 settlement 그룹 + 4 폼(`Sobo45_billing`/`Sobo47_billing`/`Sobo41_cash`/`Sobo42_cash`) 등록 — 기존 Sobo45 (물류비) 와 ID 충돌 회피 위해 `_billing`/`_cash` 접미 채택. 사이드바에 `Receipt`/`Shield` 아이콘 추가. 모든 위젯 `data-legacy-id` 부착(DEC-028) — billing 22 / cash 20 / cash-status 11 / period 10. 회귀 0 — tsc 0 · eslint settlement/* 0 · pytest C5 32 PASS",
+        "총판 화이트리스트 API 클라이언트 보강 (2026-04-26) — `lib/whitelist-api.ts` 에 `reaffiliatePublisher`, `getAdminByDist`, `dist_hcode` 쿼리 옵션(`approve`/`update`/`disable`) 추가 — 수퍼가 동일 `publisher_hcode` 복수 총판 행 편집 시 `dist_hcode` 지정 가능.",
         "DEC-051/052 로그인 단순화 + 출고현황 토글 복원 프론트 (2026-04-21) — 로그인 화면 `(public)/login/page.tsx` 에서 「DB 서버 선택」 콤보·`useEffect(/api/v1/servers)` 호출 완전 제거, `auth-context.login(userId, password)` 시그니처 축소(DEC-051). admin `/admin/user-servers` 화면을 다중 토글 → **라디오 1개 선택(Primary)** UI 로 교체 + 「해제」 버튼(인증 서버 폴백) + `adminApi.setPrimaryServer(userId, serverId|null)` 신설 = `PUT /api/v1/admin/user-servers/primary`(DEC-052). 출고현황 `/outbound/status` 에 「창고도서(B 기본)/본사도서(A)/전체」 라디오 + `outboundApi.shipmentStatus({storeKind})` 전송으로 Sobo67 Panel102 토글 동등성 복원. 헤더(`app-shell/header.tsx`) 에 Primary 미설정 사용자용 노란 「Primary 미설정」 경고 배지(`BrandBadge variant=warn` 신규) — `UserInfo.primary_data_server_set: boolean` JWT `pset` 클레임 연동. tsc 0 · 회귀 14 신규 PASS · 전 회귀 551 PASS",
         "DEC-053 phase1 컴포넌트 동등성 매트릭스 동결 (2026-04-22, audit_only) — `analysis/audit/phase1-component-fidelity.md` 신규 (33 행 5축 W/B/U/D/O 단일 매트릭스 + 폼별 §A~§AG). 결과: GAP-P0 = 0 / GAP-P1 = 0 / GAP-P2 = 15(모두 §7 deltas 의식적 차이) / OOS = 33행 모두 §6 항목 보유. 누락 layout_mapping = 0 (29 DFM 폼 전수 매핑 보유, Wave D 4 = OOS-MAS-1 그대로 유지). DEC-028 §영향 1줄 보강(phase1 승격 시 매트릭스 GAP-P0 가드) + `.cursor/rules/dfm-layout-input.mdc` §회귀 가드 1줄 추가. HA-RET-02 ID 예약(현재 retrofit 항목 0). 코드/UX 변경 0.",
         "출고관리 4화면 HTTP 500 핫픽스 (2026-04-21) — admin 사용자 진입 시 입고접수/출고접수/거래명세서/반품 라우터가 일제히 500 → 「출고현황만 정상」 사용자 보고. 원인: LIST 라우터의 `total` 산출이 `SELECT COUNT(*) FROM (subquery) t` 파생 테이블 패턴 → `mysql3_protocol: true` 서버에서 1064 SQL syntax error. 수정: `app.core.sql_mysql3.count_grouped(server_id, table, where_sql, group_by, having, params)` 공통 헬퍼 1개 신설(modern=derived 1쿼리, mysql3=단일 GROUP BY → `len(rows)` 인메모리 카운트) — `outbound_service.list_orders` / `inbound_service.list_receipts` / `transactions_service.list_sales_statements` / `returns_service.list_returns` 4 함수 일괄 적용. 부산물(사용자 명시): `transactions_service.list_sales_statements` `hcode` 옵셔널화 — 빈 값/생략 시 `Hcode=%s` WHERE 절 미부착 → 전체 거래처 대상. 프론트 `(app)/transactions/sales-statement/page.tsx` 의 hcode 필수 검증·자동 진입 차단 제거. DEC-033 §결정 사항 (d) 보강 + `.cursor/rules/multi-db-compat.mdc` §의무 사항 2 보강(파생 테이블 금지 + `count_grouped` 의무 사용). 회귀 `test/test_list_count_grouped_mysql3.py` 11/11 PASS, 인접 `test_outbound_shipment_status.py` / `test_auth_login_fixed_server.py` / `test_admin_primary_server.py` 15/15 PASS, 전체 스위트 563 PASS (사전 환경 이슈 dfm2html 2건 제외).",
@@ -123,6 +137,7 @@
       "id": "scripts",
       "title": "운영 · 내부 스크립트",
       "items": [
+        "`debug/check_affiliation_integrity.py` — 총판·화이트리스트·tenants `dist_tenant_id`/`parent_tenant_id` 정합·모호 `publisher_hcode` 점검 (exit 2 = 불일치 발견)",
         "`debug/export_id_logn_users_markdown.py` — 서버별 사용자 MD(비밀번호 제외)",
         "`debug/bootstrap_admin_id_logn.py` — 관리자 부트스트랩",
         "산출: `debug/output/` (gitignore)"
