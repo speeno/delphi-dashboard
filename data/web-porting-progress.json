@@ -4,6 +4,10 @@
   "productNote": "실행 UI는 저장소 `도서물류관리프로그램/` (제품 웹). 본 섹션은 개발 진행용 허브 대시보드 전용.",
   "docLinks": [
     {
+      "label": "운영 계정 RED 자격증명 처리 메모",
+      "path": "docs/operating-account-credentials-red.md"
+    },
+    {
       "label": "델파이 개발자 확인 체크리스트",
       "path": "docs/delphi-developer-confirmation-checklist.md"
     },
@@ -41,6 +45,7 @@
       "id": "backend",
       "title": "백엔드 · 데이터 연동",
       "items": [
+        "C1 로그인 라우팅 안정화 완료(2026-04-26) — 현재 정상 로그인 흐름은 유지하고 `login_id_index_service.rebuild()` 의 정본을 4 서버 `SHOW DATABASES` + `Id_Logn` 보유 DB 스캔으로 고정. 인덱스 저장 필드는 `Gcode/Hcode/remote_id/db_name/tenant_id/account_family` 로 제한하고 `Gpass` SELECT 금지. `execute_query` 는 SSH/pool stale `OperationalError` 2006/2013 에서 풀·터널 무효화 후 1회 재시도. 회귀: `test_login_id_index_live_scan.py`, `test_db_execute_query_retry.py`.",
         "총판–출판사 소속 판정 정합화 (2026-04-26) — `publisher_whitelist_service.lookup_by_dist_and_publisher` / `list_by_publisher_hcode` 도입, `auth_service._resolve_account_type` 에서 web_user `dist_hcode`·tenant `parent_tenant_id`·whitelist `dist_tenant_id` 정합 소비, 동일 `publisher_hcode` 다중 총판 시 T2_PUB 자동 확정 금지. 총판 전용 사후 재소속 `POST /api/v1/admin/whitelist/reaffiliate`(JWT `hcode` 강제, cross-DB `AFFILIATION_CROSS_DB_FORBIDDEN`, cap·whitelist·tenant 정합). 운영 점검 `debug/check_affiliation_integrity.py`. 프론트 `whitelist-api.ts` 재소속·`dist_hcode` 쿼리 옵션. 회귀: `tests/test_auth_whitelist_relation_resolution.py`, `tests/test_admin_whitelist_reaffiliate.py`, `test_whitelist_service`·`test_actr_priority` 갱신.",
         "FastAPI: `servers.yaml` 프로필 기준 DB 풀·SSH·MySQL 3.x raw 경로",
         "인증: 레거시 `Id_Logn` + 기존 비밀번호 형식·JWT",
@@ -82,6 +87,8 @@
       "id": "frontend",
       "title": "프론트엔드 · UX (제품)",
       "items": [
+        "운영 계정 정합 콘솔 마감(2026-04-26) — `/admin/account-directory` DB 목록을 서버별 `Id_Logn` 보유 DB로 제한하고 `database_meta`(`server_id`, tenant labels, account types, build roles, account families, `has_id_logn`) 제공. 검색 결과에는 Gcode/Hcode/Hname/Gname/server/db/account_type/build_role/warehouse tier/dist_hcode 를 함께 표시하며, 중복 key·비동기 응답 역전·프론트 페이징 회귀를 방지.",
+        "메뉴 정책 오버라이드 런타임 반영(2026-04-26) — 저장된 `/admin/menu-policy` override를 일반 로그인 사용자의 현재 account_type 범위에서 읽는 `/api/v1/admin/menu-policy/runtime` 으로 노출하고, 사이드바 `usePermissions().canSeeMenu()` 가 deny/allow 및 라이선스 disabled 상태를 함께 계산.",
         "Next.js + AppShell + 랜딩·로그인",
         "Next rewrites로 API 동일 출처 프록시(개발 CORS 완화)",
         "제품 대시보드는 업무 KPI·빠른 접근 중심 — 포팅 진행 본문은 이 허브 대시보드에만 표시",
@@ -137,6 +144,7 @@
       "id": "scripts",
       "title": "운영 · 내부 스크립트",
       "items": [
+        "`tools/export_id_logn_credentials_red.py` — RED Id_Logn 자격증명 xlsx 재생성 도구(`--dry-run`, `--server`, `--exclude-hcode`, `--output`). 출력은 gitignored `WeLove_FTP/` 만 허용하고, xlsx 이관/삭제 상태는 `docs/operating-account-credentials-red.md` 에 기록.",
         "`debug/check_affiliation_integrity.py` — 총판·화이트리스트·tenants `dist_tenant_id`/`parent_tenant_id` 정합·모호 `publisher_hcode` 점검 (exit 2 = 불일치 발견)",
         "`debug/export_id_logn_users_markdown.py` — 서버별 사용자 MD(비밀번호 제외)",
         "`debug/bootstrap_admin_id_logn.py` — 관리자 부트스트랩",

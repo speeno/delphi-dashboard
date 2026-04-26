@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-21 — DEC-033 (k+1) Sobo67_yearbook(도서별년말집계) 신규 포팅 done: 신규 ID/경로(/reports/year-end-book) + reports_service.get_year_end_book_aggregate(2-pass S1_Ssub+Sg_Csum) + DataGridPager + 년/월 grain 토글 + 도서별 드릴다운 + DEC-028 data-legacy-id, 회귀 가드 test_year_end_book.py 22/22 PASS, Sobo67_status(출고현황) 무회귀(별도 ID/경로 분리). — 직전: 2026-04-21 사이드바 「기초관리」 정합화 + Sobo67_status phase1 정식 승격(form-registry phase=phase1).",
+  "updatedAt": "2026-04-26 — 운영 계정 안정화: C1 로그인 인덱스/DSN 라우팅은 현재 정상 로그인 흐름을 유지하고 4 서버 SHOW DATABASES + Id_Logn 보유 DB 스캔 기준으로 회귀 고정, stale SSH/pool 1회 재시도 테스트 추가, account-directory 운영 콘솔과 menu-policy runtime override 반영, RED credential 도구 명시화. — 직전: 2026-04-21 DEC-033 (k+1) Sobo67_yearbook 신규 포팅 done.",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {
@@ -196,7 +196,7 @@
         },
         "T8": {
           "status": "done",
-          "note": "DEC-005~008 모두 1차 포팅 범위 외로 동결(사용자 결정). login.yaml approved v1.1.0. 1차 합격선 단순화: '기존 사용자가 기존 ID/PW 로 로그인'. 멀티테넌시·해시·라이선스·슈퍼유저 분기는 후속 이관"
+          "note": "DEC-005~008 모두 1차 포팅 범위 외로 동결(사용자 결정). login.yaml approved v1.1.0. 1차 합격선 단순화: '기존 사용자가 기존 ID/PW 로 로그인'. 2026-04-26 운영 안정화: 현재 정상 로그인 흐름은 유지하고 login_id_index 4 서버 SHOW DATABASES + Id_Logn 스캔, stale SSH/pool 1회 재시도, 대표 계정 스모크 절차를 최소 회귀 가드로 추가"
         }
       }
     },
