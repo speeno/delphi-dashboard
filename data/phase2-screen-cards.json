@@ -1,7 +1,7 @@
 {
-  "$comment": "phase2 화면별 단계(T1~T8) 카드. 도서물류관리프로그램/frontend/src/lib/form-registry.ts FORM_REGISTRY 의 phase==='phase2' 와 1:1. 2026-04-22 C3 입고내역서 2종(Sobo54/Sobo57) phase1 승격으로 본 목록에서 제거. 시나리오(input/process/output/eta) 는 form-registry 의 단일 원천을 거울. T-phase 는 dashboard 가 자체 트래킹. 2026-04-23: docs/menu-roadmap-waves.md 신설 — 향후 본 카드의 'wave' / 'crudParity' 필드는 form-registry 의 roadmapWave/crudParity 와 1:1 동기화한다(drift 발생 시 dashboard 빌드 시 경고). 1차에는 form-registry 만 단일 원천으로 두고 본 JSON 은 거울 — 화면별 'wave' / 'crud' 키 추가는 다음 사이클에 일괄 채움 예정.",
+  "$comment": "phase2 화면별 단계(T1~T8) 카드. 원칙적으로 도서물류관리프로그램/frontend/src/lib/form-registry.ts FORM_REGISTRY 의 phase==='phase2' 와 1:1 이며, phase1 승격 직후에는 T7/T8 done 증적을 남기기 위해 1 사이클 동안 promoted 항목을 보존할 수 있다. 2026-04-22 C3 입고내역서 2종(Sobo54/Sobo57) phase1 승격으로 본 목록에서 제거. 시나리오(input/process/output/eta) 는 form-registry 의 단일 원천을 거울. T-phase 는 dashboard 가 자체 트래킹. 2026-04-23: docs/menu-roadmap-waves.md 신설 — 향후 본 카드의 'wave' / 'crudParity' 필드는 form-registry 의 roadmapWave/crudParity 와 1:1 동기화한다(drift 발생 시 dashboard 빌드 시 경고). 1차에는 form-registry 만 단일 원천으로 두고 본 JSON 은 거울 — 화면별 'wave' / 'crud' 키 추가는 다음 사이클에 일괄 채움 예정.",
   "title": "Phase 2 30 화면 — 단계 카드 (T1~T8)",
-  "updatedAt": "2026-04-23 — C4 Sobo34_4 기간별재고원장(상세) phase2 → phase1 정식 승격(사이드바 초록 체크). 백엔드: SQL_LEDGER_MASTER_NOJOIN + LIMIT+1 페이저 + summary 캐시 + 권한 메시지(R1~R7 일반화) — return_receipt v1.2.0. 신규 SQL 0건(DEC-040), Sobo54/57 v1.2.2 헬퍼 재사용(_slice_with_has_more / _fetch_product_names / _fetch_publisher_names). 권한: inventory.write → inventory.read 교정(조회 전용). 회귀: test_returns_period_ledger_regression.py 12 PASS, returns/inbound 회귀군 226 PASS. 직전(2026-04-22): C3 Sobo54/57 phase1 승격.",
+  "updatedAt": "2026-04-26 — 운영·통계 Phase2 승격 마감: WebAdmAuditRotate, Sobo50/51/52/53_stats, WebAdmOps, WebAdmAudit T7/T8 done 및 form-registry phase1 승격. 회귀: C13/C14/C5 관련 테스트 + frontend typecheck 대상. Sobo16_special 은 BLK-SPC-1/2 차단 해소 범위로 분리, 정산·인쇄 잔여는 후속 묶음으로 queue.",
   "stages": [
     { "id": "T1", "label": "T1 화면카드" },
     { "id": "T2", "label": "T2 SQL/이벤트 추출" },
@@ -37,37 +37,37 @@
     {
       "id": "WebAdmAuditRotate", "caption": "감사 비밀번호 회전", "menu": "admin", "route": "/admin/audit-rotate",
       "scenario": { "input": "신·구 감사 비밀번호", "process": "이전 감사 토큰 폐기 + bcrypt 해시 저장", "output": "회전 결과 + 다음 만기일", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
       "id": "Sobo50_stats", "caption": "기간별 매출 분석", "menu": "statistics", "route": "/stats/sales-period",
       "scenario": { "input": "기간 + 그룹 단위(일/월/분기)", "process": "S1_Ssub 매출 합계 GROUP BY 단위", "output": "라인 + 막대 차트 + 합계표", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
       "id": "Sobo51_stats", "caption": "거래처별 판매 분석", "menu": "statistics", "route": "/stats/customer-analysis",
       "scenario": { "input": "기간 + 거래처 필터", "process": "거래처별 매출/반품/잔량 합계", "output": "거래처 Top N + 누적 추이 차트", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
       "id": "Sobo52_stats", "caption": "도서 회전율", "menu": "statistics", "route": "/stats/book-turnover",
       "scenario": { "input": "기간 + 도서코드 구간", "process": "재고/매출 회전 = 매출수 / 평균재고", "output": "도서별 회전율 표 + 상위 회전 차트", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
       "id": "Sobo53_stats", "caption": "분기/반기 손익", "menu": "statistics", "route": "/stats/quarterly-summary",
       "scenario": { "input": "년도 + 분기/반기 토글", "process": "매출 - 반품 - 물류비 = 마진", "output": "분기 손익 카드 + 추이 그래프", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
       "id": "WebAdmOps", "caption": "운영 모니터링", "menu": "admin", "route": "/admin/ops",
       "scenario": { "input": "(자동 새로고침)", "process": "/health/full + /metrics 폴링", "output": "DB·풀·라우터 응답시간 카드 + 알람", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
       "id": "WebAdmAudit", "caption": "감사 통합 뷰", "menu": "admin", "route": "/admin/audit",
       "scenario": { "input": "기간 + 도메인 필터", "process": "audit_settlement + audit_returns 통합 조회", "output": "감사 이벤트 타임라인 + CSV 다운로드", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
       "id": "Sobo67_status", "caption": "출고현황", "menu": "shipment", "route": "/outbound/status",

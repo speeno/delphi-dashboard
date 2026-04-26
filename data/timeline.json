@@ -1,6 +1,13 @@
 [
   {
     "date": "2026-04-26",
+    "type": "milestone",
+    "title": "운영·통계 Phase2 화면 phase1 승격 마감",
+    "description": "WebAdmAuditRotate, Sobo50/51/52/53_stats, WebAdmOps, WebAdmAudit 의 T7/T8를 done으로 고정하고 form-registry phase1로 승격. C13/C14 FE 정적 회귀는 phase1 승격 기준으로 갱신. Sobo16_special 차단 해소와 정산·인쇄 잔여 화면은 `docs/phase2-next-work-queue.md` 후속 입력으로 분리.",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-26",
     "type": "fix",
     "title": "운영 계정 안정화 스프린트 — C1 로그인 라우팅·계정 콘솔·메뉴 정책 runtime 마감",
     "description": "현재 정상 로그인 흐름은 재설계하지 않고 `login_id_index_service.rebuild()` 를 4 서버 `SHOW DATABASES` + `Id_Logn` 보유 DB 스캔 기준으로 문서화·회귀 고정. `execute_query` stale pool/SSH tunnel 2006/2013 1회 재시도 테스트 추가. `/admin/account-directory` 는 서버별 DB 메타와 계정 유형 표시를 보강. 저장된 menu-policy override는 `/api/v1/admin/menu-policy/runtime` 및 프론트 `usePermissions().canSeeMenu()` 로 실제 사이드바에 반영. RED xlsx 재생성 도구는 `tools/export_id_logn_credentials_red.py` 로 명시화.",

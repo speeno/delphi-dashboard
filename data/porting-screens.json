@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-26 — 운영 계정 안정화: C1 로그인 인덱스/DSN 라우팅은 현재 정상 로그인 흐름을 유지하고 4 서버 SHOW DATABASES + Id_Logn 보유 DB 스캔 기준으로 회귀 고정, stale SSH/pool 1회 재시도 테스트 추가, account-directory 운영 콘솔과 menu-policy runtime override 반영, RED credential 도구 명시화. — 직전: 2026-04-21 DEC-033 (k+1) Sobo67_yearbook 신규 포팅 done.",
+  "updatedAt": "2026-04-26 — 운영·통계 Phase2 승격 마감: WebAdmAuditRotate, Sobo50/51/52/53_stats, WebAdmOps, WebAdmAudit form-registry phase1 승격 및 phase2-screen-cards T7/T8 done. — 직전: 운영 계정 안정화(C1 로그인 인덱스/DSN 라우팅, account-directory, menu-policy runtime override, RED credential 도구화).",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {
@@ -1725,7 +1725,7 @@
       "name": "통계/리포트 확장",
       "gateId": 5,
       "purpose": "기간별 매출 / 거래처 분석 / 도서 회전율 / 분기 손익 4 신규 화면 (외부 BI 직결 제외)",
-      "summary": "확장 라인 v0.2 Phase 1 마감 (2026-04-20) + RBAC 시드 정합 (2026-04-21). 4 신규 endpoints (STAT-1~4) + 4 permission_keys (F50/F51e/F52e/F53e). 신규 SQL 0건 — stats_service 가 reports_service / settlement_service 만 호출 (DEC-040/044 정합). `web_admin.json::role-admin` 에 `admin.stats.*` 4종 명시 등재(도서 회전율 F52e). 외부 BI/ETL/DW 직결 ❌. 13 PASS 테스트(test_c13_stats_phase1.py).",
+      "summary": "확장 라인 v0.2 Phase 1 마감 (2026-04-20) + RBAC 시드 정합 (2026-04-21) + 운영·통계 Phase2 승격(2026-04-26). 4 신규 endpoints (STAT-1~4) + 4 permission_keys (F50/F51e/F52e/F53e). 신규 SQL 0건 — stats_service 가 reports_service / settlement_service 만 호출 (DEC-040/044 정합). `web_admin.json::role-admin` 에 `admin.stats.*` 4종 명시 등재(도서 회전율 F52e). Recharts 4 화면(Sobo50/51/52/53) phase1 승격. 외부 BI/ETL/DW 직결 ❌.",
       "delphi": {
         "primary_form": "Sobo50/51/52/53/54/55 (Phase 1 미포팅)",
         "primary_unit": "(분석 PENDING)",
@@ -1757,7 +1757,7 @@
           "도서물류관리프로그램/backend/app/services/stats_service.py (신규 SQL 0건 — reports_service/settlement_service 재사용)"
         ],
         "frontend": [
-          "도서물류관리프로그램/frontend/src/app/(app)/stats/{sales-period,customer-analysis,book-turnover,quarterly-summary}/page.tsx (Phase 2 — recharts 4 화면)",
+          "도서물류관리프로그램/frontend/src/app/(app)/stats/{sales-period,customer-analysis,book-turnover,quarterly-summary}/page.tsx (phase1 — recharts 4 화면)",
           "도서물류관리프로그램/frontend/src/components/stats/{stats-filter-bar,stats-banners,charts}.tsx (공용)",
           "도서물류관리프로그램/frontend/src/lib/stats-api.ts",
           "도서물류관리프로그램/frontend/src/i18n/messages/c13.ko.json"
@@ -1775,8 +1775,8 @@
         "T4": { "status": "completed", "note": "test_c13_stats_phase1.py 13 PASS — TC-C13-S-08 web_admin 시드(admin.stats.*) 정합" },
         "T5": { "status": "completed", "note": "stats_service.py + stats router (4 endpoint, require_permission 4종)" },
         "T6": { "status": "completed", "note": "Phase 2 — recharts 4 화면 (Sobo50/51/52/53) + 공용 필터/배너/차트 + lib/stats-api + c13.ko.json + form-registry. tsc 0 error." },
-        "T7": { "status": "completed", "note": "신규 SQL 0건 grep 가드 PASS + DEC-041 표준 응답 정합" },
-        "T8": { "status": "completed", "note": "DEC-044 등록 + permission-keys-catalog §4 등록 (F50/F51e/F52e/F53e)" }
+        "T7": { "status": "completed", "note": "신규 SQL 0건 grep 가드 PASS + DEC-041 표준 응답 정합 + FE 정적 회귀(test_c13_stats_phase2_fe.py) phase1 승격 기준으로 고정" },
+        "T8": { "status": "completed", "note": "DEC-044 등록 + permission-keys-catalog §4 등록(F50/F51e/F52e/F53e) + 2026-04-26 form-registry Sobo50/51/52/53_stats phase1 승격" }
       }
     },
     {
@@ -1786,7 +1786,7 @@
       "name": "운영 모니터링",
       "gateId": 5,
       "purpose": "헬스체크 확장 + Prometheus /metrics + 운영 알림 배너 + audit 통합 뷰 (Self-hosted only)",
-      "summary": "확장 라인 v0.2 Phase 1 마감 (2026-04-20). /health/full + Prometheus /metrics + audit ring buffer + in-app 알림 큐 (ETag 적용). 외부 SaaS APM/알림/로그집계 ❌ (DEC-044). 신규 SQL 0건 — in-memory ring buffer + audit_logger handler subscribe. 13 PASS 테스트.",
+      "summary": "확장 라인 v0.2 Phase 1 마감 (2026-04-20) + 운영·통계 Phase2 승격(2026-04-26). /health/full + Prometheus /metrics + audit ring buffer + in-app 알림 큐 (ETag 적용). /admin/ops 와 /admin/audit 화면은 phase1 승격. 외부 SaaS APM/알림/로그집계 ❌ (DEC-044). 신규 SQL 0건 — in-memory ring buffer + audit_logger handler subscribe.",
       "delphi": {
         "primary_form": "(없음 — 모던 신규)",
         "primary_unit": "(N/A)",
@@ -1812,7 +1812,7 @@
           "도서물류관리프로그램/backend/app/routers/ops.py (4 endpoint × 3 권한 가드)"
         ],
         "frontend": [
-          "도서물류관리프로그램/frontend/src/app/(app)/admin/{ops,audit}/page.tsx (Phase 2)",
+          "도서물류관리프로그램/frontend/src/app/(app)/admin/{ops,audit}/page.tsx (phase1)",
           "도서물류관리프로그램/frontend/src/components/ops/global-alert-banner.tsx (글로벌 60s 폴링 + ETag dismiss)",
           "도서물류관리프로그램/frontend/src/lib/ops-api.ts",
           "도서물류관리프로그램/frontend/src/i18n/messages/c14.ko.json",
@@ -1831,8 +1831,8 @@
         "T4": { "status": "completed", "note": "test_c14_ops_phase1.py 13 PASS" },
         "T5": { "status": "completed", "note": "ops_service.py + ops router (4 endpoint, 3 권한 가드, ETag DEC-042)" },
         "T6": { "status": "completed", "note": "Phase 2 — admin/{ops,audit} 페이지 + GlobalAlertBanner(60s 저빈도 폴링, document.hidden pause) + ETag dismiss 정합 (DEC-042) + /metrics 동일 출처 프록시. tsc 0 error." },
-        "T7": { "status": "completed", "note": "신규 SQL 0건 + 라벨 카디널리티 forbidden_label_keys 가드 PASS" },
-        "T8": { "status": "completed", "note": "DEC-044 등록 + permission-keys-catalog §4 등록 (F90/F91/F92)" }
+        "T7": { "status": "completed", "note": "신규 SQL 0건 + 라벨 카디널리티 forbidden_label_keys 가드 PASS + FE 정적 회귀(test_c14_ops_phase2_fe.py) phase1 승격 기준으로 고정" },
+        "T8": { "status": "completed", "note": "DEC-044 등록 + permission-keys-catalog §4 등록(F90/F91/F92) + 2026-04-26 form-registry WebAdmOps/WebAdmAudit phase1 승격" }
       }
     },
     {
