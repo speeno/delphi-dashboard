@@ -2,6 +2,13 @@
   {
     "date": "2026-04-26",
     "type": "milestone",
+    "title": "정산·인쇄 잔여 화면 재분류 (C5/C7 근거 정렬)",
+    "description": "`Sobo46_billing`, `Sobo49_tax`, `Settle_outstanding`, `Sobo41_slip` 및 billing 별칭(`Sobo46_billing_bill`, `Sobo49_tax_bill`)을 `form-registry.ts` phase1과 `phase2-screen-cards.json` T1~T8 done으로 동기화. `porting-screens.json` C5 요약·routes·T7 노트 갱신. 회귀: `test_c5_settlement_phase2.py`(TC-ST-P2_32/33), `test_c5_settlement_optional_filters.py`, `test_c7_print_phase1.py`. 책임 분리: C5=정산 UI·미수 집계·전표, C7=Sobo46/49 PDF 엔드포인트.",
+    "sprint": 1
+  },
+  {
+    "date": "2026-04-26",
+    "type": "milestone",
     "title": "운영·통계 Phase2 화면 phase1 승격 마감",
     "description": "WebAdmAuditRotate, Sobo50/51/52/53_stats, WebAdmOps, WebAdmAudit 의 T7/T8를 done으로 고정하고 form-registry phase1로 승격. C13/C14 FE 정적 회귀는 phase1 승격 기준으로 갱신. Sobo16_special 차단 해소와 정산·인쇄 잔여 화면은 `docs/phase2-next-work-queue.md` 후속 입력으로 분리.",
     "sprint": 1

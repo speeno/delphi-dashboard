@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-04-26T08:42:00Z",
-  "phase": "2026-04-26 운영·통계 Phase2 승격 마감 — WebAdmAuditRotate, Sobo50/51/52/53_stats, WebAdmOps, WebAdmAudit 를 T7/T8 done 으로 고정하고 form-registry phase1로 승격. C13/C14 FE 정적 회귀는 phase1 승격 기준으로 갱신했고, Sobo16_special 차단 해소와 정산·인쇄 잔여는 `docs/phase2-next-work-queue.md` 후속 입력으로 분리. 직전: 운영 계정 안정화(C1 로그인 인덱스/DSN 라우팅, account-directory, menu-policy runtime override, RED credential 도구화).",
+  "updatedAt": "2026-04-26T12:00:00Z",
+  "phase": "2026-04-26 정산·인쇄 잔여 재분류 완료 — Sobo46_billing/Sobo49_tax/Settle_outstanding/Sobo41_slip(+billing 별칭 2건) form-registry phase1 + phase2-screen-cards/porting-screens 동기화, TC-ST-P2_32/33 회귀. 직전: 운영·통계 Phase2 승격 마감 — 이후 큐는 Sobo16_special 등 §1·§3만 유지.",
   "productNote": "실행 UI는 저장소 `도서물류관리프로그램/` (제품 웹). 본 섹션은 개발 진행용 허브 대시보드 전용.",
   "docLinks": [
     {
@@ -91,6 +91,7 @@
       "id": "frontend",
       "title": "프론트엔드 · UX (제품)",
       "items": [
+        "정산·인쇄 잔여 재분류(2026-04-26) — `Sobo46_billing`/`Sobo49_tax`/`Settle_outstanding`/`Sobo41_slip` 및 billing 별칭 2건을 phase1·T7/T8 done으로 정렬. `test_c5_settlement_phase2.py` TC-ST-P2_32(registry)·TC-ST-P2_33(data-legacy-id) + optional_filters(outstanding) + `test_c7_print_phase1.py`(PDF) 근거 고정. C5=기능·미수·전표, C7=Sobo46/49 PDF 단일 근거.",
         "운영·통계 Phase2 화면 phase1 승격(2026-04-26) — `WebAdmAuditRotate`, `Sobo50_stats`, `Sobo51_stats`, `Sobo52_stats`, `Sobo53_stats`, `WebAdmOps`, `WebAdmAudit` 를 `form-registry.ts` 에서 phase1로 전환. C13/C14 FE 정적 회귀는 phase1 승격 기준으로 갱신했고, 조회 전용 화면은 `crudParity=R`, 감사 비밀번호 회전은 `crudParity=RU` 로 부분 동등성을 사이드바 tooltip에 유지.",
         "운영 계정 정합 콘솔 마감(2026-04-26) — `/admin/account-directory` DB 목록을 서버별 `Id_Logn` 보유 DB로 제한하고 `database_meta`(`server_id`, tenant labels, account types, build roles, account families, `has_id_logn`) 제공. 검색 결과에는 Gcode/Hcode/Hname/Gname/server/db/account_type/build_role/warehouse tier/dist_hcode 를 함께 표시하며, 중복 key·비동기 응답 역전·프론트 페이징 회귀를 방지.",
         "메뉴 정책 오버라이드 런타임 반영(2026-04-26) — 저장된 `/admin/menu-policy` override를 일반 로그인 사용자의 현재 account_type 범위에서 읽는 `/api/v1/admin/menu-policy/runtime` 으로 노출하고, 사이드바 `usePermissions().canSeeMenu()` 가 deny/allow 및 라이선스 disabled 상태를 함께 계산.",

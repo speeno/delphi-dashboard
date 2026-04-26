@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-26 — 운영·통계 Phase2 승격 마감: WebAdmAuditRotate, Sobo50/51/52/53_stats, WebAdmOps, WebAdmAudit form-registry phase1 승격 및 phase2-screen-cards T7/T8 done. — 직전: 운영 계정 안정화(C1 로그인 인덱스/DSN 라우팅, account-directory, menu-policy runtime override, RED credential 도구화).",
+  "updatedAt": "2026-04-26 — 정산·인쇄 잔여 재분류: Sobo46_billing/Sobo49_tax/Settle_outstanding/Sobo41_slip(+billing 별칭) form-registry phase1 + TC-ST-P2-32/33. — 직전: 운영·통계 Phase2 승격 마감.",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {
@@ -1224,9 +1224,9 @@
       "name": "정산(일·월 마감)",
       "gateId": 3,
       "phase1_status": "completed",
-      "phase2_status": "deferred",
+      "phase2_status": "complete",
       "purpose": "일·월 집계·청구·세금계산서·입금 정산",
-      "summary": "Phase 1 완료 (Sobo45/45_1/47/41/42/42_1, T1~T8) — 청구·집계·확정·취소·입금 CRUD·입금현황·gpass 회전. Phase 2 = Sobo46/49 인쇄 + 재집계 배치 (이연).",
+      "summary": "Phase 1 완료 (Sobo45/45_1/47/41/42/42_1) + Phase 2 확장(Sobo46 청구서 인쇄·Sobo49 세금·재집계·audit) + 모바일 정산 확장(Settle_outstanding 미수, Sobo41_slip 입금전표) — 2026-04-26 form-registry phase1 재분류로 대시보드·카드 drift 제거. C7은 Sobo46/49 PDF 경로 흡수.",
       "delphi": {
         "primary_form": "TSobo45 (청구서관리)",
         "primary_unit": "Subu45.pas",
@@ -1234,8 +1234,8 @@
         "related_forms": [
           "TSobo45_1 청구서관리(택배)",
           "TSobo47 청구금액(년월)",
-          "TSobo46 청구서출력 (Phase 2)",
-          "TSobo49 세금계산서 (Phase 2)",
+          "TSobo46 청구서출력 (C5+C7 인쇄 경로)",
+          "TSobo49 세금계산서 (C5+C7 인쇄 경로)",
           "TSobo41 입금내역",
           "TSobo42 입금현황",
           "TSobo42_1 입금현황(년월)",
@@ -1253,9 +1253,14 @@
       "web": {
         "routes": [
           "/settlement/billing",
+          "/settlement/billing/[billingKey]/print",
           "/settlement/period",
           "/settlement/cash",
-          "/settlement/cash-status"
+          "/settlement/cash-status",
+          "/settlement/tax-invoice",
+          "/settlement/tax-invoice/[billingKey]/print",
+          "/settlement/outstanding",
+          "/settlement/payment-slip"
         ],
         "endpoints": [
           "GET /api/v1/settlement/billing",
@@ -1281,6 +1286,11 @@
           "도서물류관리프로그램/frontend/src/app/(app)/settlement/period/page.tsx",
           "도서물류관리프로그램/frontend/src/app/(app)/settlement/cash/page.tsx",
           "도서물류관리프로그램/frontend/src/app/(app)/settlement/cash-status/page.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/settlement/billing/[billingKey]/print/page.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/settlement/tax-invoice/page.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/settlement/tax-invoice/[billingKey]/print/page.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/settlement/outstanding/page.tsx",
+          "도서물류관리프로그램/frontend/src/app/(app)/settlement/payment-slip/page.tsx",
           "도서물류관리프로그램/frontend/src/lib/settlement-api.ts",
           "도서물류관리프로그램/frontend/src/lib/form-registry.ts (settlement 그룹 + 4 폼 _billing/_cash)",
           "도서물류관리프로그램/frontend/src/components/app-shell/sidebar.tsx (Receipt/Shield 아이콘)"
@@ -1353,7 +1363,7 @@
         },
         "T7": {
           "status": "done",
-          "note": "test_c5_settlement_phase1.py 32 + test_c5_settlement_phase2.py 31 = 63 PASS · C4 회귀 무영향 · tsc/eslint 0 · data-legacy-id grep 통과 · debug probe 매트릭스 +2 그룹 (tax_invoice, audit_settlement)."
+          "note": "test_c5_settlement_phase1.py 32 + test_c5_settlement_phase2.py 33 + test_c5_settlement_optional_filters.py(outstanding 등) = 회귀 고정 · C4 회귀 무영향 · tsc/eslint 0 · Sobo46/49/미수/전표 form-registry phase1 + TC-ST-P2-32/33"
         },
         "T8": {
           "status": "done",
@@ -1368,7 +1378,7 @@
       "name": "라벨/송장 인쇄",
       "gateId": 5,
       "purpose": "거래명세·라벨·송장·세무 출력",
-      "summary": "Phase 1 마감 + Phase 2-α 마감 (2026-04-20). Phase 1 = 5 양식 (Sobo46/49/27/23/21) + 1 라벨 (Seep13 우편엽서) + DEC-037 WeasyPrint. Phase 2-α = 거래처별 양식 변형 (Sobo27 v0..v9, Sobo23 v1/v2/v3/v5) + 라벨 form 1..5 흡수 (DEC-019/028 단일 빌더 + variant/form 인자). 신규 SQL 0 + base byte-identical 회귀 0 + 422 PR_VARIANT_UNSUPPORTED/PR_FORM_UNSUPPORTED 가드.",
+      "summary": "Phase 1 마감 + Phase 2-α 마감 (2026-04-20). Phase 1 = 5 양식 (Sobo46/49/27/23/21) + 1 라벨 (Seep13 우편엽서) + DEC-037 WeasyPrint — **Sobo46/49 PDF는 본 시나리오 단일 근거**, 청구·세금 **목록·HTML 미리보기·stub는 C5** (`form-registry`·settlement 라우터)와 중복 서술 없이 병행. Phase 2-α = 거래처별 양식 변형 (Sobo27 v0..v9, Sobo23 v1/v2/v3/v5) + 라벨 form 1..5 흡수 (DEC-019/028 단일 빌더 + variant/form 인자). 신규 SQL 0 + base byte-identical 회귀 0 + 422 PR_VARIANT_UNSUPPORTED/PR_FORM_UNSUPPORTED 가드.",
       "delphi": {
         "primary_form": "(인쇄 진입점 묶음)",
         "primary_unit": "Tong04.pas (Print_*)",

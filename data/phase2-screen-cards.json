@@ -1,7 +1,7 @@
 {
   "$comment": "phase2 화면별 단계(T1~T8) 카드. 원칙적으로 도서물류관리프로그램/frontend/src/lib/form-registry.ts FORM_REGISTRY 의 phase==='phase2' 와 1:1 이며, phase1 승격 직후에는 T7/T8 done 증적을 남기기 위해 1 사이클 동안 promoted 항목을 보존할 수 있다. 2026-04-22 C3 입고내역서 2종(Sobo54/Sobo57) phase1 승격으로 본 목록에서 제거. 시나리오(input/process/output/eta) 는 form-registry 의 단일 원천을 거울. T-phase 는 dashboard 가 자체 트래킹. 2026-04-23: docs/menu-roadmap-waves.md 신설 — 향후 본 카드의 'wave' / 'crudParity' 필드는 form-registry 의 roadmapWave/crudParity 와 1:1 동기화한다(drift 발생 시 dashboard 빌드 시 경고). 1차에는 form-registry 만 단일 원천으로 두고 본 JSON 은 거울 — 화면별 'wave' / 'crud' 키 추가는 다음 사이클에 일괄 채움 예정.",
   "title": "Phase 2 30 화면 — 단계 카드 (T1~T8)",
-  "updatedAt": "2026-04-26 — 운영·통계 Phase2 승격 마감: WebAdmAuditRotate, Sobo50/51/52/53_stats, WebAdmOps, WebAdmAudit T7/T8 done 및 form-registry phase1 승격. 회귀: C13/C14/C5 관련 테스트 + frontend typecheck 대상. Sobo16_special 은 BLK-SPC-1/2 차단 해소 범위로 분리, 정산·인쇄 잔여는 후속 묶음으로 queue.",
+  "updatedAt": "2026-04-26 — 정산·인쇄 잔여 재분류: Sobo46_billing, Sobo49_tax, Settle_outstanding, Sobo41_slip (+ billing 별칭 2건) form-registry phase1 + phase2-screen-cards T7/T8 done 동기화. TC-ST-P2-32/33 회귀 추가. 직전: 운영·통계 Phase2 승격 마감.",
   "stages": [
     { "id": "T1", "label": "T1 화면카드" },
     { "id": "T2", "label": "T2 SQL/이벤트 추출" },
@@ -25,14 +25,14 @@
       "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "in_progress", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
     },
     {
-      "id": "Sobo46_billing", "caption": "청구서 인쇄(미리보기)", "menu": "settlement", "route": null, "legacy_form": "Sobo46.dfm",
+      "id": "Sobo46_billing", "caption": "청구서 인쇄(미리보기)", "menu": "settlement", "route": "/settlement/billing/[billingKey]/print", "legacy_form": "Sobo46.dfm",
       "scenario": { "input": "청구키(거래처+년월)", "process": "S2_Ssum 행 + Y/N 마감 가드 적용", "output": "HTML 미리보기 + PDF 인쇄 다운로드", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "in_progress", "T5": "done", "T6": "in_progress", "T7": "pending", "T8": "pending" }
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
       "id": "Sobo49_tax", "caption": "세금계산서 발행", "menu": "settlement", "route": "/settlement/tax-invoice", "legacy_form": "Sobo49.dfm",
       "scenario": { "input": "거래처+년월", "process": "청구금액 + 사업자번호 + 세액 계산", "output": "세금계산서 양식 미리보기 + 발행번호", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "in_progress", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
       "id": "WebAdmAuditRotate", "caption": "감사 비밀번호 회전", "menu": "admin", "route": "/admin/audit-rotate",
@@ -131,13 +131,13 @@
     },
     {
       "id": "Settle_outstanding", "caption": "미수현황", "menu": "settlement", "route": "/settlement/outstanding",
-      "scenario": { "input": "기준일", "process": "청구금액 - 입금금액 누적 = 미수", "output": "거래처별 미수 금액 + 합계", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "in_progress", "T4": "in_progress", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "scenario": { "input": "시작월~종료월 + 거래처(옵션)", "process": "GET /settlement/outstanding 서버 집계 + 페이저", "output": "거래처별 미수 금액 + 합계", "eta": "Phase 1 (2026-04-W4)" },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
       "id": "Sobo41_slip", "caption": "입금전표", "menu": "settlement", "route": "/settlement/payment-slip",
-      "scenario": { "input": "거래처+입금일+금액", "process": "입금 헤더+라인 INSERT, 청구 매핑", "output": "전표 미리보기 + 인쇄", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "in_progress", "T4": "in_progress", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "scenario": { "input": "거래처 + 일자 범위(옵션)", "process": "입금 목록 조회(settlementCashApi.list) → 전표 카드 + window.print()", "output": "전표 미리보기 + 인쇄", "eta": "Phase 1 (2026-04-W4)" },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
       "id": "Sobo28_delivery", "caption": "출고택배관리", "menu": "delivery", "route": "/delivery/management", "legacy_form": "Sobo28.dfm",
