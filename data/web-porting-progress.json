@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-04-26T16:00:00Z",
-  "phase": "2026-04-26 총판–출판사 소속 판정 정합화 — whitelist `dist_hcode+publisher_hcode` 복합키·`parent_tenant_id`/`dist_tenant_id` 소비·동일 hcode 다중 총판 fail-safe, `POST /api/v1/admin/whitelist/reaffiliate`(T2_DIST 전용·동일DB·AFFILIATION_CROSS_DB_FORBIDDEN), `debug/check_affiliation_integrity.py`, 회귀 `test_auth_whitelist_relation_resolution`·`test_admin_whitelist_reaffiliate` 등. 문서 `docs/onboarding-account-type-resolution.md`·`docs/decision-login-db-routing.md`·`docs/account-type-alignment-inventory.md` 동결. | Phase 1 + C2~C5 1차 T1~T8 + C7 Phase 2-α + C8 + Track B4 done — 2026-04-23 사용자 보고: `/master/logistics-cost` 화면이 레거시 `Subu45.dfm Caption='청구서관리'` 와 어긋나게 「Sobo45 = 물류비」로 잘못 매핑 → DEC-060 신규 + 옵션 (B) 채택(화면 제거 + Sobo45_billing 으로 통합). master_data.yaml v1.1.0→v1.2.0 (catalog/SQL-MAS-10/customer_variants 제거, 6→5 마스터 정정), 백엔드 3 파일·프론트 4 파일·테스트 3 파일 동시 정정, 회귀 가드 LogisticsCostMappingRemovedTests 5축 부재 단언 신규. 2026-04-23 (직전) C4 Sobo34_4 기간별재고원장(상세) phase1 정식 승격 — return_receipt v1.2.0.",
+  "updatedAt": "2026-04-26T08:01:00Z",
+  "phase": "2026-04-26 운영 계정 안정화 스프린트 완료 — 현재 정상 로그인 흐름은 유지하고 C1 로그인 인덱스/DSN 라우팅을 4 서버 `SHOW DATABASES` + `Id_Logn` 보유 DB 스캔 기준으로 문서화·회귀 고정. 계정 유형 운영 콘솔은 서버별 DB 메타와 계정 유형·역할 표시를 보강했고, 저장된 menu-policy override는 `/api/v1/admin/menu-policy/runtime` 과 사이드바 `usePermissions().canSeeMenu()` 에 실제 반영. RED 자격증명 산출물은 `tools/export_id_logn_credentials_red.py` 운영 도구화와 `docs/operating-account-credentials-red.md` 처리 메모로 정리. 검증: backend 18 PASS, frontend typecheck 0, ReadLints 0, dashboard JSON OK, db-smoke dry-run JSON 저장.",
   "productNote": "실행 UI는 저장소 `도서물류관리프로그램/` (제품 웹). 본 섹션은 개발 진행용 허브 대시보드 전용.",
   "docLinks": [
     {
