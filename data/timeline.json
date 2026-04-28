@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-04-29",
+    "type": "feature",
+    "title": "오피넷 유가 연동 · 헤더 시계·날씨 · 대시보드 메타 정리",
+    "description": "백엔드: `opinet_client` + `fuel_cost` 전국·시도 경유 평균·캐시·등락 알림, `fuel-cost` API region/sido. 프론트: `HeaderClockWeather` + 지역 프리셋 localStorage + 편집 모드에서만 Select, `role-dashboard-view` 상단 조회기간/표본 한 줄 정렬. 문서 `docs/dashboard-opinet-env.md`.",
+    "sprint": 1
+  },
+  {
     "date": "2026-04-26",
     "type": "milestone",
     "title": "정산·인쇄 잔여 화면 재분류 (C5/C7 근거 정렬)",
