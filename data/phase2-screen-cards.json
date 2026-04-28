@@ -140,9 +140,9 @@
       "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
     },
     {
-      "id": "Sobo28_delivery", "caption": "출고택배관리", "menu": "delivery", "route": "/delivery/management", "legacy_form": "Sobo28.dfm",
-      "scenario": { "input": "출고일자 + 택배사", "process": "출고 → 송장번호 매핑 + 상태 동기", "output": "송장 리스트 + 배송상태", "eta": "Phase 2 (2026-Q2)", "blockers": ["택배사 API 연동 합의 필요"] },
-      "tasks": { "T1": "done", "T2": "in_progress", "T3": "blocked", "T4": "pending", "T5": "pending", "T6": "in_progress", "T7": "pending", "T8": "pending" }
+      "id": "Sobo28_delivery", "caption": "택배관리", "menu": "delivery", "route": "/shipping/courier", "legacy_form": "Sobo28.dfm",
+      "scenario": { "input": "거래일자 + Hcode 구간(옵션)", "process": "S1_Ssub+G1_Ggeo 집계 + S1_Memo", "output": "택배 대상 그리드 + 메모", "eta": "Phase 2 (2026-Q2)", "blockers": ["택배사 외부 API 는 후속"] },
+      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "pending", "T5": "done", "T6": "in_progress", "T7": "pending", "T8": "pending" }
     },
     {
       "id": "Stats_monthly", "caption": "월별통계", "menu": "statistics", "route": "/stats/monthly",
