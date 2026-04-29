@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-29 — 허브 대시보드 위젯 설정 UX: JSON prompt 제거·지역 프리셋(bbox)·폼 편집(Sheet) + 회귀 test_dashboard_widget_config_ux.py. — 직전: 2026-04-26 정산·인쇄 잔여 재분류.",
+  "updatedAt": "2026-04-29 — 통계 화면 공통 완료 + C9 Sobo11/Sobo14 CRUD API 보강. — 직전: 통계 필터/페이징/Sobo43.",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {
@@ -438,7 +438,7 @@
       "name": "기초관리 마스터 등록 (1차 — 6폼 단일 원천 + Wave D 웹관리)",
       "gateId": 2,
       "purpose": "기초 마스터 데이터 단일 원천 확정 후 조회·수정 활성 + 웹 전용 관리(사용자/서버/권한/환경설정 개정) 도입",
-      "summary": "Sobo11·14·17·38·39·45 READ + 거래처/도서 PATCH + Wave D /admin. Phase1 수용 완료. 실DB 검증: G1_Ggeo 주소(Gadd1/2)·G4_Book 비정규 문자열 HOT-MAS-3 반영. Phase2·INSERT/RBAC 등은 deferrals.",
+      "summary": "Sobo11·14·17·38·39 READ + 거래처/도서 CRUD API(POST/PATCH/DELETE) + Wave D /admin. 2026-04-29 Sobo11/Sobo14 신규·삭제 API 보강으로 CRUD gap 축소. UI 버튼 노출은 후속 UX 선택.",
       "phase1_status": "complete",
       "phase1_acceptance_goal": "C9 단일 원천 6폼 사이드바 노출 + READ 전체 + PATCH 2폼(거래처/도서) + Wave D /admin 4페이지 + DEC-019~023 동결",
       "delphi": {
@@ -511,7 +511,11 @@
           "GET /api/v1/admin/legacy-permission-map",
           "GET|POST /api/v1/admin/settings",
           "GET /api/v1/admin/settings/history",
-          "POST /api/v1/admin/settings/rollback"
+          "POST /api/v1/admin/settings/rollback",
+          "POST /api/v1/masters/customer",
+          "DELETE /api/v1/masters/customer/{gcode}",
+          "POST /api/v1/masters/book",
+          "DELETE /api/v1/masters/book/{gcode}"
         ],
         "backend": [
           "도서물류관리프로그램/backend/app/services/masters_service.py (확장)",
@@ -519,18 +523,22 @@
           "도서물류관리프로그램/backend/app/models/master.py (신규 Pydantic)",
           "도서물류관리프로그램/backend/app/services/admin_service.py (Wave D 신규)",
           "도서물류관리프로그램/backend/app/routers/admin.py (Wave D 신규)",
-          "도서물류관리프로그램/backend/app/models/admin.py (Wave D 신규)"
+          "도서물류관리프로그램/backend/app/models/admin.py (Wave D 신규)",
+          "도서물류관리프로그램/backend/app/models/master.py (CustomerCreate/BookCreate/MasterDelete models)",
+          "도서물류관리프로그램/backend/app/services/masters_service.py (create/delete customer/book)",
+          "도서물류관리프로그램/backend/app/routers/masters.py (POST/DELETE customer/book)"
         ],
         "frontend": [
           "도서물류관리프로그램/frontend/src/app/(app)/master/* (6 페이지)",
           "도서물류관리프로그램/frontend/src/app/(app)/admin/* (4 페이지)",
           "도서물류관리프로그램/frontend/src/lib/master-api.ts",
           "도서물류관리프로그램/frontend/src/lib/admin-api.ts",
-          "도서물류관리프로그램/frontend/src/lib/form-registry.ts (master + admin 메뉴 그룹 추가)"
+          "도서물류관리프로그램/frontend/src/lib/form-registry.ts (master + admin 메뉴 그룹 추가)",
+          "도서물류관리프로그램/frontend/src/lib/master-api.ts (create/delete methods)"
         ],
         "app_url": "http://127.0.0.1:3000/master"
       },
-      "contract": "migration/contracts/master_data.yaml v1.1.0 (DEC-028 customer_variants/out_of_scope 추가) + migration/contracts/admin_web_platform.yaml",
+      "contract": "migration/contracts/master_data.yaml (v1.3.0 — Sobo11/Sobo14 CRUD API addendum)",
       "testpack": "test/test_c2_outbound_phase1.py + test/test_c6_inquiry_phase1.py (C2/C6 회귀) + test/test_pagination_contracts.py·test/test_masters_q_search.py (C9 list·q·PK 가드)",
       "evaluation_report": "C2/C6 회귀 34/34 PASS · C9 관련 페이징·마스터 검색 계약 pytest 22+30 PASS · tsc 0 · eslint 0 · yaml/json OK · form-registry 35폼/15라우트 중복 0 · 실DB HOT-MAS-3 운영 재현 해소 · DEC-028 retrofit 60+ data-legacy-id 부착(HOT-MAS-4)",
       "phase1_test_results": {
@@ -698,15 +706,15 @@
         },
         "T3": {
           "status": "done",
-          "note": "master_data.yaml + admin_web_platform.yaml v1.0.0 작성"
+          "note": "master_data.yaml v1.3.0 — Sobo11/Sobo14 POST/DELETE API 추가"
         },
         "T4": {
           "status": "done",
-          "note": "C2/C6 회귀 가드 34건 활용 (마스터 회귀 영향 없음 확인)"
+          "note": "test_master_crud_api_contract.py — create/delete service/router/client 회귀"
         },
         "T5": {
           "status": "done",
-          "note": "masters_service 6 함수 + admin_service Wave D 풀스택"
+          "note": "masters_service/routers/models customer/book create/delete + audit.master action=create/delete"
         },
         "T6": {
           "status": "done",
@@ -718,7 +726,7 @@
         },
         "T8": {
           "status": "done",
-          "note": "DEC-019~023 동결 · 대시보드 C9 API masters 경로·런타임 블록·실DB 진행 문구 반영"
+          "note": "C9 CRUD gap: Sobo11/Sobo14 API CRUD 보강 완료. Sobo17/38/39 쓰기는 후속 유지"
         }
       }
     },
@@ -809,7 +817,10 @@
         "analysis/layout_mappings/Sobo54.md",
         "analysis/layout_mappings/Sobo57.md"
       ],
-      "subscenarios_absorbed": ["Sobo22_1 (변형)", "Sobo22_2 (변형)"],
+      "subscenarios_absorbed": [
+        "Sobo22_1 (변형)",
+        "Sobo22_2 (변형)"
+      ],
       "runtime_check": {
         "performed_at": "2026-04-19",
         "browser_url": "http://127.0.0.1:3000/inbound/receipts",
@@ -1219,14 +1230,30 @@
         "OQ-RT-9 (audit DB): audit_returns + audit_password_attempts 영속화"
       ],
       "tasks": {
-        "T1": { "status": "done" },
-        "T2": { "status": "done" },
-        "T3": { "status": "done" },
-        "T4": { "status": "done" },
-        "T5": { "status": "done" },
-        "T6": { "status": "done" },
-        "T7": { "status": "done" },
-        "T8": { "status": "done" }
+        "T1": {
+          "status": "done"
+        },
+        "T2": {
+          "status": "done"
+        },
+        "T3": {
+          "status": "done"
+        },
+        "T4": {
+          "status": "done"
+        },
+        "T5": {
+          "status": "done"
+        },
+        "T6": {
+          "status": "done"
+        },
+        "T7": {
+          "status": "done"
+        },
+        "T8": {
+          "status": "done"
+        }
       }
     },
     {
@@ -1717,8 +1744,12 @@
       ],
       "db_impact": "DB 변경 0 (UI 반응형/디바이스 호환만)",
       "web": {
-        "routes": ["(C2/C3/C4/C8 페이지 모바일 호환)"],
-        "endpoints": ["(기존 엔드포인트 재사용)"],
+        "routes": [
+          "(C2/C3/C4/C8 페이지 모바일 호환)"
+        ],
+        "endpoints": [
+          "(기존 엔드포인트 재사용)"
+        ],
         "backend": [],
         "frontend": [
           "도서물류관리프로그램/frontend/src/app/(app)/* (반응형 CSS 보강)",
@@ -1730,14 +1761,38 @@
       "subscenarios_absorbed": [],
       "extensionLine": true,
       "tasks": {
-        "T1": { "status": "completed", "note": "screen_card C11_Mobile_UAT.md v0.1 골격" },
-        "T2": { "status": "completed", "note": "extension_dependencies.md C11 → C2/C8/C10 선행 자산표 + 진입 게이트" },
-        "T3": { "status": "completed", "note": "mobile_uat.yaml v1.0 동결 — BPI-1~4 + SC-1~3 + DEC-MOB-1/2 + AC-MOB-1~5" },
-        "T4": { "status": "completed", "note": "test_c11_mobile_responsive.py 37 PASS" },
-        "T5": { "status": "completed", "note": "신규 백엔드 변경 0건 — 모바일 UAT 는 UI/CSS 위주 (DEC-044 정합)" },
-        "T6": { "status": "completed", "note": "ScanInput.tsx 모바일 보강 — min-h-[44px] + sm: prefix + auto* attrs" },
-        "T7": { "status": "completed", "note": "axis_test_full 369 PASS / tsc 0 / eslint 0 / 데스크톱 회귀 baseline 가드" },
-        "T8": { "status": "completed", "note": "DEC-044 등록 + open-questions OQ-MOB-1 등록" }
+        "T1": {
+          "status": "completed",
+          "note": "screen_card C11_Mobile_UAT.md v0.1 골격"
+        },
+        "T2": {
+          "status": "completed",
+          "note": "extension_dependencies.md C11 → C2/C8/C10 선행 자산표 + 진입 게이트"
+        },
+        "T3": {
+          "status": "completed",
+          "note": "mobile_uat.yaml v1.0 동결 — BPI-1~4 + SC-1~3 + DEC-MOB-1/2 + AC-MOB-1~5"
+        },
+        "T4": {
+          "status": "completed",
+          "note": "test_c11_mobile_responsive.py 37 PASS"
+        },
+        "T5": {
+          "status": "completed",
+          "note": "신규 백엔드 변경 0건 — 모바일 UAT 는 UI/CSS 위주 (DEC-044 정합)"
+        },
+        "T6": {
+          "status": "completed",
+          "note": "ScanInput.tsx 모바일 보강 — min-h-[44px] + sm: prefix + auto* attrs"
+        },
+        "T7": {
+          "status": "completed",
+          "note": "axis_test_full 369 PASS / tsc 0 / eslint 0 / 데스크톱 회귀 baseline 가드"
+        },
+        "T8": {
+          "status": "completed",
+          "note": "DEC-044 등록 + open-questions OQ-MOB-1 등록"
+        }
       }
     },
     {
@@ -1747,12 +1802,17 @@
       "name": "통계/리포트 확장",
       "gateId": 5,
       "purpose": "기간별 매출 / 거래처 분석 / 도서 회전율 / 분기 손익 4 신규 화면 (외부 BI 직결 제외)",
-      "summary": "확장 라인 v0.2 Phase 1 마감 (2026-04-20) + RBAC 시드 정합 (2026-04-21) + 운영·통계 Phase2 승격(2026-04-26). 4 신규 endpoints (STAT-1~4) + 4 permission_keys (F50/F51e/F52e/F53e). 신규 SQL 0건 — stats_service 가 reports_service / settlement_service 만 호출 (DEC-040/044 정합). `web_admin.json::role-admin` 에 `admin.stats.*` 4종 명시 등재(도서 회전율 F52e). Recharts 4 화면(Sobo50/51/52/53) phase1 승격. 외부 BI/ETL/DW 직결 ❌.",
+      "summary": "확장 라인 v0.2 Phase 1 마감 + 2026-04-29 통계 공통 조회 UX 보강. 4 신규 endpoints(STAT-1~4) + Sobo43 publisher stats, hcode 미입력 시 전체 조회, 표준 page 메타/상단 페이저, 신규 SQL 0건 정책 유지.",
       "delphi": {
         "primary_form": "Sobo50/51/52/53/54/55 (Phase 1 미포팅)",
         "primary_unit": "(분석 PENDING)",
         "dfm": "(분석 PENDING)",
-        "related_forms": ["Sobo50.dfm", "Sobo51.dfm", "Sobo52.dfm", "Sobo53.dfm"]
+        "related_forms": [
+          "Sobo50.dfm",
+          "Sobo51.dfm",
+          "Sobo52.dfm",
+          "Sobo53.dfm"
+        ]
       },
       "permission_keys": [
         "F50 admin.stats.sales (신규)",
@@ -1766,39 +1826,76 @@
           "/stats/sales-period",
           "/stats/customer-analysis",
           "/stats/book-turnover",
-          "/stats/quarterly-summary"
+          "/stats/quarterly-summary",
+          "/stats/monthly",
+          "/stats/customer",
+          "/stats/book",
+          "/stats/publisher"
         ],
         "endpoints": [
           "GET /api/v1/stats/sales-period",
           "GET /api/v1/stats/customer-analysis",
           "GET /api/v1/stats/book-turnover",
-          "GET /api/v1/stats/quarterly-summary"
+          "GET /api/v1/stats/quarterly-summary",
+          "GET /api/v1/stats/publisher"
         ],
         "backend": [
           "도서물류관리프로그램/backend/app/routers/stats.py (4 endpoint + require_permission 4종)",
-          "도서물류관리프로그램/backend/app/services/stats_service.py (신규 SQL 0건 — reports_service/settlement_service 재사용)"
+          "도서물류관리프로그램/backend/app/services/stats_service.py (신규 SQL 0건 — reports_service/settlement_service 재사용)",
+          "도서물류관리프로그램/backend/app/routers/stats.py (optional hcode + limit/offset + publisher endpoint)",
+          "도서물류관리프로그램/backend/app/services/stats_service.py (표준 page 메타 + Sobo43 publisher 집계)"
         ],
         "frontend": [
           "도서물류관리프로그램/frontend/src/app/(app)/stats/{sales-period,customer-analysis,book-turnover,quarterly-summary}/page.tsx (phase1 — recharts 4 화면)",
           "도서물류관리프로그램/frontend/src/components/stats/{stats-filter-bar,stats-banners,charts}.tsx (공용)",
           "도서물류관리프로그램/frontend/src/lib/stats-api.ts",
-          "도서물류관리프로그램/frontend/src/i18n/messages/c13.ko.json"
+          "도서물류관리프로그램/frontend/src/i18n/messages/c13.ko.json",
+          "도서물류관리프로그램/frontend/src/app/(app)/stats/{monthly,customer,book,publisher}/page.tsx",
+          "도서물류관리프로그램/frontend/src/components/data-grid/data-grid-pager.tsx (상단 페이저 재사용)",
+          "test/test_stats_optional_paging.py"
         ]
       },
-      "contract": "migration/contracts/stats_reports.yaml v1.0.0 (frozen)",
-      "testpack": "test/test_c13_stats_phase1.py (13 PASS — 정적 8 + 런타임 5) + test/test_c13_stats_phase2_fe.py (FE 정적 회귀)",
+      "contract": "migration/contracts/stats_reports.yaml v1.0.0 frozen + 2026-04-29 optional-filter/paging addendum",
+      "testpack": "migration/test-cases/stats_reports.json v1.1.0-phase1 + test/test_stats_optional_paging.py",
       "subscenarios_absorbed": [],
       "extensionLine": true,
-      "constraints": ["외부 BI 도구 (Tableau/PowerBI) 직결 제외", "신규 SQL 0건 정책"],
+      "constraints": [
+        "외부 BI 도구 (Tableau/PowerBI) 직결 제외",
+        "신규 SQL 0건 정책"
+      ],
       "tasks": {
-        "T1": { "status": "completed", "note": "screen_card C13_Stats_Reports.md v0.1 골격 + stats_inventory.md (Sobo50~55 인벤토리)" },
-        "T2": { "status": "completed", "note": "stats_inventory.md §2 — 4 endpoint × 기존 service 재사용 매핑 (신규 SQL 0건 검증)" },
-        "T3": { "status": "completed", "note": "stats_reports.yaml v1.0 동결 — DEC-STAT-1/2 + AC-STAT-1~5 + PBP-1~3" },
-        "T4": { "status": "completed", "note": "test_c13_stats_phase1.py 13 PASS — TC-C13-S-08 web_admin 시드(admin.stats.*) 정합" },
-        "T5": { "status": "completed", "note": "stats_service.py + stats router (4 endpoint, require_permission 4종)" },
-        "T6": { "status": "completed", "note": "Phase 2 — recharts 4 화면 (Sobo50/51/52/53) + 공용 필터/배너/차트 + lib/stats-api + c13.ko.json + form-registry. tsc 0 error." },
-        "T7": { "status": "completed", "note": "신규 SQL 0건 grep 가드 PASS + DEC-041 표준 응답 정합 + FE 정적 회귀(test_c13_stats_phase2_fe.py) phase1 승격 기준으로 고정" },
-        "T8": { "status": "completed", "note": "DEC-044 등록 + permission-keys-catalog §4 등록(F50/F51e/F52e/F53e) + 2026-04-26 form-registry Sobo50/51/52/53_stats phase1 승격" }
+        "T1": {
+          "status": "completed",
+          "note": "screen_card C13_Stats_Reports.md v0.1 골격 + stats_inventory.md (Sobo50~55 인벤토리)"
+        },
+        "T2": {
+          "status": "completed",
+          "note": "stats_inventory.md §2 — 4 endpoint × 기존 service 재사용 매핑 (신규 SQL 0건 검증)"
+        },
+        "T3": {
+          "status": "completed",
+          "note": "stats_reports.yaml addendum — optional hcode means all + DEC-024 page meta + STAT-PUB"
+        },
+        "T4": {
+          "status": "completed",
+          "note": "stats_reports.json v1.1.0 + test_stats_optional_paging.py"
+        },
+        "T5": {
+          "status": "completed",
+          "note": "stats_service/stats router optional hcode + limit/offset + publisher endpoint (신규 SQL 0건 유지)"
+        },
+        "T6": {
+          "status": "completed",
+          "note": "통계 화면 DataGridPager 상단 배치 + hcode 선택 입력 + Sobo43 placeholder 제거"
+        },
+        "T7": {
+          "status": "completed",
+          "note": "py_compile · npm typecheck · stats optional paging 회귀로 검증"
+        },
+        "T8": {
+          "status": "completed",
+          "note": "2026-04-29 통계 3종+Sobo43 phase2 카드 T1~T8 done 동기화"
+        }
       }
     },
     {
@@ -1822,7 +1919,10 @@
       ],
       "db_impact": "신규 SQL 0건 — audit 통합 뷰는 in-memory ring buffer (audit_logger handler subscribe). Prometheus 메트릭은 in-memory 카운터.",
       "web": {
-        "routes": ["/admin/ops (운영 알림 배너)", "/admin/audit (통합 감사 뷰)"],
+        "routes": [
+          "/admin/ops (운영 알림 배너)",
+          "/admin/audit (통합 감사 뷰)"
+        ],
         "endpoints": [
           "GET /api/v1/health/full (DM-1~3 매핑)",
           "GET /metrics (Prometheus exposition)",
@@ -1845,16 +1945,45 @@
       "testpack": "test/test_c14_ops_phase1.py (13 PASS — 정적 7 + 런타임 6) + test/test_c14_ops_phase2_fe.py (FE 정적 회귀)",
       "subscenarios_absorbed": [],
       "extensionLine": true,
-      "constraints": ["외부 SaaS APM (Datadog/NewRelic/Sentry 호스티드) 제외", "외부 알림 채널 (Slack/Teams/PagerDuty) 제외", "외부 로그 집계 (ELK 호스티드/Splunk) 제외", "라벨 카디널리티 정책 (≤ 50 unique value/metric)"],
+      "constraints": [
+        "외부 SaaS APM (Datadog/NewRelic/Sentry 호스티드) 제외",
+        "외부 알림 채널 (Slack/Teams/PagerDuty) 제외",
+        "외부 로그 집계 (ELK 호스티드/Splunk) 제외",
+        "라벨 카디널리티 정책 (≤ 50 unique value/metric)"
+      ],
       "tasks": {
-        "T1": { "status": "completed", "note": "screen_card C14_Ops_Monitoring.md v0.1 골격" },
-        "T2": { "status": "completed", "note": "extension_dependencies.md C14 → C10 권한/audit_service 의존 등록" },
-        "T3": { "status": "completed", "note": "ops_monitoring.yaml v1.0 동결 — DEC-OPS-1/2/3 + AC-OPS-1~5 + DM-1~3 + 라벨 정책" },
-        "T4": { "status": "completed", "note": "test_c14_ops_phase1.py 13 PASS" },
-        "T5": { "status": "completed", "note": "ops_service.py + ops router (4 endpoint, 3 권한 가드, ETag DEC-042)" },
-        "T6": { "status": "completed", "note": "Phase 2 — admin/{ops,audit} 페이지 + GlobalAlertBanner(60s 저빈도 폴링, document.hidden pause) + ETag dismiss 정합 (DEC-042) + /metrics 동일 출처 프록시. tsc 0 error." },
-        "T7": { "status": "completed", "note": "신규 SQL 0건 + 라벨 카디널리티 forbidden_label_keys 가드 PASS + FE 정적 회귀(test_c14_ops_phase2_fe.py) phase1 승격 기준으로 고정" },
-        "T8": { "status": "completed", "note": "DEC-044 등록 + permission-keys-catalog §4 등록(F90/F91/F92) + 2026-04-26 form-registry WebAdmOps/WebAdmAudit phase1 승격" }
+        "T1": {
+          "status": "completed",
+          "note": "screen_card C14_Ops_Monitoring.md v0.1 골격"
+        },
+        "T2": {
+          "status": "completed",
+          "note": "extension_dependencies.md C14 → C10 권한/audit_service 의존 등록"
+        },
+        "T3": {
+          "status": "completed",
+          "note": "ops_monitoring.yaml v1.0 동결 — DEC-OPS-1/2/3 + AC-OPS-1~5 + DM-1~3 + 라벨 정책"
+        },
+        "T4": {
+          "status": "completed",
+          "note": "test_c14_ops_phase1.py 13 PASS"
+        },
+        "T5": {
+          "status": "completed",
+          "note": "ops_service.py + ops router (4 endpoint, 3 권한 가드, ETag DEC-042)"
+        },
+        "T6": {
+          "status": "completed",
+          "note": "Phase 2 — admin/{ops,audit} 페이지 + GlobalAlertBanner(60s 저빈도 폴링, document.hidden pause) + ETag dismiss 정합 (DEC-042) + /metrics 동일 출처 프록시. tsc 0 error."
+        },
+        "T7": {
+          "status": "completed",
+          "note": "신규 SQL 0건 + 라벨 카디널리티 forbidden_label_keys 가드 PASS + FE 정적 회귀(test_c14_ops_phase2_fe.py) phase1 승격 기준으로 고정"
+        },
+        "T8": {
+          "status": "completed",
+          "note": "DEC-044 등록 + permission-keys-catalog §4 등록(F90/F91/F92) + 2026-04-26 form-registry WebAdmOps/WebAdmAudit phase1 승격"
+        }
       }
     },
     {
@@ -1889,16 +2018,44 @@
       "testpack": "test/test_c15_cutover_phase1.py (13 PASS) + test/test_c15_cutover_phase2_adapter.py (S/R/G 회귀)",
       "subscenarios_absorbed": [],
       "extensionLine": true,
-      "constraints": ["외부 마이그레이션 SaaS (AWS DMS / Azure Migrate) 제외", "외부 데이터 변환 서비스 제외", "OQ-IN-1/DBL-001~003 cut-over 차단 게이트 — 미해소 시 진입 불가"],
+      "constraints": [
+        "외부 마이그레이션 SaaS (AWS DMS / Azure Migrate) 제외",
+        "외부 데이터 변환 서비스 제외",
+        "OQ-IN-1/DBL-001~003 cut-over 차단 게이트 — 미해소 시 진입 불가"
+      ],
       "tasks": {
-        "T1": { "status": "completed", "note": "screen_card C15_Cutover.md v0.1 골격" },
-        "T2": { "status": "completed", "note": "extension_dependencies.md C15 → C5/C8/C10 선행 의존 + open-questions OQ 차단 게이트 명시" },
-        "T3": { "status": "completed", "note": "cutover.yaml v1.0 동결 — VC-1~5 + 7 핵심 시나리오 + 롤백 RTO ≤ 30min + OQ 차단" },
-        "T4": { "status": "completed", "note": "test_c15_cutover_phase1.py 13 PASS + CLI dry-run 15 PASS" },
-        "T5": { "status": "completed", "note": "scripts/cutover_validator.py — DataSource 추상 + InMemoryDataSource + 5종 체크" },
-        "T6": { "status": "completed", "note": "Phase 2 — scripts/adapters (Mysql/SqlServer, 시스템 쿼리 only) + scripts/cutover_run.py (P1~P6 + GATE/confirm/rollback) + cutover.yaml phase2_runtime + DEC-CUT-4 — test_c15_cutover_phase2_adapter.py PASS" },
-        "T7": { "status": "completed", "note": "신규 SQL 0건 + 외부 SaaS 0 imports + RTO 30min 가드 PASS" },
-        "T8": { "status": "completed", "note": "DEC-044 등록 + open-questions §확장 라인 cut-over 차단 게이트 등록" }
+        "T1": {
+          "status": "completed",
+          "note": "screen_card C15_Cutover.md v0.1 골격"
+        },
+        "T2": {
+          "status": "completed",
+          "note": "extension_dependencies.md C15 → C5/C8/C10 선행 의존 + open-questions OQ 차단 게이트 명시"
+        },
+        "T3": {
+          "status": "completed",
+          "note": "cutover.yaml v1.0 동결 — VC-1~5 + 7 핵심 시나리오 + 롤백 RTO ≤ 30min + OQ 차단"
+        },
+        "T4": {
+          "status": "completed",
+          "note": "test_c15_cutover_phase1.py 13 PASS + CLI dry-run 15 PASS"
+        },
+        "T5": {
+          "status": "completed",
+          "note": "scripts/cutover_validator.py — DataSource 추상 + InMemoryDataSource + 5종 체크"
+        },
+        "T6": {
+          "status": "completed",
+          "note": "Phase 2 — scripts/adapters (Mysql/SqlServer, 시스템 쿼리 only) + scripts/cutover_run.py (P1~P6 + GATE/confirm/rollback) + cutover.yaml phase2_runtime + DEC-CUT-4 — test_c15_cutover_phase2_adapter.py PASS"
+        },
+        "T7": {
+          "status": "completed",
+          "note": "신규 SQL 0건 + 외부 SaaS 0 imports + RTO 30min 가드 PASS"
+        },
+        "T8": {
+          "status": "completed",
+          "note": "DEC-044 등록 + open-questions §확장 라인 cut-over 차단 게이트 등록"
+        }
       }
     }
   ],

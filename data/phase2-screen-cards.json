@@ -1,16 +1,40 @@
 {
   "$comment": "phase2 화면별 단계(T1~T8) 카드. 원칙적으로 도서물류관리프로그램/frontend/src/lib/form-registry.ts FORM_REGISTRY 의 phase==='phase2' 와 1:1 이며, phase1 승격 직후에는 T7/T8 done 증적을 남기기 위해 1 사이클 동안 promoted 항목을 보존할 수 있다. 2026-04-22 C3 입고내역서 2종(Sobo54/Sobo57) phase1 승격으로 본 목록에서 제거. 시나리오(input/process/output/eta) 는 form-registry 의 단일 원천을 거울. T-phase 는 dashboard 가 자체 트래킹. 2026-04-23: docs/menu-roadmap-waves.md 신설 — 향후 본 카드의 'wave' / 'crudParity' 필드는 form-registry 의 roadmapWave/crudParity 와 1:1 동기화한다(drift 발생 시 dashboard 빌드 시 경고). 1차에는 form-registry 만 단일 원천으로 두고 본 JSON 은 거울 — 화면별 'wave' / 'crud' 키 추가는 다음 사이클에 일괄 채움 예정.",
   "title": "Phase 2 30 화면 — 단계 카드 (T1~T8)",
-  "updatedAt": "2026-04-29 — Sobo16_special·Sobo28_delivery 실제 구현 완료(T4~T8 done) 및 form-registry phase1 동기화. 직전: Sobo58·Sobo32_ledger·Sobo32_1_ledger T4/T7/T8 done 동기화.",
+  "updatedAt": "2026-04-29 — 통계 화면 공통 옵션 필터(미입력=전체) + 표준 페이징 + 상단 페이저 + Sobo43 출판사통계 placeholder 제거. 직전: Sobo16_special·Sobo28_delivery phase1 동기화.",
   "stages": [
-    { "id": "T1", "label": "T1 화면카드" },
-    { "id": "T2", "label": "T2 SQL/이벤트 추출" },
-    { "id": "T3", "label": "T3 Contract" },
-    { "id": "T4", "label": "T4 TestPack" },
-    { "id": "T5", "label": "T5 백엔드" },
-    { "id": "T6", "label": "T6 프론트" },
-    { "id": "T7", "label": "T7 5축 회귀" },
-    { "id": "T8", "label": "T8 동결+승격" }
+    {
+      "id": "T1",
+      "label": "T1 화면카드"
+    },
+    {
+      "id": "T2",
+      "label": "T2 SQL/이벤트 추출"
+    },
+    {
+      "id": "T3",
+      "label": "T3 Contract"
+    },
+    {
+      "id": "T4",
+      "label": "T4 TestPack"
+    },
+    {
+      "id": "T5",
+      "label": "T5 백엔드"
+    },
+    {
+      "id": "T6",
+      "label": "T6 프론트"
+    },
+    {
+      "id": "T7",
+      "label": "T7 5축 회귀"
+    },
+    {
+      "id": "T8",
+      "label": "T8 동결+승격"
+    }
   ],
   "legend": {
     "done": "5축 PASS — phase1 승격 가능",
@@ -20,149 +44,661 @@
   },
   "screens": [
     {
-      "id": "Sobo58", "caption": "기간별반품내역서", "menu": "returns", "route": "/returns/period-report", "legacy_form": "Sobo58.dfm",
-      "scenario": { "input": "시작일 ~ 종료일", "process": "반품 헤더+라인 BETWEEN 집계", "output": "기간 반품 명세 + 출판사별 합계", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo58",
+      "caption": "기간별반품내역서",
+      "menu": "returns",
+      "route": "/returns/period-report",
+      "legacy_form": "Sobo58.dfm",
+      "scenario": {
+        "input": "시작일 ~ 종료일",
+        "process": "반품 헤더+라인 BETWEEN 집계",
+        "output": "기간 반품 명세 + 출판사별 합계",
+        "eta": "Phase 1 (2026-04-W4)"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo46_billing", "caption": "청구서 인쇄(미리보기)", "menu": "settlement", "route": "/settlement/billing/[billingKey]/print", "legacy_form": "Sobo46.dfm",
-      "scenario": { "input": "청구키(거래처+년월)", "process": "S2_Ssum 행 + Y/N 마감 가드 적용", "output": "HTML 미리보기 + PDF 인쇄 다운로드", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo46_billing",
+      "caption": "청구서 인쇄(미리보기)",
+      "menu": "settlement",
+      "route": "/settlement/billing/[billingKey]/print",
+      "legacy_form": "Sobo46.dfm",
+      "scenario": {
+        "input": "청구키(거래처+년월)",
+        "process": "S2_Ssum 행 + Y/N 마감 가드 적용",
+        "output": "HTML 미리보기 + PDF 인쇄 다운로드",
+        "eta": "Phase 1 (2026-04-W4)"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo49_tax", "caption": "세금계산서 발행", "menu": "settlement", "route": "/settlement/tax-invoice", "legacy_form": "Sobo49.dfm",
-      "scenario": { "input": "거래처+년월", "process": "청구금액 + 사업자번호 + 세액 계산", "output": "세금계산서 양식 미리보기 + 발행번호", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo49_tax",
+      "caption": "세금계산서 발행",
+      "menu": "settlement",
+      "route": "/settlement/tax-invoice",
+      "legacy_form": "Sobo49.dfm",
+      "scenario": {
+        "input": "거래처+년월",
+        "process": "청구금액 + 사업자번호 + 세액 계산",
+        "output": "세금계산서 양식 미리보기 + 발행번호",
+        "eta": "Phase 1 (2026-04-W4)"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "WebAdmAuditRotate", "caption": "감사 비밀번호 회전", "menu": "admin", "route": "/admin/audit-rotate",
-      "scenario": { "input": "신·구 감사 비밀번호", "process": "이전 감사 토큰 폐기 + bcrypt 해시 저장", "output": "회전 결과 + 다음 만기일", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "WebAdmAuditRotate",
+      "caption": "감사 비밀번호 회전",
+      "menu": "admin",
+      "route": "/admin/audit-rotate",
+      "scenario": {
+        "input": "신·구 감사 비밀번호",
+        "process": "이전 감사 토큰 폐기 + bcrypt 해시 저장",
+        "output": "회전 결과 + 다음 만기일",
+        "eta": "Phase 1 (2026-04-W4)"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo50_stats", "caption": "기간별 매출 분석", "menu": "statistics", "route": "/stats/sales-period",
-      "scenario": { "input": "기간 + 그룹 단위(일/월/분기)", "process": "S1_Ssub 매출 합계 GROUP BY 단위", "output": "라인 + 막대 차트 + 합계표", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo50_stats",
+      "caption": "기간별 매출 분석",
+      "menu": "statistics",
+      "route": "/stats/sales-period",
+      "scenario": {
+        "input": "기간 + 그룹 단위(일/월/분기)",
+        "process": "S1_Ssub 매출 합계 GROUP BY 단위",
+        "output": "라인 + 막대 차트 + 합계표",
+        "eta": "Phase 1 (2026-04-W4)"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo51_stats", "caption": "거래처별 판매 분석", "menu": "statistics", "route": "/stats/customer-analysis",
-      "scenario": { "input": "기간 + 거래처 필터", "process": "거래처별 매출/반품/잔량 합계", "output": "거래처 Top N + 누적 추이 차트", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo51_stats",
+      "caption": "거래처별 판매 분석",
+      "menu": "statistics",
+      "route": "/stats/customer-analysis",
+      "scenario": {
+        "input": "기간 + 거래처 필터",
+        "process": "거래처별 매출/반품/잔량 합계",
+        "output": "거래처 Top N + 누적 추이 차트",
+        "eta": "Phase 1 (2026-04-W4)"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo52_stats", "caption": "도서 회전율", "menu": "statistics", "route": "/stats/book-turnover",
-      "scenario": { "input": "기간 + 도서코드 구간", "process": "재고/매출 회전 = 매출수 / 평균재고", "output": "도서별 회전율 표 + 상위 회전 차트", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo52_stats",
+      "caption": "도서 회전율",
+      "menu": "statistics",
+      "route": "/stats/book-turnover",
+      "scenario": {
+        "input": "기간 + 도서코드 구간",
+        "process": "재고/매출 회전 = 매출수 / 평균재고",
+        "output": "도서별 회전율 표 + 상위 회전 차트",
+        "eta": "Phase 1 (2026-04-W4)"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo53_stats", "caption": "분기/반기 손익", "menu": "statistics", "route": "/stats/quarterly-summary",
-      "scenario": { "input": "년도 + 분기/반기 토글", "process": "매출 - 반품 - 물류비 = 마진", "output": "분기 손익 카드 + 추이 그래프", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo53_stats",
+      "caption": "분기/반기 손익",
+      "menu": "statistics",
+      "route": "/stats/quarterly-summary",
+      "scenario": {
+        "input": "년도 + 분기/반기 토글",
+        "process": "매출 - 반품 - 물류비 = 마진",
+        "output": "분기 손익 카드 + 추이 그래프",
+        "eta": "Phase 1 (2026-04-W4)"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "WebAdmOps", "caption": "운영 모니터링", "menu": "admin", "route": "/admin/ops",
-      "scenario": { "input": "(자동 새로고침)", "process": "/health/full + /metrics 폴링", "output": "DB·풀·라우터 응답시간 카드 + 알람", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "WebAdmOps",
+      "caption": "운영 모니터링",
+      "menu": "admin",
+      "route": "/admin/ops",
+      "scenario": {
+        "input": "(자동 새로고침)",
+        "process": "/health/full + /metrics 폴링",
+        "output": "DB·풀·라우터 응답시간 카드 + 알람",
+        "eta": "Phase 1 (2026-04-W4)"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "WebAdmAudit", "caption": "감사 통합 뷰", "menu": "admin", "route": "/admin/audit",
-      "scenario": { "input": "기간 + 도메인 필터", "process": "audit_settlement + audit_returns 통합 조회", "output": "감사 이벤트 타임라인 + CSV 다운로드", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "WebAdmAudit",
+      "caption": "감사 통합 뷰",
+      "menu": "admin",
+      "route": "/admin/audit",
+      "scenario": {
+        "input": "기간 + 도메인 필터",
+        "process": "audit_settlement + audit_returns 통합 조회",
+        "output": "감사 이벤트 타임라인 + CSV 다운로드",
+        "eta": "Phase 1 (2026-04-W4)"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo67_status", "caption": "출고현황", "menu": "shipment", "route": "/outbound/status",
-      "scenario": { "input": "기간 + 거래처(선택) + 도서구분(창고 B 기본 / 본사 A / 전체)", "process": "GET /api/v1/outbound/shipment-status (storeKind=A|B|ALL, 서버 집계·페이징)", "output": "일자×거래처 매트릭스 + 합계/취소 카운트, Sobo67 Panel102 토글 복원", "eta": "phase1 정식 승격(2026-04-21) — 본·창고 토글 복원 + count_grouped + in_clause_lookup 청크 적용 5축 PASS" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo67_status",
+      "caption": "출고현황",
+      "menu": "shipment",
+      "route": "/outbound/status",
+      "scenario": {
+        "input": "기간 + 거래처(선택) + 도서구분(창고 B 기본 / 본사 A / 전체)",
+        "process": "GET /api/v1/outbound/shipment-status (storeKind=A|B|ALL, 서버 집계·페이징)",
+        "output": "일자×거래처 매트릭스 + 합계/취소 카운트, Sobo67 Panel102 토글 복원",
+        "eta": "phase1 정식 승격(2026-04-21) — 본·창고 토글 복원 + count_grouped + in_clause_lookup 청크 적용 5축 PASS"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo44_inv", "caption": "재고현황", "menu": "inventory", "route": "/inventory/status",
-      "scenario": { "input": "기간(필수) + 거래처/지사·도서코드(선택, 비우면 전체)", "process": "도서별 입출고 합산 → 잔량 (DEC-033 (f) 풀스캔 가드: LIMIT 5,000 + truncated, (g) DataGridPager 일자 단위 순차 페이지네이션)", "output": "도서별 잔량 + 부족재고 강조 + truncated 배너 + 페이지 메타", "eta": "phase1 정식 승격(2026-04-21) — 사이드바 초록 체크" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo44_inv",
+      "caption": "재고현황",
+      "menu": "inventory",
+      "route": "/inventory/status",
+      "scenario": {
+        "input": "기간(필수) + 거래처/지사·도서코드(선택, 비우면 전체)",
+        "process": "도서별 입출고 합산 → 잔량 (DEC-033 (f) 풀스캔 가드: LIMIT 5,000 + truncated, (g) DataGridPager 일자 단위 순차 페이지네이션)",
+        "output": "도서별 잔량 + 부족재고 강조 + truncated 배너 + 페이지 메타",
+        "eta": "phase1 정식 승격(2026-04-21) — 사이드바 초록 체크"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo32_ledger", "caption": "거래처원장", "menu": "ledger", "route": "/ledger/customer",
-      "scenario": { "input": "거래처(필수) + 기간", "process": "거래명세서 누적 → 일자별 잔액", "output": "전표/취소/누적 잔액 표", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo32_ledger",
+      "caption": "거래처원장",
+      "menu": "ledger",
+      "route": "/ledger/customer",
+      "scenario": {
+        "input": "거래처(필수) + 기간",
+        "process": "거래명세서 누적 → 일자별 잔액",
+        "output": "전표/취소/누적 잔액 표",
+        "eta": "Phase 1 (2026-04-W4)"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo32_1_ledger", "caption": "통합 거래처원장", "menu": "ledger", "route": "/ledger/customer-integrated",
-      "scenario": { "input": "기간(전체 거래처)", "process": "거래처별 매출/취소 누적", "output": "거래처 행 + 합계", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo32_1_ledger",
+      "caption": "통합 거래처원장",
+      "menu": "ledger",
+      "route": "/ledger/customer-integrated",
+      "scenario": {
+        "input": "기간(전체 거래처)",
+        "process": "거래처별 매출/취소 누적",
+        "output": "거래처 행 + 합계",
+        "eta": "Phase 1 (2026-04-W4)"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo33_ledger", "caption": "도서수불장", "menu": "inventory", "route": "/ledger/book",
-      "scenario": { "input": "기간(필수) + 거래처·도서코드(선택, 비우면 전체)", "process": "입고/판매/반품 합산 → 잔량 흐름 (DEC-033 (f) LIMIT 5,000+truncated, 기존 hcode='%' 트릭 제거 / (g) DataGridPager 일자 단위 순차 페이지네이션)", "output": "일자별 수불 + 누적 잔량 + truncated 배너 + 페이지 메타", "eta": "phase1 정식 승격(2026-04-21) — 사이드바 초록 체크" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo33_ledger",
+      "caption": "도서수불장",
+      "menu": "inventory",
+      "route": "/ledger/book",
+      "scenario": {
+        "input": "기간(필수) + 거래처·도서코드(선택, 비우면 전체)",
+        "process": "입고/판매/반품 합산 → 잔량 흐름 (DEC-033 (f) LIMIT 5,000+truncated, 기존 hcode='%' 트릭 제거 / (g) DataGridPager 일자 단위 순차 페이지네이션)",
+        "output": "일자별 수불 + 누적 잔량 + truncated 배너 + 페이지 메타",
+        "eta": "phase1 정식 승격(2026-04-21) — 사이드바 초록 체크"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo33_1_ledger", "caption": "통합 도서수불장", "menu": "inventory", "route": "/ledger/book-integrated",
-      "scenario": { "input": "기간(필수) + 거래처·도서코드 구간(선택, 비우면 전체 거래처 합계)", "process": "도서별 합계(입고/판매/반품) — DEC-033 (f) SQL-INQ-7/8 hcode 절 동적 제거 / (g) book_sales 페이지 메타를 DataGridPager 로 노출(기존 fetchAllPages 자동 누적 → 순차 페이지)", "output": "도서별 잔량 표 + 합계 + 페이지 메타", "eta": "phase1 정식 승격(2026-04-21) — 사이드바 초록 체크" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo33_1_ledger",
+      "caption": "통합 도서수불장",
+      "menu": "inventory",
+      "route": "/ledger/book-integrated",
+      "scenario": {
+        "input": "기간(필수) + 거래처·도서코드 구간(선택, 비우면 전체 거래처 합계)",
+        "process": "도서별 합계(입고/판매/반품) — DEC-033 (f) SQL-INQ-7/8 hcode 절 동적 제거 / (g) book_sales 페이지 메타를 DataGridPager 로 노출(기존 fetchAllPages 자동 누적 → 순차 페이지)",
+        "output": "도서별 잔량 표 + 합계 + 페이지 메타",
+        "eta": "phase1 정식 승격(2026-04-21) — 사이드바 초록 체크"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo48_compare", "caption": "장부대조", "menu": "ledger", "route": "/ledger/comparison", "legacy_form": "Sobo48.dfm",
-      "scenario": { "input": "거래처 + 기간", "process": "거래처 ↔ 본사 장부 차액 산출", "output": "차액 표 + 차액 사유", "eta": "Phase 2 (2026-Q2)", "blockers": ["레거시 단일 SQL 미확정", "신규 SQL 0 정책(DEC-040)"] },
-      "tasks": { "T1": "done", "T2": "in_progress", "T3": "blocked", "T4": "pending", "T5": "pending", "T6": "in_progress", "T7": "pending", "T8": "pending" }
+      "id": "Sobo48_compare",
+      "caption": "장부대조",
+      "menu": "ledger",
+      "route": "/ledger/comparison",
+      "legacy_form": "Sobo48.dfm",
+      "scenario": {
+        "input": "거래처 + 기간",
+        "process": "거래처 ↔ 본사 장부 차액 산출",
+        "output": "차액 표 + 차액 사유",
+        "eta": "Phase 2 (2026-Q2)",
+        "blockers": [
+          "레거시 단일 SQL 미확정",
+          "신규 SQL 0 정책(DEC-040)"
+        ]
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "in_progress",
+        "T3": "blocked",
+        "T4": "pending",
+        "T5": "pending",
+        "T6": "in_progress",
+        "T7": "pending",
+        "T8": "pending"
+      }
     },
     {
-      "id": "Sobo16_special", "caption": "특별관리", "menu": "master", "route": "/master/special", "legacy_form": "Sobo16.dfm",
-      "scenario": { "input": "출판사 Hcode + 거래처/도서 선택 축", "process": "GET/PATCH /masters/special — G6_Ggeo 목록 + Grat1/Gssum 부분 수정", "output": "특별관리 거래처/도서 링크 목록", "eta": "phase1 정식 승격(2026-04-29)", "implementation_plan": "docs/master-special-implementation-plan.md" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo16_special",
+      "caption": "특별관리",
+      "menu": "master",
+      "route": "/master/special",
+      "legacy_form": "Sobo16.dfm",
+      "scenario": {
+        "input": "출판사 Hcode + 거래처/도서 선택 축",
+        "process": "GET/PATCH /masters/special — G6_Ggeo 목록 + Grat1/Gssum 부분 수정",
+        "output": "특별관리 거래처/도서 링크 목록",
+        "eta": "phase1 정식 승격(2026-04-29)",
+        "implementation_plan": "docs/master-special-implementation-plan.md"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo21_status_list", "caption": "거래현황(LIST)", "menu": "transactions", "route": "/transactions/status?view=list",
-      "scenario": { "input": "거래처(선택) + 기간", "process": "거래명세서 행 페이지네이션 누적 (canonical /sales-statement + facade /transactions/status?view=list 동일 위임, useListSession 보존)", "output": "전표 단위 행 리스트 + DataGridPager 서버 페이징", "eta": "phase1 정식 승격(2026-04-22) — 사이드바 초록 체크" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo21_status_list",
+      "caption": "거래현황(LIST)",
+      "menu": "transactions",
+      "route": "/transactions/status?view=list",
+      "scenario": {
+        "input": "거래처(선택) + 기간",
+        "process": "거래명세서 행 페이지네이션 누적 (canonical /sales-statement + facade /transactions/status?view=list 동일 위임, useListSession 보존)",
+        "output": "전표 단위 행 리스트 + DataGridPager 서버 페이징",
+        "eta": "phase1 정식 승격(2026-04-22) — 사이드바 초록 체크"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo21_status_summary", "caption": "거래현황(요약)", "menu": "transactions", "route": "/transactions/status?view=summary",
-      "scenario": { "input": "거래처(선택) + 기간", "process": "거래처별 전표수/수량/금액 합계 (mysql3 호환을 위해 fetch 후 Python groupBy=customer 집계, summarize_sales_statements_by_customer)", "output": "거래처 행 + 금액 내림차순 + truncated 배너 + 페이지 메타", "eta": "phase1 정식 승격(2026-04-22) — 사이드바 초록 체크" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo21_status_summary",
+      "caption": "거래현황(요약)",
+      "menu": "transactions",
+      "route": "/transactions/status?view=summary",
+      "scenario": {
+        "input": "거래처(선택) + 기간",
+        "process": "거래처별 전표수/수량/금액 합계 (mysql3 호환을 위해 fetch 후 Python groupBy=customer 집계, summarize_sales_statements_by_customer)",
+        "output": "거래처 행 + 금액 내림차순 + truncated 배너 + 페이지 메타",
+        "eta": "phase1 정식 승격(2026-04-22) — 사이드바 초록 체크"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo21_status_memo", "caption": "거래현황(메모)", "menu": "transactions", "route": "/transactions/status?view=memo",
-      "scenario": { "input": "거래처(선택) + 기간 + memoLike(선택)", "process": "메모 보유 전표 필터 + memoLike LIKE 검색 (mysql3 EXISTS 회피 — S1_Memo 키 fetch 후 Python 교집합, _list_with_memo_filter)", "output": "전표 + 메모 미리보기(memo_preview) + 페이지 메타", "eta": "phase1 정식 승격(2026-04-22) — 사이드바 초록 체크" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo21_status_memo",
+      "caption": "거래현황(메모)",
+      "menu": "transactions",
+      "route": "/transactions/status?view=memo",
+      "scenario": {
+        "input": "거래처(선택) + 기간 + memoLike(선택)",
+        "process": "메모 보유 전표 필터 + memoLike LIKE 검색 (mysql3 EXISTS 회피 — S1_Memo 키 fetch 후 Python 교집합, _list_with_memo_filter)",
+        "output": "전표 + 메모 미리보기(memo_preview) + 페이지 메타",
+        "eta": "phase1 정식 승격(2026-04-22) — 사이드바 초록 체크"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo29_other", "caption": "기타명세서", "menu": "transactions", "route": "/transactions/other", "legacy_form": "Sobo29.dfm",
-      "scenario": { "input": "거래처 + 비정형 행", "process": "비정형 명세 입력 → 인쇄 양식 생성", "output": "기타명세 PDF 미리보기", "eta": "Phase 2 (2026-Q2)", "blockers": ["레거시 폼 단순 출력기 — SQL 미확정"] },
-      "tasks": { "T1": "done", "T2": "in_progress", "T3": "blocked", "T4": "pending", "T5": "pending", "T6": "in_progress", "T7": "pending", "T8": "pending" }
+      "id": "Sobo29_other",
+      "caption": "기타명세서",
+      "menu": "transactions",
+      "route": "/transactions/other",
+      "legacy_form": "Sobo29.dfm",
+      "scenario": {
+        "input": "거래처 + 비정형 행",
+        "process": "비정형 명세 입력 → 인쇄 양식 생성",
+        "output": "기타명세 PDF 미리보기",
+        "eta": "Phase 2 (2026-Q2)",
+        "blockers": [
+          "레거시 폼 단순 출력기 — SQL 미확정"
+        ]
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "in_progress",
+        "T3": "blocked",
+        "T4": "pending",
+        "T5": "pending",
+        "T6": "in_progress",
+        "T7": "pending",
+        "T8": "pending"
+      }
     },
     {
-      "id": "Settle_outstanding", "caption": "미수현황", "menu": "settlement", "route": "/settlement/outstanding",
-      "scenario": { "input": "시작월~종료월 + 거래처(옵션)", "process": "GET /settlement/outstanding 서버 집계 + 페이저", "output": "거래처별 미수 금액 + 합계", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Settle_outstanding",
+      "caption": "미수현황",
+      "menu": "settlement",
+      "route": "/settlement/outstanding",
+      "scenario": {
+        "input": "시작월~종료월 + 거래처(옵션)",
+        "process": "GET /settlement/outstanding 서버 집계 + 페이저",
+        "output": "거래처별 미수 금액 + 합계",
+        "eta": "Phase 1 (2026-04-W4)"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo41_slip", "caption": "입금전표", "menu": "settlement", "route": "/settlement/payment-slip",
-      "scenario": { "input": "거래처 + 일자 범위(옵션)", "process": "입금 목록 조회(settlementCashApi.list) → 전표 카드 + window.print()", "output": "전표 미리보기 + 인쇄", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo41_slip",
+      "caption": "입금전표",
+      "menu": "settlement",
+      "route": "/settlement/payment-slip",
+      "scenario": {
+        "input": "거래처 + 일자 범위(옵션)",
+        "process": "입금 목록 조회(settlementCashApi.list) → 전표 카드 + window.print()",
+        "output": "전표 미리보기 + 인쇄",
+        "eta": "Phase 1 (2026-04-W4)"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo28_delivery", "caption": "택배관리", "menu": "delivery", "route": "/shipping/courier", "legacy_form": "Sobo28.dfm",
-      "scenario": { "input": "거래일자 + Hcode 구간(옵션)", "process": "S1_Ssub+G1_Ggeo 집계 + S1_Memo 조회/저장", "output": "택배 대상 그리드 + 메모", "eta": "phase1 정식 승격(2026-04-29)", "blockers": ["택배사 외부 API 는 별도 후속"] },
-      "tasks": { "T1": "done", "T2": "done", "T3": "done", "T4": "done", "T5": "done", "T6": "done", "T7": "done", "T8": "done" }
+      "id": "Sobo28_delivery",
+      "caption": "택배관리",
+      "menu": "delivery",
+      "route": "/shipping/courier",
+      "legacy_form": "Sobo28.dfm",
+      "scenario": {
+        "input": "거래일자 + Hcode 구간(옵션)",
+        "process": "S1_Ssub+G1_Ggeo 집계 + S1_Memo 조회/저장",
+        "output": "택배 대상 그리드 + 메모",
+        "eta": "phase1 정식 승격(2026-04-29)",
+        "blockers": [
+          "택배사 외부 API 는 별도 후속"
+        ]
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Stats_monthly", "caption": "월별통계", "menu": "statistics", "route": "/stats/monthly",
-      "scenario": { "input": "년도 + (전체/거래처/도서)", "process": "월별 매출/반품 집계", "output": "12개월 카드 + 막대그래프", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "in_progress", "T4": "in_progress", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "id": "Stats_monthly",
+      "caption": "월별통계",
+      "menu": "statistics",
+      "route": "/stats/monthly",
+      "scenario": {
+        "input": "년도 + (전체/거래처/도서)",
+        "process": "월별 매출/반품 집계",
+        "output": "12개월 카드 + 막대그래프",
+        "eta": "phase1 정식 승격(2026-04-29) — 옵션 필터 전체 조회 + 표준 페이징 + 상단 페이저"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo36_stats_route", "caption": "거래처통계(목록)", "menu": "statistics", "route": "/stats/customer",
-      "scenario": { "input": "기간 + 정렬축", "process": "거래처 매출/판매수 합계", "output": "거래처 Top N 표", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "in_progress", "T4": "in_progress", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "id": "Sobo36_stats_route",
+      "caption": "거래처통계(목록)",
+      "menu": "statistics",
+      "route": "/stats/customer",
+      "scenario": {
+        "input": "기간 + 정렬축",
+        "process": "거래처 매출/판매수 합계",
+        "output": "거래처 Top N 표",
+        "eta": "phase1 정식 승격(2026-04-29) — 옵션 필터 전체 조회 + 표준 페이징 + 상단 페이저"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo37_stats_route", "caption": "도서통계(목록)", "menu": "statistics", "route": "/stats/book",
-      "scenario": { "input": "기간 + 도서코드 구간", "process": "도서별 판매수/매출 합계", "output": "도서 판매 표 + Top N", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "done", "T3": "in_progress", "T4": "in_progress", "T5": "done", "T6": "done", "T7": "in_progress", "T8": "pending" }
+      "id": "Sobo37_stats_route",
+      "caption": "도서통계(목록)",
+      "menu": "statistics",
+      "route": "/stats/book",
+      "scenario": {
+        "input": "기간 + 도서코드 구간",
+        "process": "도서별 판매수/매출 합계",
+        "output": "도서 판매 표 + Top N",
+        "eta": "phase1 정식 승격(2026-04-29) — 옵션 필터 전체 조회 + 표준 페이징 + 상단 페이저"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     },
     {
-      "id": "Sobo43_stats_route", "caption": "출판사통계", "menu": "statistics", "route": "/stats/publisher", "legacy_form": "Sobo43.dfm",
-      "scenario": { "input": "기간 + 출판사", "process": "출판사별 매출/반품/잔량 집계", "output": "출판사 Top N + 추이", "eta": "Phase 1 (2026-04-W4)" },
-      "tasks": { "T1": "done", "T2": "in_progress", "T3": "in_progress", "T4": "pending", "T5": "in_progress", "T6": "in_progress", "T7": "pending", "T8": "pending" }
+      "id": "Sobo43_stats_route",
+      "caption": "출판사통계",
+      "menu": "statistics",
+      "route": "/stats/publisher",
+      "legacy_form": "Sobo43.dfm",
+      "scenario": {
+        "input": "기간 + 출판사",
+        "process": "GET /api/v1/stats/publisher — book-sales 재사용 출판사 그룹 집계(신규 SQL 0건)",
+        "output": "출판사별 합계 그리드 + Top N 차트 + 표준 page 메타",
+        "eta": "phase1 정식 승격(2026-04-29) — 옵션 필터 전체 조회 + 표준 페이징 + 상단 페이저"
+      },
+      "tasks": {
+        "T1": "done",
+        "T2": "done",
+        "T3": "done",
+        "T4": "done",
+        "T5": "done",
+        "T6": "done",
+        "T7": "done",
+        "T8": "done"
+      }
     }
   ]
 }
