@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-26 — 정산·인쇄 잔여 재분류: Sobo46_billing/Sobo49_tax/Settle_outstanding/Sobo41_slip(+billing 별칭) form-registry phase1 + TC-ST-P2-32/33. — 직전: 운영·통계 Phase2 승격 마감.",
+  "updatedAt": "2026-04-29 — 허브 대시보드 위젯 설정 UX: JSON prompt 제거·지역 프리셋(bbox)·폼 편집(Sheet) + 회귀 test_dashboard_widget_config_ux.py. — 직전: 2026-04-26 정산·인쇄 잔여 재분류.",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {
@@ -196,7 +196,7 @@
         },
         "T8": {
           "status": "done",
-          "note": "DEC-005~008 모두 1차 포팅 범위 외로 동결(사용자 결정). login.yaml approved v1.1.0. 1차 합격선 단순화: '기존 사용자가 기존 ID/PW 로 로그인'. 2026-04-26 운영 안정화: 현재 정상 로그인 흐름은 유지하고 login_id_index 4 서버 SHOW DATABASES + Id_Logn 스캔, stale SSH/pool 1회 재시도, 대표 계정 스모크 절차를 최소 회귀 가드로 추가"
+          "note": "DEC-005~008 모두 1차 포팅 범위 외로 동결(사용자 결정). login.yaml approved v1.1.0. 1차 합격선 단순화: '기존 사용자가 기존 ID/PW 로 로그인'. 2026-04-26 운영 안정화: login_id_index 4 서버 스캔·SSH/pool 재시도·스모크. 2026-04-29 경로 하드닝: UserInfo/감사/priority fail-safe + test_auth_login_500_safety_net.py"
         }
       }
     },
@@ -362,6 +362,18 @@
             "도서물류관리프로그램/frontend/src/lib/form-store.ts"
           ],
           "verified_by": "tsc 0 error"
+        },
+        {
+          "id": "HOT-APP-3",
+          "date": "2026-04-29",
+          "summary": "대시보드 편집 모드 위젯 설정 UX — `window.prompt` JSON 입력 제거, Sheet 패널에서 교통·날씨·유가 등 폼 선택 + 지역명 프리셋으로 ITS bbox(minX~maxY)·기상(lat/lon/nx/ny) 일괄 반영. 접이식 고급 JSON 유지.",
+          "files": [
+            "도서물류관리프로그램/frontend/src/components/dashboard/role-dashboard-view.tsx",
+            "도서물류관리프로그램/frontend/src/components/dashboard/dashboard-widget-config-dialog.tsx",
+            "도서물류관리프로그램/frontend/src/lib/dashboard-region-presets.ts",
+            "test/test_dashboard_widget_config_ux.py"
+          ],
+          "verified_by": "npm run typecheck · pytest test_dashboard_widget_config_ux.py"
         }
       ],
       "subscenarios_absorbed": [
@@ -415,7 +427,7 @@
         },
         "T8": {
           "status": "done",
-          "note": "porting-screens / web-porting-progress / human-action-items / todos 4개 JSON 동기화 + runtime_check·hotfixes(HOT-INQ-1/HOT-APP-1/2) 후속 반영"
+          "note": "porting-screens / web-porting-progress / human-action-items / todos 4개 JSON 동기화 + runtime_check·hotfixes(HOT-INQ-1/HOT-APP-1/2/3) 후속 반영"
         }
       }
     },

@@ -1,6 +1,6 @@
 {
   "updatedAt": "2026-04-29T06:45:00Z",
-  "phase": "2026-04-29 오피넷 유가 대시보드(opinet_client·fuel_cost·national/시도·캐시) + 앱 헤더 네온 시계·날씨(weather-risk 폴링·편집모드 지역 Select·localStorage) + 역할 대시보드 상단 메타 한 줄 정렬. 직전: 2026-04-27 C7 Code128 SVG 바코드 엔진 도입.",
+  "phase": "2026-04-29 오피넷 유가·헤더 시계/날씨 + HOT-APP-3 대시보드 위젯 설정(Sheet·지역 프리셋·prompt 제거) + C1 로그인 500 방지(auth·audit fail-safe). 직전: 2026-04-27 C7 Code128 SVG 바코드 엔진 도입.",
   "productNote": "실행 UI는 저장소 `도서물류관리프로그램/` (제품 웹). 본 섹션은 개발 진행용 허브 대시보드 전용.",
   "docLinks": [
     {
@@ -54,6 +54,7 @@
       "title": "백엔드 · 데이터 연동",
       "items": [
         "오피넷 유가 · 대시보드 외부 지표 (2026-04-29) — `opinet_client` avgAllPrice/avgSidoPrice(JSON·D047 경유), `BLS_OPINET_CODE`·TTL 캐시(`fuel:opinet:national` / `fuel:opinet:sido:{코드}`), `fuel_cost` 지역 단가 우선·등락 `level`(warn/crit), `GET .../fuel-cost` `region`/`sido`. 환경 문서 `docs/dashboard-opinet-env.md`. 회귀 `test_dashboard_external_api.py`(모킹·fallback).",
+        "C1 로그인 응답 안정화 (2026-04-29) — `auth.py` UserInfo dict 정규화·`priority` 안전 변환·JWT/UserInfo 구성 예외 시 401 다운그레이드, `audit_service._safe_emit` 로 감사 로깅 실패가 POST `/api/v1/auth/login` 500을 유발하지 않도록 격리. 회귀 `test/test_auth_login_500_safety_net.py`.",
         "C1 로그인 라우팅 안정화 완료(2026-04-26) — 현재 정상 로그인 흐름은 유지하고 `login_id_index_service.rebuild()` 의 정본을 4 서버 `SHOW DATABASES` + `Id_Logn` 보유 DB 스캔으로 고정. 인덱스 저장 필드는 `Gcode/Hcode/remote_id/db_name/tenant_id/account_family` 로 제한하고 `Gpass` SELECT 금지. `execute_query` 는 SSH/pool stale `OperationalError` 2006/2013 에서 풀·터널 무효화 후 1회 재시도. 회귀: `test_login_id_index_live_scan.py`, `test_db_execute_query_retry.py`.",
         "총판–출판사 소속 판정 정합화 (2026-04-26) — `publisher_whitelist_service.lookup_by_dist_and_publisher` / `list_by_publisher_hcode` 도입, `auth_service._resolve_account_type` 에서 web_user `dist_hcode`·tenant `parent_tenant_id`·whitelist `dist_tenant_id` 정합 소비, 동일 `publisher_hcode` 다중 총판 시 T2_PUB 자동 확정 금지. 총판 전용 사후 재소속 `POST /api/v1/admin/whitelist/reaffiliate`(JWT `hcode` 강제, cross-DB `AFFILIATION_CROSS_DB_FORBIDDEN`, cap·whitelist·tenant 정합). 운영 점검 `debug/check_affiliation_integrity.py`. 프론트 `whitelist-api.ts` 재소속·`dist_hcode` 쿼리 옵션. 회귀: `tests/test_auth_whitelist_relation_resolution.py`, `tests/test_admin_whitelist_reaffiliate.py`, `test_whitelist_service`·`test_actr_priority` 갱신.",
         "FastAPI: `servers.yaml` 프로필 기준 DB 풀·SSH·MySQL 3.x raw 경로",
@@ -97,6 +98,7 @@
       "id": "frontend",
       "title": "프론트엔드 · UX (제품)",
       "items": [
+        "UX 핫픽스 HOT-APP-3 (2026-04-29) — 역할 대시보드 편집 모드 위젯 설정: `dashboard-widget-config-dialog`(Sheet)·`dashboard-region-presets`(ITS bbox·기상 lat/lon/nx/ny 프리셋)·`role-dashboard-view`에서 JSON `window.prompt` 제거·고급 JSON 접기 유지. 회귀 `test/test_dashboard_widget_config_ux.py`.",
         "앱 셸 헤더 실시간 시계·날씨 + 편집 모드 지역 선택 (2026-04-29) — `header-clock-weather.tsx`(네온 패널·1초 시계·날짜·`weather-risk` 5분 폴링), `header-weather-presets` + `portal_header_weather_preset_v1` localStorage, `dashboard-shell-store` zustand + `RoleDashboardView` `editWidgets` 동기화, 업무 대시보드(`/dashboard/{super,dist,pub,t3}`) 편집 모드에서만 지역 Select. `header.tsx` 우측 삽입.",
         "역할 대시보드 상단 메타 UX (2026-04-29) — `role-dashboard-view` 조회 기간·표본 행 수 한 줄(flex-wrap) 정렬, 불필요 안내 문구 제거.",
         "정산·인쇄 잔여 재분류(2026-04-26) — `Sobo46_billing`/`Sobo49_tax`/`Settle_outstanding`/`Sobo41_slip` 및 billing 별칭 2건을 phase1·T7/T8 done으로 정렬. `test_c5_settlement_phase2.py` TC-ST-P2_32(registry)·TC-ST-P2_33(data-legacy-id) + optional_filters(outstanding) + `test_c7_print_phase1.py`(PDF) 근거 고정. C5=기능·미수·전표, C7=Sobo46/49 PDF 단일 근거.",
