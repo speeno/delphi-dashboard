@@ -1,7 +1,7 @@
 {
   "$comment": "C10 이후 R&D/DX 트랙 — 시나리오 (C1~C15) 와 평행하게 운영되는 비즈니스 외 작업 라인. 본 페이즈는 2종 (T-B4: .frf 자동 변환 PoC, T-DEV: 개발 인프라/DX) 등록. 트랙은 시나리오와 달리 T1~T8 고정 단계가 없고, 자유 마일스톤으로 추적.",
   "title": "R&D / DX Tracks",
-  "updatedAt": "2026-05-01 — T-WELOVE-COVERAGE 등록 (WeLove_FTP 전체 계정 DPR 클로저·인벤토리·계약 retrofit 트랙). 직전: T-B4 done·DEC-050 동결.",
+  "updatedAt": "2026-05-01 — T-WELOVE-COVERAGE W3 완료(Id_Logn/c8 별칭)·W4 YAML 정합 테스트·회귀 게이트 실행. 직전: WIP 등록.",
   "tracks": [
     {
       "id": "T-B4",
@@ -71,7 +71,7 @@
       "category": "포팅 입력 정본",
       "status": "in_progress",
       "purpose": "gitignored `WeLove_FTP` 고객별 빌드·468개 DPR 클로저·테넌트 라우팅을 포팅 계약과 동기하고, 화면 매핑·메뉴/권한·스모크 게이트까지 한 트랙으로 추적한다.",
-      "summary": "2026-05-01 등록 — 산출물: `analysis/welove_*.json`, 계약 `welove_build_coverage.yaml`, 요약 `docs/welove-dpr-closure-coverage.md`. 로그인 검증·DSN 라우팅(DSN-DEC-08)은 변경 금지; 메타(active_build_id·account_family 등) 보존만 허용.",
+      "summary": "2026-05-01 — `welove_screen_contract_coverage.json` 40/40 커버(Id_Logn→Chul, c8_scan_match→Tong08/07 별칭). RBAC·`build_forced_hidden_menus` vs 테넌트 시드 회귀 테스트 추가. 로그인 경로 변경 금지 원칙 유지.",
       "rationale": [
         "레거시 소스 스냅샷만으로는 고객별 실행 파일 전체를 커버하지 못함 → WeLove_FTP가 공식 입력",
         "코드 분기 금지 — `customer_variants`·계약 데이터로만 변이 표현 (DEC-028·welove_build_coverage branch_rule)",
@@ -95,21 +95,23 @@
         {
           "id": "W3",
           "name": "화면 계약 커버리지(layout_mappings vs 소스 PAS/DFM) retrofit 추적",
-          "status": "in_progress",
-          "artifact": "analysis/welove_screen_contract_coverage.json, 미커버 Id_Logn·c8_scan_match 별도 계약 추적"
+          "status": "done",
+          "date": "2026-05-01",
+          "artifact": "analysis/welove_screen_contract_coverage.json — `LAYOUT_NOTE_EXTRA_UNIT_ALIASES`(Id_Logn→chul, c8_scan_match→tong08/tong07), uncovered 0"
         },
         {
           "id": "W4",
           "name": "메뉴·권한·프런트 게이트(account-menu-matrix·RBAC) 빌드별 정합",
-          "status": "pending",
+          "status": "in_progress",
           "depends_on": ["W3"],
-          "artifact": "migration/contracts/rbac_menu_matrix.yaml, build_forced_hidden_menus.yaml, frontend account-menu-matrix.ts"
+          "artifact": "migration/contracts/rbac_menu_matrix.yaml, build_forced_hidden_menus.yaml — test_build_forced_hidden_menu_keys_match_seeded_tenants; 프런트 account-menu-matrix.ts 후속"
         },
         {
           "id": "W5",
           "name": "4대 서버 스모크·welove·로그인 회귀 게이트 상시",
-          "status": "pending",
-          "artifact": "debug/probe_backend_all_servers.py, test/test_welove_porting_coverage.py, test/test_auth_login_*.py"
+          "status": "done",
+          "date": "2026-05-01",
+          "artifact": "debug/probe_backend_all_servers.py dry-run(L4), pytest test_welove_porting_coverage + test_auth_login_* 로컬 통과"
         },
         {
           "id": "W-PENDING-SEMANTIC",
