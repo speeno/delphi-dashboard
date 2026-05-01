@@ -5,5 +5,32 @@
   { "id": "RISK-004", "name": "성능 저하", "probability": "중간", "impact": "높음", "response": "Comparison Harness 응답시간 비교 + 프로파일링", "owner": "M", "status": "감시중" },
   { "id": "RISK-005", "name": "현업 저항/교육 부족", "probability": "중간", "impact": "중간", "response": "Routing Harness 점진적 전환 + 즉시 롤백 보장", "owner": "P", "status": "감시중" },
   { "id": "RISK-006", "name": "데이터 정합성 문제", "probability": "중간", "impact": "높음", "response": "Comparison Harness 상시 비교 + 자동 알림", "owner": "M + S-Mid", "status": "감시중" },
-  { "id": "RISK-007", "name": "하네스 자체 장애", "probability": "낮음", "impact": "중간", "response": "하네스 우회 경로 + 운영 런북", "owner": "M + S-Mid", "status": "감시중" }
+  { "id": "RISK-007", "name": "하네스 자체 장애", "probability": "낮음", "impact": "중간", "response": "하네스 우회 경로 + 운영 런북", "owner": "M + S-Mid", "status": "감시중" },
+  {
+    "id": "RISK-008",
+    "name": "WeLove 고객별 빌드 누락·오매칭",
+    "probability": "중간",
+    "impact": "높음",
+    "response": "`welove_build_catalog_extended.json`·tenant 라우팅 매트릭스 상시 동기; 활성 tenant의 active_build_id 누락 0건 게이트(test_welove_porting_coverage); 고객별 운영 정본은 사람 승인 항목(HA-WELOVE-01)으로 고정",
+    "owner": "M",
+    "status": "감시중"
+  },
+  {
+    "id": "RISK-009",
+    "name": "D_Select / 테넌트 스코프 오판·RLS 회귀",
+    "probability": "중간",
+    "impact": "높음",
+    "response": "멀티 DB 호환 룰 적용; 로그인 후 server_id·tenant claim 일관성 유지; d_select 점진 도입 시 기존 회귀 게이트(T-DEV M4)와 연계",
+    "owner": "M + S-Mid",
+    "status": "감시중"
+  },
+  {
+    "id": "RISK-010",
+    "name": "로그인·DSN 라우팅 변경으로 인한 인증 회귀",
+    "probability": "중간",
+    "impact": "높음",
+    "response": "DSN-DEC-08·login.yaml·tenants_directory 변경 시 문서 체크리스트(login-routing-regression-guard.md) 필수; 비즈니스 로직 변경 금지·메타 추가만; 필수 테스트 test_auth_login_dynamic_routing / 500_safety_net / fixed_server / welove_porting_coverage",
+    "owner": "M",
+    "status": "감시중"
+  }
 ]

@@ -1,7 +1,7 @@
 {
   "$comment": "C10 이후 R&D/DX 트랙 — 시나리오 (C1~C15) 와 평행하게 운영되는 비즈니스 외 작업 라인. 본 페이즈는 2종 (T-B4: .frf 자동 변환 PoC, T-DEV: 개발 인프라/DX) 등록. 트랙은 시나리오와 달리 T1~T8 고정 단계가 없고, 자유 마일스톤으로 추적.",
   "title": "R&D / DX Tracks",
-  "updatedAt": "2026-04-21 — T-B4: 변환 작업 100% 완료 (1744 양식 IR+HTML 산출) → status=done. Phase 3(운영 파이프라인 결합)는 DEC-048 + DEC-050 별도 게이트로 분리. DEC-050 시행으로 화이트리스트 인프라(print_template_registry) + 4 산출물 + 대시보드 단일 원천(frf-html-porting.json/renderFrfHtmlPorting) 동결.",
+  "updatedAt": "2026-05-01 — T-WELOVE-COVERAGE 등록 (WeLove_FTP 전체 계정 DPR 클로저·인벤토리·계약 retrofit 트랙). 직전: T-B4 done·DEC-050 동결.",
   "tracks": [
     {
       "id": "T-B4",
@@ -64,6 +64,69 @@
       "decisions": ["DEC-019", "DEC-033", "DEC-040", "DEC-041"],
       "extensionLine": true,
       "linked_scenarios": ["C10", "C14"]
+    },
+    {
+      "id": "T-WELOVE-COVERAGE",
+      "name": "WeLove 전체 계정 대응 포팅 커버리지",
+      "category": "포팅 입력 정본",
+      "status": "in_progress",
+      "purpose": "gitignored `WeLove_FTP` 고객별 빌드·468개 DPR 클로저·테넌트 라우팅을 포팅 계약과 동기하고, 화면 매핑·메뉴/권한·스모크 게이트까지 한 트랙으로 추적한다.",
+      "summary": "2026-05-01 등록 — 산출물: `analysis/welove_*.json`, 계약 `welove_build_coverage.yaml`, 요약 `docs/welove-dpr-closure-coverage.md`. 로그인 검증·DSN 라우팅(DSN-DEC-08)은 변경 금지; 메타(active_build_id·account_family 등) 보존만 허용.",
+      "rationale": [
+        "레거시 소스 스냅샷만으로는 고객별 실행 파일 전체를 커버하지 못함 → WeLove_FTP가 공식 입력",
+        "코드 분기 금지 — `customer_variants`·계약 데이터로만 변이 표현 (DEC-028·welove_build_coverage branch_rule)",
+        "고급 모델 권장: 468 DPR 업무 의미 군집화·고객별 운영 정본 빌드 판정은 사람·별도 마일스톤으로 분리"
+      ],
+      "milestones": [
+        {
+          "id": "W1",
+          "name": "WeLove_FTP DPR 클로저·확장 빌드 카탈로그 인벤토리 고정",
+          "status": "done",
+          "date": "2026-05-01",
+          "artifact": "tools/extract_welove_dpr_closures.py, tools/build_welove_porting_coverage.py → analysis/welove_dpr_closures.json, welove_build_catalog_extended.json, welove_tenant_build_routing_matrix.json"
+        },
+        {
+          "id": "W2",
+          "name": "테넌트↔active_build_id 라우팅 매트릭스·계약 동기",
+          "status": "done",
+          "date": "2026-05-01",
+          "artifact": "migration/contracts/welove_build_coverage.yaml, tenants_directory_seed / tenants_directory_service 정합"
+        },
+        {
+          "id": "W3",
+          "name": "화면 계약 커버리지(layout_mappings vs 소스 PAS/DFM) retrofit 추적",
+          "status": "in_progress",
+          "artifact": "analysis/welove_screen_contract_coverage.json, 미커버 Id_Logn·c8_scan_match 별도 계약 추적"
+        },
+        {
+          "id": "W4",
+          "name": "메뉴·권한·프런트 게이트(account-menu-matrix·RBAC) 빌드별 정합",
+          "status": "pending",
+          "depends_on": ["W3"],
+          "artifact": "migration/contracts/rbac_menu_matrix.yaml, build_forced_hidden_menus.yaml, frontend account-menu-matrix.ts"
+        },
+        {
+          "id": "W5",
+          "name": "4대 서버 스모크·welove·로그인 회귀 게이트 상시",
+          "status": "pending",
+          "artifact": "debug/probe_backend_all_servers.py, test/test_welove_porting_coverage.py, test/test_auth_login_*.py"
+        },
+        {
+          "id": "W-PENDING-SEMANTIC",
+          "name": "(고급 모델 권장) 468 DPR 업무 의미 군집화·고객별 운영 정본 빌드 인간 승인",
+          "status": "pending",
+          "blocker": "도메인 SME·운영 확인",
+          "note": "표준 티어 완료 후 별도 실행; 결과는 customer_variants·운영 메모에만 반영"
+        }
+      ],
+      "decisions": ["DSN-DEC-08", "DEC-028", "DEC-033"],
+      "extensionLine": true,
+      "linked_scenarios": ["C1", "C9", "C10"],
+      "doc_links": [
+        "docs/welove-dpr-closure-coverage.md",
+        "docs/login-routing-regression-guard.md",
+        "migration/contracts/welove_build_coverage.yaml"
+      ]
     }
   ]
 }
