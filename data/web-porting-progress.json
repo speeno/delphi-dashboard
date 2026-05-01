@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-04-29T06:45:00Z",
-  "phase": "2026-04-29 오피넷 유가·헤더 시계/날씨 + HOT-APP-3 대시보드 위젯 설정(Sheet·지역 프리셋·prompt 제거) + C1 로그인 500 방지(auth·audit fail-safe). 직전: 2026-04-27 C7 Code128 SVG 바코드 엔진 도입.",
-  "productNote": "실행 UI는 저장소 `도서물류관리프로그램/` (제품 웹). 본 섹션은 개발 진행용 허브 대시보드 전용.",
+  "updatedAt": "2026-05-01T08:00:00Z",
+  "phase": "2026-05-01 국립중앙도서관 Open API — ISBN 서지 보강(Sobo14)·목록 NL 확인·사서추천도서 위젯·저회전 NL 배지·도서코드 NL 검색 (`BLS_NL_API_KEY` 단일, key/cert_key 동일값). 직전: 2026-04-29 오피넷 유가·헤더 시계/날씨 + HOT-APP-3.",
+  "productNote": "실행 UI는 저장소 `도서물류관리프로그램/` (제품 웹). 본 섹션은 개발 진행용 허브 대시보드 전용. 최근 신규: NL ISBN 보강·외부 위젯·저회전 배지 — 상세는 아래 backend/frontend 블록 최상단 항목.",
   "docLinks": [
     {
       "label": "Phase2 후속 작업 큐",
@@ -46,6 +46,10 @@
     {
       "label": "계정 유형 정합 인벤토리",
       "path": "docs/account-type-alignment-inventory.md"
+    },
+    {
+      "label": "루트 `.env.example` — NL Open API 변수명(BLS_NL_*, 키 미기재)",
+      "path": ".env.example"
     }
   ],
   "blocks": [
@@ -53,6 +57,7 @@
       "id": "backend",
       "title": "백엔드 · 데이터 연동",
       "items": [
+        "국립중앙도서관 Open API (2026-05-01) — 환경 `BLS_NL_API_KEY`(단일)·`BLS_NL_BASE_URL`(기본 https://www.nl.go.kr)·TTL·타임아웃(`config.py`). 클라이언트 `nl_library_client`: 서지 `.../seoji/SearchApi.do` 에 `cert_key`, 검색·사서추천 `.../NL/search/openApi/{search.do,saseoApi.do}` 에 `key` 동일 값·TTL 메모리 캐시. 라우터 `GET /api/v1/integrations/nl/{isbn,search,librarian-picks,bibliography-status}` (`integrations_nl.py`, `main.py` 등록). 대시보드 프록시 `GET /api/v1/dashboard/external/nl-librarian-picks` + `dashboard_external_service.nl_librarian_picks`. 회귀 `test/test_nl_library_client.py`·`test/test_nl_integration_router.py`(레포 `test/`).",
         "오피넷 유가 · 대시보드 외부 지표 (2026-04-29) — `opinet_client` avgAllPrice/avgSidoPrice(JSON·D047 경유), `BLS_OPINET_CODE`·TTL 캐시(`fuel:opinet:national` / `fuel:opinet:sido:{코드}`), `fuel_cost` 지역 단가 우선·등락 `level`(warn/crit), `GET .../fuel-cost` `region`/`sido`. 환경 문서 `docs/dashboard-opinet-env.md`. 회귀 `test_dashboard_external_api.py`(모킹·fallback).",
         "C1 로그인 응답 안정화 (2026-04-29) — `auth.py` UserInfo dict 정규화·`priority` 안전 변환·JWT/UserInfo 구성 예외 시 401 다운그레이드, `audit_service._safe_emit` 로 감사 로깅 실패가 POST `/api/v1/auth/login` 500을 유발하지 않도록 격리. 회귀 `test/test_auth_login_500_safety_net.py`.",
         "C1 로그인 라우팅 안정화 완료(2026-04-26) — 현재 정상 로그인 흐름은 유지하고 `login_id_index_service.rebuild()` 의 정본을 4 서버 `SHOW DATABASES` + `Id_Logn` 보유 DB 스캔으로 고정. 인덱스 저장 필드는 `Gcode/Hcode/remote_id/db_name/tenant_id/account_family` 로 제한하고 `Gpass` SELECT 금지. `execute_query` 는 SSH/pool stale `OperationalError` 2006/2013 에서 풀·터널 무효화 후 1회 재시도. 회귀: `test_login_id_index_live_scan.py`, `test_db_execute_query_retry.py`.",
@@ -98,6 +103,7 @@
       "id": "frontend",
       "title": "프론트엔드 · UX (제품)",
       "items": [
+        "국립중앙도서관 UI 연동 (2026-05-01) — `lib/nl-library-api.ts` 만 백엔드 통합 API 호출(키 비노출). 도서 상세 `/master/book/[gcode]` ISBN 옆 `NL 조회`·결과 카드 `이 서지 반영`(저장은 기존 `masterApi.bookUpdate`). 목록 `/master/book` `NL 서지` 열·행별 확인 패널. 역할 대시보드 `external.nl_librarian_picks` 위젯 + `ExternalWidgetCard` → `nl-librarian-picks`. 저회전(opsHealth) 행 NL 대조 배지(`bibliography-status`). 도서코드 `/master/book-code` `NL에서 검색` 읽기 전용 패널. 타입 검사 `npm run typecheck` 통과.",
         "UX 핫픽스 HOT-APP-3 (2026-04-29) — 역할 대시보드 편집 모드 위젯 설정: `dashboard-widget-config-dialog`(Sheet)·`dashboard-region-presets`(ITS bbox·기상 lat/lon/nx/ny 프리셋)·`role-dashboard-view`에서 JSON `window.prompt` 제거·고급 JSON 접기 유지. 회귀 `test/test_dashboard_widget_config_ux.py`.",
         "앱 셸 헤더 실시간 시계·날씨 + 편집 모드 지역 선택 (2026-04-29) — `header-clock-weather.tsx`(네온 패널·1초 시계·날짜·`weather-risk` 5분 폴링), `header-weather-presets` + `portal_header_weather_preset_v1` localStorage, `dashboard-shell-store` zustand + `RoleDashboardView` `editWidgets` 동기화, 업무 대시보드(`/dashboard/{super,dist,pub,t3}`) 편집 모드에서만 지역 Select. `header.tsx` 우측 삽입.",
         "역할 대시보드 상단 메타 UX (2026-04-29) — `role-dashboard-view` 조회 기간·표본 행 수 한 줄(flex-wrap) 정렬, 불필요 안내 문구 제거.",

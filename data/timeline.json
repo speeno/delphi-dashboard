@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-05-01",
+    "type": "feature",
+    "title": "국립중앙도서관 Open API — ISBN 서지·사서추천 위젯·저회전 NL 배지",
+    "description": "백엔드: `BLS_NL_API_KEY` 단일 키(`key`·`cert_key` 동일), `nl_library_client` + `GET /api/v1/integrations/nl/*`, 대시보드 `nl-librarian-picks` 프록시. 프론트: `nl-library-api.ts` 프록시만 호출, 도서 상세/목록·도서코드 NL 패널, 역할 대시보드 `external.nl_librarian_picks`, 저회전 NL 배지. 회귀 `test/test_nl_library_client.py`·`test/test_nl_integration_router.py`.",
+    "sprint": 1
+  },
+  {
     "date": "2026-04-29",
     "type": "feature",
     "title": "오피넷 유가 연동 · 헤더 시계·날씨 · 대시보드 메타 정리",
