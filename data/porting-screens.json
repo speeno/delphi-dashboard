@@ -1265,7 +1265,7 @@
       "phase1_status": "completed",
       "phase2_status": "complete",
       "purpose": "일·월 집계·청구·세금계산서·입금 정산",
-      "summary": "Phase 1 완료 (Sobo45/45_1/47/41/42/42_1) + Phase 2 확장(Sobo46 청구서 인쇄·Sobo49 세금·재집계·audit) + 모바일 정산 확장(Settle_outstanding 미수, Sobo41_slip 입금전표) — 2026-04-26 form-registry phase1 재분류로 대시보드·카드 drift 제거. C7은 Sobo46/49 PDF 경로 흡수.",
+      "summary": "Phase 1 완료 (Sobo45/45_1/47/41/42/42_1) + Phase 2 확장(Sobo46 청구서 인쇄·Sobo49 세금·재집계·audit) + 모바일 정산 확장(Settle_outstanding 미수, Sobo41_slip 입금전표) — 2026-04-26 form-registry phase1 재분류로 대시보드·카드 drift 제거. C7은 Sobo46/49 PDF 경로 흡수. **2026-05-04**: Sobo49 보관본 인쇄 GET print(/print.pdf) 가 T2_Ssub 동적 컬럼(DEC-058)으로 변형 DB 호환·DEC-035 stub 과 출력 경로 분리(DEC-035 (d))·계약 v1.3.1.",
       "delphi": {
         "primary_form": "TSobo45 (청구서관리)",
         "primary_unit": "Subu45.pas",
@@ -1340,7 +1340,9 @@
           "tools/.../Subu47/Sobo47.*",
           "tools/.../Subu41/Sobo41.*",
           "tools/.../Subu42/Sobo42.*",
-          "tools/.../Subu42_1/Sobo42_1.*"
+          "tools/.../Subu42_1/Sobo42_1.*",
+          "tools/.../Subu46/Sobo46.*",
+          "tools/.../Subu49/Sobo49.*"
         ],
         "layout_mappings": [
           "analysis/layout_mappings/Sobo45_billing.md",
@@ -1349,13 +1351,15 @@
           "analysis/layout_mappings/Sobo41_cash.md",
           "analysis/layout_mappings/Sobo42_cash.md",
           "analysis/layout_mappings/Sobo42_1_cash.md",
+          "analysis/layout_mappings/Sobo46_billing.md",
+          "analysis/layout_mappings/Sobo49_tax.md",
           "analysis/screen_cards/c5_settlement.md",
           "analysis/handlers/c5_phase1.md"
         ],
         "dfm_widget_id_coverage": "billing 22 / cash 20 / cash-status 11 / period 10 — 매핑 노트 ↔ DOM 1:1"
       },
-      "contract": "migration/contracts/settlement_billing.yaml v1.1.0 (Phase 2)",
-      "testpack": "migration/test-cases/settlement_billing.json + test/test_c5_settlement_phase1.py (32 cases) + test/test_c5_settlement_phase2.py (31 cases) — 총 63 PASS",
+      "contract": "migration/contracts/settlement_billing.yaml v1.3.1 (Phase 2 + Sobo49 인쇄 동적 컬럼·미수 등 DEC-033(f) 확장 반영)",
+      "testpack": "migration/test-cases/settlement_billing.json + test/test_c5_settlement_phase1.py (32 cases) + test/test_c5_settlement_phase2.py (31 cases) + test/test_settlement_tax_invoice_chek3_optional.py + test/test_c5_settlement_optional_filters.py — 회귀 그린 유지",
       "subscenarios_absorbed": [
         "C12 마감 후 편집 차단 (DEC-031: T2_Ssub.Yesno='1' 단일 정본)",
         "C14 보고서 동등성(일부) — Sobo47 월합계",
@@ -1365,8 +1369,9 @@
         "DEC-031 마감 정책 = legacy_yesno (T2_Ssub.Yesno='1' 단일 정본)",
         "DEC-032 평문 Gpass 폐기 → /audit/gpass-rotate (bcrypt + audit_token, scope='gpass_change')",
         "DEC-034 Phase 2 인쇄 = HTML 미리보기 + window.print() (PDF/실인쇄는 C7 이연)",
-        "DEC-035 세금 외부 발행 = NOT_INTEGRATED stub (200 + audit), 외부 채널은 후속 시나리오",
-        "DEC-036 Chek3 토글 = 백엔드 _update_chek3 단일 헬퍼 (단건/일괄 동일 흐름)"
+        "DEC-035 세금 외부 발행 = NOT_INTEGRATED stub (200 + audit + 내부 Chek3='1'), 외부 채널은 후속 시나리오 — 보관본 HTML/PDF 출력은 stub 와 분리 완결 (DEC-035 (d))",
+        "DEC-036 Chek3 토글 = 백엔드 update_chek3 단일 헬퍼 (단건/일괄 동일 흐름)",
+        "DEC-058 T2_Ssub 컬럼 어댑터 — 목록·인쇄 단건 SELECT 동적 빌드 (변형사 Chek3/Sdate/Yesno 부재 흡수)"
       ],
       "phase2_open_questions": [
         "OQ-ST-1 (resolved by DEC-035, 2026-04-19) Sobo49 세금 외부 채널 stub",

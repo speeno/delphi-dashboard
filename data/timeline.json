@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-05-04",
+    "type": "milestone",
+    "title": "세금·레거시 출력·CRUD 잔여 고도화 (Wave A~D 산출 동기)",
+    "description": "C5 Sobo49: 보관본 HTML/PDF SELECT 를 목록과 동일 T2_Ssub 동적 컬럼(`_build_sql_print_row`, DEC-058)·DEC-035(d) stub/출력 분리·settlement_billing.yaml v1.3.1·legacy 결정문 보강. 미완 인벤토리: phase2-screen-cards `Sobo48_compare`/`Sobo29_other` blockers 에 라우트 드리프트·잔여 갭 명시 후 재생성. Wave B: wave-b-placeholder-scoping.md 에 4경로 dfm 후보(Subu50~53 등)·blocked 카드 정렬. Wave C: layout_mappings §12 (Sobo11/14/17/38/39/45). Sobo49_tax §12 갭 표(A1). `.github/PULL_REQUEST_TEMPLATE.md` 모델 티어. 회귀: `generate_incomplete_features_inventory.py --check`, pytest tax-invoice+c5 phase2.",
+    "sprint": 1
+  },
+  {
     "date": "2026-05-01",
     "type": "feature",
     "title": "국립중앙도서관 Open API — ISBN 서지·사서추천 위젯·저회전 NL 배지",

@@ -1,7 +1,7 @@
 {
   "$comment": "phase2 화면별 단계(T1~T8) 카드. 원칙적으로 도서물류관리프로그램/frontend/src/lib/form-registry.ts FORM_REGISTRY 의 phase==='phase2' 와 1:1 이며, phase1 승격 직후에는 T7/T8 done 증적을 남기기 위해 1 사이클 동안 promoted 항목을 보존할 수 있다. 2026-04-22 C3 입고내역서 2종(Sobo54/Sobo57) phase1 승격으로 본 목록에서 제거. 시나리오(input/process/output/eta) 는 form-registry 의 단일 원천을 거울. T-phase 는 dashboard 가 자체 트래킹. 2026-04-23: docs/menu-roadmap-waves.md 신설 — 향후 본 카드의 'wave' / 'crudParity' 필드는 form-registry 의 roadmapWave/crudParity 와 1:1 동기화한다(drift 발생 시 dashboard 빌드 시 경고). 1차에는 form-registry 만 단일 원천으로 두고 본 JSON 은 거울 — 화면별 'wave' / 'crud' 키 추가는 다음 사이클에 일괄 채움 예정.",
   "title": "Phase 2 30 화면 — 단계 카드 (T1~T8)",
-  "updatedAt": "2026-04-29 — 통계 화면 공통 옵션 필터(미입력=전체) + 표준 페이징 + 상단 페이저 + Sobo43 출판사통계 placeholder 제거. 직전: Sobo16_special·Sobo28_delivery phase1 동기화.",
+  "updatedAt": "2026-05-04 — Sobo48_compare/Sobo29_other 시나리오 blockers 에 라우트 드리프트·잔여 출력 갭 명시(대시보드·incomplete-features-inventory 동기). 직전: 2026-04-29 통계 화면 공통 옵션 필터.",
   "stages": [
     {
       "id": "T1",
