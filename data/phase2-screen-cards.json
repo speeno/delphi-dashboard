@@ -411,7 +411,8 @@
         "eta": "Phase 2 (2026-Q2)",
         "blockers": [
           "레거시 단일 SQL 미확정",
-          "신규 SQL 0 정책(DEC-040)"
+          "신규 SQL 0 정책(DEC-040)",
+          "라우트 드리프트: /ledger/comparison 는 현재 Sobo48 본판(출판사 설정)이 임시 점유 중 — 장부대조 진입 시 별도 라우트 또는 view 모드 분리 필요 (analysis/audit/wave-b-placeholder-scoping.md §2)"
         ]
       },
       "tasks": {
@@ -527,7 +528,7 @@
         "output": "기타명세 PDF 미리보기",
         "eta": "Phase 2 (2026-Q2)",
         "blockers": [
-          "레거시 폼 단순 출력기 — SQL 미확정"
+          "레거시 폼 단순 출력기 — 인쇄 양식(T7) 미확정 (조회·메모 저장은 구현 완료, Sobo29.* data-legacy-id 부착 — analysis/audit/wave-b-placeholder-scoping.md §2)"
         ]
       },
       "tasks": {
