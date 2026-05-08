@@ -1,7 +1,7 @@
 {
   "$comment": "핵심 10 시나리오의 화면 단위 포팅 진행 트래커. docs/core-scenarios-porting-plan.md 와 1:1 동기화. 상태 값: not_started | in_progress | review | done | blocked",
   "title": "핵심 10 시나리오 — 화면 단위 포팅 진행",
-  "updatedAt": "2026-04-29 — 통계 화면 공통 완료 + C9 Sobo11/Sobo14 CRUD API 보강. — 직전: 통계 필터/페이징/Sobo43.",
+  "updatedAt": "2026-05-08 — 허브 대시보드·todos·계획서 §4 동기화. 직전: 2026-05-04 C5 Sobo49·DEC-058·settlement_billing v1.3.1; 2026-04-29 통계 공통 + C9 Sobo11/Sobo14 CRUD.",
   "planDoc": "docs/core-scenarios-porting-plan.md",
   "stages": [
     {

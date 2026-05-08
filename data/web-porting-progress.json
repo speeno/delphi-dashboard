@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-05-04T10:30:00Z",
-  "phase": "2026-05-04 세금·레거시 출력·CRUD 잔여 고도화 — Sobo49 세금계산서 보관본 HTML/PDF 가 T2_Ssub 동적 컬럼(DEC-058)으로 목록과 통일·DEC-035(d) stub/출력 분리·settlement_billing.yaml v1.3.1. Wave B placeholder 4경로 dfm 후보 인덱스·phase2 카드 라우트 드리프트 blockers·Wave C layout_mappings §12 버튼→API→테스트 표·PR 템플릿 모델 티어. 직전: 2026-05-01 WeLove_FTP·NL Open API.",
-  "productNote": "실행 UI는 저장소 `도서물류관리프로그램/` (제품 웹). 본 섹션은 개발 진행용 허브 대시보드 전용. 최근: C5 Sobo49 인쇄 경로 멀티 DB 안정화(DEC-058)·미완 인벤토리 동기(`generate_incomplete_features_inventory.py --check`)·고급 티어 작업은 docs/PR 템플릿 표 참조.",
+  "updatedAt": "2026-05-08T12:00:00Z",
+  "phase": "2026-05-08 진행 허브 동기화 — porting-screens.json·todos.json(M-S1-PORT-C10)·docs/core-scenarios-porting-plan.md §4를 단일 스냅샷으로 정합. 제품 변경 없음. 직전: 2026-05-04 세금·레거시 출력·CRUD(Sobo49·DEC-058·settlement_billing v1.3.1)·Wave B/C 정리.",
+  "productNote": "실행 UI는 저장소 `도서물류관리프로그램/` (제품 웹). 본 섹션은 개발 진행용 허브 대시보드 전용. 최근: 2026-05-08 메타·할일·§4 드리프트 제거. 그 직전: C5 Sobo49·DEC-058·미완 인벤토리 동기·고급 티어는 docs/PR 템플릿 표 참조.",
   "docLinks": [
     {
       "label": "Phase2 후속 작업 큐",

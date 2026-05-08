@@ -159,7 +159,8 @@
         {
           "id": "M-S1-PORT-C10",
           "task": "C10 권한 관리(f11~f89, +C13/C15) — T1~T8 진행 (단계 5, 게이트 #4 고객사별 차이 승인)",
-          "done": false
+          "done": true,
+          "note": "porting-screens.json C10 T1~T8 completed 동기화 (2026-05-08). pytest test_c10_admin_phase1 등 회귀·/admin/id-logn·DEC-041/042/043."
         },
         {
           "id": "M-S1-PORT-C9-WD",
