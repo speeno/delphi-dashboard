@@ -1,11 +1,47 @@
 {
-  "updatedAt": "2026-05-08T12:00:00Z",
-  "phase": "2026-05-08 진행 허브 동기화 — porting-screens.json·todos.json(M-S1-PORT-C10)·docs/core-scenarios-porting-plan.md §4를 단일 스냅샷으로 정합. 제품 변경 없음. 직전: 2026-05-04 세금·레거시 출력·CRUD(Sobo49·DEC-058·settlement_billing v1.3.1)·Wave B/C 정리.",
+  "updatedAt": "2026-05-11T02:21:00Z",
+  "phase": "2026-05-11 북이오웍스 디자인 가독성 보정 — Design.md/Gap 에서 CMS --primary ≠ Vivid Lime 명시, globals.css primary/sidebar/link/ring/status 재매핑, 로그인/랜딩 CTA 만 brand-primary, DataGrid 헤더·앱 셸 spacing·국문 typography base 적용. 회귀 매트릭스 analysis/regression/design-readability-remap.md. tsc/build PASS · rg HEX 화이트리스트 외 0건 · brand-warm TSX 0건. npm lint 는 사전 존재 react-hooks 에러(use-sales-statement-pdf-layout/use-permissions)로 실패.",
   "productNote": "실행 UI는 저장소 `도서물류관리프로그램/` (제품 웹). 본 섹션은 개발 진행용 허브 대시보드 전용. 최근: 2026-05-08 메타·할일·§4 드리프트 제거. 그 직전: C5 Sobo49·DEC-058·미완 인벤토리 동기·고급 티어는 docs/PR 템플릿 표 참조.",
   "docLinks": [
     {
       "label": "Phase2 후속 작업 큐",
       "path": "docs/phase2-next-work-queue.md"
+    },
+    {
+      "label": "북이오웍스 디자인 단일 원천 (Design.md v1.0)",
+      "path": "docs/Design.md"
+    },
+    {
+      "label": "디자인 갭 분석 (globals.css·앱 셸·로그인)",
+      "path": "docs/design-gap-analysis.md"
+    },
+    {
+      "label": "디자인 롤아웃 플랜 (Phase A/B/C·자산 경로)",
+      "path": "docs/design-rollout-plan.md"
+    },
+    {
+      "label": "디자인 자산 요청서 (브랜드 담당 발송용)",
+      "path": "docs/design-asset-request.md"
+    },
+    {
+      "label": "디자인 PR 템플릿 (Phase A/B/C 공용)",
+      "path": ".github/PULL_REQUEST_TEMPLATE/design-bookioworks.md"
+    },
+    {
+      "label": "Phase A 회귀 매트릭스 (토큰 회전)",
+      "path": "analysis/regression/design-phase-a-rotation.md"
+    },
+    {
+      "label": "Phase B 선스캐폴드 매트릭스 (Logo·button·metadata)",
+      "path": "analysis/regression/design-phase-b-prescaffold.md"
+    },
+    {
+      "label": "Phase C 매트릭스 (차트·지도 토큰화)",
+      "path": "analysis/regression/design-phase-c-tokenize.md"
+    },
+    {
+      "label": "디자인 가독성 보정 매트릭스 (primary/vivid 분리)",
+      "path": "analysis/regression/design-readability-remap.md"
     },
     {
       "label": "운영 계정 RED 자격증명 처리 메모",
