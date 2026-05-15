@@ -1,0 +1,72 @@
+{
+  "$comment": "미구현·부분구현 단일 추적표 — plans/미구현_화면_구현_계획 W0. 원천 JSON은 analysis/audit/incomplete-features-inventory.json 을 재생성해 동기한다.",
+  "updatedAt": "2026-05-15T12:00:00Z",
+  "planRef": "미구현 화면 구현 계획 (w0~w5 웨이브)",
+  "upstream": {
+    "incomplete_features": "analysis/audit/incomplete-features-inventory.json",
+    "incomplete_markdown": "analysis/audit/incomplete-features-inventory.md",
+    "phase2_cards": "dashboard/data/phase2-screen-cards.json",
+    "form_registry": "도서물류관리프로그램/frontend/src/lib/form-registry.ts",
+    "crud_backlog": "docs/crud-backlog.md",
+    "billing_menu_map": "migration/coverage/billing-deposit-menu-legacy-to-web-map.md",
+    "shipping_p2": "migration/coverage/billing-subu43-44-shipping-backlog.md"
+  },
+  "waveStatus": {
+    "W0": "done",
+    "W1": "done",
+    "W2": "done",
+    "W3": "done",
+    "W4": "done",
+    "W5": "done"
+  },
+  "waveNotes": {
+    "W2": "scaffold+계약 v0.1+T1 카드+probe — T2 SQL·CRUD 는 백로그 유지",
+    "W3": "crud-backlog §2.6·§2.7·Wave C 표 갱신 (G0 행 추가)",
+    "W4": "phase3-print-gate §4 + courier_management phase3_print_gate_alignment",
+    "W5": "analysis/screen_cards/billing-p3-roadmap.md 시나리오 착수 표"
+  },
+  "activeGaps": [
+    {
+      "wave": "W2-followup",
+      "kind": "sql_t2",
+      "id": "Sobo43_shipping_ledger",
+      "notes": "shipping_ledger_service — 레거시 SQL·t3_ssub_adapt·count_grouped (DEC-033)"
+    },
+    {
+      "wave": "W4-followup",
+      "kind": "external_integration",
+      "id": "DEC-035_tax_external",
+      "notes": "세금 외부 채널 — 제품 합의 후 stub 제거"
+    },
+    {
+      "wave": "W4-followup",
+      "kind": "external_integration",
+      "id": "courier_external_carrier",
+      "notes": "courier_management.yaml external_carrier_integration"
+    },
+    {
+      "wave": "W4-followup",
+      "kind": "print_c7",
+      "id": "Sobo29_other_pdf",
+      "notes": "C7 비정형 PDF — phase3-print-gate G1~G3"
+    },
+    {
+      "wave": "W5",
+      "kind": "legacy_gap",
+      "legacyForm": "Sobo24_9",
+      "notes": "명세서 발송건수 — billing-deposit-map P3"
+    },
+    {
+      "wave": "W5",
+      "kind": "legacy_gap",
+      "legacyForm": "Sobo38_1",
+      "notes": "운임관리-택배 — billing-deposit-map P3"
+    },
+    {
+      "wave": "W5",
+      "kind": "legacy_gap",
+      "legacyForm": "Seok30",
+      "notes": "메세지 팝업 — Wave D 알림 통합 후보"
+    }
+  ]
+}

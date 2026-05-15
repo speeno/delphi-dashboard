@@ -257,7 +257,7 @@
         "blockers": [
           "Sobo43_stats_route(출판사통계) 와 ID/folder 충돌 — 신규 ID Sobo43_shipping_ledger 사용",
           "신규 SQL 0 정책(DEC-040) 검토 필요",
-          "T1 카드 (analysis/screen_cards/Sobo43_shipping.md) 미작성"
+          "T1 카드 초안: analysis/screen_cards/Sobo43_shipping.md (2026-05-15) — T2 SQL·계약 v0.1 후속"
         ]
       },
       "backlog": "migration/coverage/billing-subu43-44-shipping-backlog.md",
@@ -281,7 +281,8 @@
         "eta": "Phase 2 후속",
         "blockers": [
           "Sobo44_inv(재고현황) 와 ID/folder 충돌 — 신규 ID Sobo44_shipping_status 사용",
-          "Sobo43_shipping_ledger 와 동일 도메인 — T1 통합 카드 권장"
+          "Sobo43_shipping_ledger 와 동일 도메인 — T1 통합 카드 권장",
+          "T1 카드 초안: analysis/screen_cards/Sobo44_shipping.md (2026-05-15)"
         ]
       },
       "backlog": "migration/coverage/billing-subu43-44-shipping-backlog.md",
